@@ -12,7 +12,7 @@ import PasswordChangeForm from "../components/PasswordChangeForm";
 const ProfilePage = () => {
 	const { darkMode } = useTheme();
 	const navigate = useNavigate();
-	const { user, logout, requestVerificationWithFiles } = useAuthStore();
+	const { user, logout, requestVerificationWithFiles, refreshUser } = useAuthStore();
 	const { userAchievements, getUserAchievements } = useCommunityStore();
 	const { listings, getUserListings } = useListingStore();
 	const [activeTab, setActiveTab] = useState("profile");
@@ -29,6 +29,7 @@ const ProfilePage = () => {
 		memberSince: null
 	});
 	const [statsLoading, setStatsLoading] = useState(true);
+	const [lastEcoPoints, setLastEcoPoints] = useState(null);
 	// const [notificationSettings, setNotificationSettings] = useState({
 	// 	messages_buyers: true,
 	// 	messages_sellers: true,
@@ -51,20 +52,67 @@ const ProfilePage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []); // Only run once on mount
 
+	// Auto-refresh ecoPoints when they change in authStore
+	useEffect(() => {
+		if (user && user.ecoPoints !== undefined) {
+			// Check if ecoPoints have changed
+			if (lastEcoPoints !== null && lastEcoPoints !== user.ecoPoints) {
+				console.log("EcoPoints updated from", lastEcoPoints, "to", user.ecoPoints);
+				// Update profile stats with new ecoPoints
+				setProfileStats(prev => ({
+					...prev,
+					ecoPoints: user.ecoPoints
+				}));
+			}
+			// Track the last known ecoPoints value
+			setLastEcoPoints(user.ecoPoints);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user?.ecoPoints, lastEcoPoints]);
+
+	// Periodic refresh to catch any backend updates (every 30 seconds)
+	useEffect(() => {
+		const intervalId = setInterval(async () => {
+			try {
+				const freshUser = await refreshUser();
+				if (freshUser && freshUser.ecoPoints !== profileStats.ecoPoints) {
+					console.log("Auto-refreshed ecoPoints:", freshUser.ecoPoints);
+					setProfileStats(prev => ({
+						...prev,
+						ecoPoints: freshUser.ecoPoints
+					}));
+				}
+			} catch (error) {
+				// Silently fail - don't interrupt user experience
+				console.debug("Periodic ecoPoints refresh skipped:", error.message);
+			}
+		}, 30000); // Check every 30 seconds
+
+		// Cleanup interval on unmount
+		return () => clearInterval(intervalId);
+	}, [profileStats.ecoPoints, refreshUser]);
+
 	const fetchProfileData = async () => {
 		try {
 			setStatsLoading(true);
 			
+			// Refresh user data from backend to get latest stats
+			const freshUser = await refreshUser();
+			const userData = freshUser || user;
+			
 			// Immediately set stats from current user object (no waiting)
-			if (user) {
+			if (userData) {
 				setProfileStats({
-					ecoPoints: user.ecoPoints || 0,
-					listings: user.listings || 0,
-					itemsRecycled: user.itemsRecycled || 0,
-					rating: user.rating || 0,
-					reviews: user.reviews || 0,
-					memberSince: user.memberSince || user.createdAt
+					ecoPoints: userData.ecoPoints || 0,
+					listings: userData.listings || 0,
+					itemsRecycled: userData.itemsRecycled || 0,
+					rating: userData.rating || 0,
+					reviews: userData.reviews || 0,
+					memberSince: userData.memberSince || userData.createdAt
 				});
+				
+				// Initialize lastEcoPoints tracker
+				setLastEcoPoints(userData.ecoPoints || 0);
 			}
 			
 			// Fetch user's listings from backend
@@ -72,12 +120,12 @@ const ProfilePage = () => {
 			
 			// Debug: Log the user object to see what data is available
 			console.log("Profile stats from user object:", {
-				ecoPoints: user?.ecoPoints,
-				listings: user?.listings,
-				itemsRecycled: user?.itemsRecycled,
-				rating: user?.rating,
-				reviews: user?.reviews,
-				memberSince: user?.memberSince
+				ecoPoints: userData?.ecoPoints,
+				listings: userData?.listings,
+				itemsRecycled: userData?.itemsRecycled,
+				rating: userData?.rating,
+				reviews: userData?.reviews,
+				memberSince: userData?.memberSince
 			});
 		} catch (error) {
 			console.error("Error fetching profile data:", error);

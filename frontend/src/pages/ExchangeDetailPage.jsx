@@ -21,7 +21,7 @@ import {
 const ExchangeDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, refreshUser } = useAuthStore();
   const {
     currentExchange,
     getExchangeById,
@@ -158,6 +158,8 @@ const ExchangeDetailPage = () => {
       const result = await completeExchange(id);
       if (result.data.status === "fully_completed") {
         toast.success("🎉 Exchange fully completed! +50 EcoPoints earned!");
+        // Refresh user data to update ecoPoints
+        await refreshUser();
       } else {
         toast.success("Completion confirmed. Waiting for other party.");
       }
@@ -214,7 +216,9 @@ const ExchangeDetailPage = () => {
     }
     try {
       await verifyHandshake(id, handshakeToken);
-      toast.success("🎉 Handshake verified! Exchange completed!");
+      toast.success("🎉 Handshake verified! Exchange completed! +50 EcoPoints earned!");
+      // Refresh user data to update ecoPoints
+      await refreshUser();
       fetchExchange();
     } catch (error) {
       toast.error(error.response?.data?.message || "Invalid code");

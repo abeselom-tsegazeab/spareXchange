@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { useCommunityStore } from "./communityStore";
+import { useAuthStore } from "./authStore";
 
 const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/api/listings" : "/api/listings";
 
@@ -23,6 +24,9 @@ export const useListingStore = create((set) => ({
 				message: response.data.message,
 				currentListing: response.data.listing
 			});
+			
+			// Refresh user data to update ecoPoints
+			await useAuthStore.getState().refreshUser();
 			
 			// Trigger achievement check after creating listing
 			useCommunityStore.getState().triggerAchievementCheck();

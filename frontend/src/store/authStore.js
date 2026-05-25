@@ -501,4 +501,18 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+
+	// Refresh user data from backend (useful after earning ecoPoints)
+	refreshUser: async () => {
+		try {
+			const response = await axios.get(`${API_URL}/check-auth`);
+			if (response.data.success && response.data.user) {
+				set({ user: response.data.user, isAuthenticated: true });
+				return response.data.user;
+			}
+		} catch (error) {
+			console.error("Failed to refresh user data:", error);
+		}
+		return null;
+	},
 }));
