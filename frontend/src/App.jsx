@@ -201,7 +201,7 @@ function App() {
 					path='/leaderboard'
 					element={
 						<ProtectedRoute>
-							<Leaderboard />
+							<LeaderboardPage />
 						</ProtectedRoute>
 					}
 				/>
