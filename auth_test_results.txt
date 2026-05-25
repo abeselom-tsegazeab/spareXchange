@@ -1,0 +1,298 @@
+================================================================================
+AUTHENTICATION FLOW TEST WITH CURL
+================================================================================
+Generated Email: test_1779005610@test.com
+Password: TestPass123!
+Timestamp: 1779005610
+================================================================================
+
+1️⃣  SIGNUP REQUEST
+================================================================================
+POST http://localhost:5000/api/auth/signup
+Payload: {"email":"test_1779005610@test.com","password":"TestPass123!","name":"Test User","userType":"user"}
+--------------------------------------------------------------------------------
+Note: Unnecessary use of -X or --request, POST is already inferred.
+* Host localhost:5000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:5000...
+* Connected to localhost (::1) port 5000
+> POST /api/auth/signup HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/8.6.0
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 99
+> 
+} [99 bytes data]
+100    99    0     0  100    99      0     81  0:00:01  0:00:01 --:--:--    81100    99    0     0  100    99      0     44  0:00:02  0:00:02 --:--:--    44100    99    0     0  100    99      0     30  0:00:03  0:00:03 --:--:--    30100    99    0     0  100    99      0     23  0:00:04  0:00:04 --:--:--    23100    99    0     0  100    99      0     18  0:00:05  0:00:05 --:--:--    18100    99    0     0  100    99      0     15  0:00:06  0:00:06 --:--:--     0< HTTP/1.1 201 Created
+< Access-Control-Allow-Origin: http://localhost:5173
+< Vary: Origin
+< Access-Control-Allow-Credentials: true
+< Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+< Cross-Origin-Opener-Policy: same-origin
+< Cross-Origin-Resource-Policy: same-origin
+< Origin-Agent-Cluster: ?1
+< Referrer-Policy: no-referrer
+< Strict-Transport-Security: max-age=31536000; includeSubDomains
+< X-Content-Type-Options: nosniff
+< X-DNS-Prefetch-Control: off
+< X-Download-Options: noopen
+< X-Frame-Options: SAMEORIGIN
+< X-Permitted-Cross-Domain-Policies: none
+< X-XSS-Protection: 0
+< RateLimit-Policy: 100;w=900
+< RateLimit-Limit: 100
+< RateLimit-Remaining: 89
+< RateLimit-Reset: 834
+* Added cookie token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTEsImV4cCI6MTc3OTAwNjUxMX0.vIoK-NNZFLeATW1ATbkn1xptX3fNUz10CnX5wrsz4FE" for domain localhost, path /, expire 1779006517
+< Set-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTEsImV4cCI6MTc3OTAwNjUxMX0.vIoK-NNZFLeATW1ATbkn1xptX3fNUz10CnX5wrsz4FE; Max-Age=900; Path=/; Expires=Sun, 17 May 2026 08:28:31 GMT; HttpOnly; SameSite=Strict
+* Added cookie refreshToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTEsImV4cCI6MTc3OTYxMDQxMX0.WwDkLFzAeYr30t6uHHCWMmmIKjjbqeFMXOtpiLjiQsA" for domain localhost, path /, expire 1779610417
+< Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTEsImV4cCI6MTc3OTYxMDQxMX0.WwDkLFzAeYr30t6uHHCWMmmIKjjbqeFMXOtpiLjiQsA; Max-Age=604800; Path=/; Expires=Sun, 24 May 2026 08:13:31 GMT; HttpOnly; SameSite=Strict
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 1251
+< ETag: W/"4e3-3j1zbgi9yitHeHxEEJk7+izSscA"
+< Date: Sun, 17 May 2026 08:13:37 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< 
+{ [1251 bytes data]
+100  1350  100  1251  100    99    189     15  0:00:06  0:00:06 --:--:--   285100  1350  100  1251  100    99    189     15  0:00:06  0:00:06 --:--:--   370{"success":true,"message":"User created successfully","accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTEsImV4cCI6MTc3OTAwNjUxMX0.vIoK-NNZFLeATW1ATbkn1xptX3fNUz10CnX5wrsz4FE","user":{"email":"test_1779005610@test.com","name":"Test User","isVerified":false,"verificationToken":"173780","verificationTokenExpiresAt":"2026-05-18T08:13:30.974Z","ecoPoints":0,"userType":"individual","verifiedSeller":false,"location":"","phone":"","profilePicture":"","totalReviews":0,"interests":[],"achievements":[],"expertise":"","trustScore":80,"locationCoords":{"type":"Point","coordinates":[0,0]},"verificationDocs":[],"roleStatus":"none","isMfaEnabled":false,"mfaBackupCodes":[],"notificationPreferences":{"emailNotifications":true,"pushNotifications":true,"smsNotifications":false,"listingAlerts":true,"exchangeUpdates":true,"messageNotifications":true,"systemAnnouncements":true,"marketingEmails":false},"permissions":["create_listings","propose_exchanges"],"isBanned":false,"isActive":true,"authProvider":"local","_id":"6a0978aa4fc6fbc7ddb58f7b","lastLogin":"2026-05-17T08:13:30.975Z","deviceTokens":[],"createdAt":"2026-05-17T08:13:30.976Z","updatedAt":"2026-05-17T08:13:31.259Z","__v":0}}
+* Connection #0 to host localhost left intact
+
+
+2️⃣  LOGIN REQUEST
+================================================================================
+POST http://localhost:5000/api/auth/login
+Payload: {"email":"test_1779005610@test.com","password":"TestPass123!"}
+Cookies File: cookies.txt
+--------------------------------------------------------------------------------
+Note: Unnecessary use of -X or --request, POST is already inferred.
+* Host localhost:5000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:5000...
+* Connected to localhost (::1) port 5000
+> POST /api/auth/login HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/8.6.0
+> Accept: */*
+> Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTEsImV4cCI6MTc3OTYxMDQxMX0.WwDkLFzAeYr30t6uHHCWMmmIKjjbqeFMXOtpiLjiQsA; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTEsImV4cCI6MTc3OTAwNjUxMX0.vIoK-NNZFLeATW1ATbkn1xptX3fNUz10CnX5wrsz4FE
+> Content-Type: application/json
+> Content-Length: 62
+> 
+} [62 bytes data]
+< HTTP/1.1 200 OK
+< Access-Control-Allow-Origin: http://localhost:5173
+< Vary: Origin
+< Access-Control-Allow-Credentials: true
+< Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+< Cross-Origin-Opener-Policy: same-origin
+< Cross-Origin-Resource-Policy: same-origin
+< Origin-Agent-Cluster: ?1
+< Referrer-Policy: no-referrer
+< Strict-Transport-Security: max-age=31536000; includeSubDomains
+< X-Content-Type-Options: nosniff
+< X-DNS-Prefetch-Control: off
+< X-Download-Options: noopen
+< X-Frame-Options: SAMEORIGIN
+< X-Permitted-Cross-Domain-Policies: none
+< X-XSS-Protection: 0
+< RateLimit-Policy: 100;w=900
+< RateLimit-Limit: 100
+< RateLimit-Remaining: 88
+< RateLimit-Reset: 827
+* Replaced cookie token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTgsImV4cCI6MTc3OTAwNjUxOH0.et6nQ2fDKeLr8j7obqN-eJrzgdCbKAzIRaR9VOoChB4" for domain localhost, path /, expire 1779006518
+< Set-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTgsImV4cCI6MTc3OTAwNjUxOH0.et6nQ2fDKeLr8j7obqN-eJrzgdCbKAzIRaR9VOoChB4; Max-Age=900; Path=/; Expires=Sun, 17 May 2026 08:28:38 GMT; HttpOnly; SameSite=Strict
+* Replaced cookie refreshToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTgsImV4cCI6MTc3OTYxMDQxOH0.JzifZiis1wCgS67_1G5KPMxEI5PpEuXhLyAQ5xZ1Jdw" for domain localhost, path /, expire 1779610418
+< Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTgsImV4cCI6MTc3OTYxMDQxOH0.JzifZiis1wCgS67_1G5KPMxEI5PpEuXhLyAQ5xZ1Jdw; Max-Age=604800; Path=/; Expires=Sun, 24 May 2026 08:13:38 GMT; HttpOnly; SameSite=Strict
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 1248
+< ETag: W/"4e0-sJ4GFnZC83G7+mPlKW3qjW5JCko"
+< Date: Sun, 17 May 2026 08:13:38 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< 
+{ [1248 bytes data]
+100  1310  100  1248  100    62   1116     55  0:00:01  0:00:01 --:--:--  1172100  1310  100  1248  100    62   1116     55  0:00:01  0:00:01 --:--:--  1172{"success":true,"message":"Logged in successfully","accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTgsImV4cCI6MTc3OTAwNjUxOH0.et6nQ2fDKeLr8j7obqN-eJrzgdCbKAzIRaR9VOoChB4","user":{"locationCoords":{"type":"Point","coordinates":[0,0]},"notificationPreferences":{"emailNotifications":true,"pushNotifications":true,"smsNotifications":false,"listingAlerts":true,"exchangeUpdates":true,"messageNotifications":true,"systemAnnouncements":true,"marketingEmails":false},"_id":"6a0978aa4fc6fbc7ddb58f7b","email":"test_1779005610@test.com","name":"Test User","isVerified":false,"verificationToken":"173780","verificationTokenExpiresAt":"2026-05-18T08:13:30.974Z","ecoPoints":0,"userType":"individual","verifiedSeller":false,"location":"","phone":"","profilePicture":"","totalReviews":0,"interests":[],"achievements":[],"expertise":"","trustScore":80,"verificationDocs":[],"roleStatus":"none","isMfaEnabled":false,"mfaBackupCodes":[],"permissions":["create_listings","propose_exchanges"],"isBanned":false,"isActive":true,"authProvider":"local","lastLogin":"2026-05-17T08:13:37.883Z","deviceTokens":[],"createdAt":"2026-05-17T08:13:30.976Z","updatedAt":"2026-05-17T08:13:38.055Z","__v":0}}
+* Connection #0 to host localhost left intact
+
+
+3️⃣  LOGOUT REQUEST
+================================================================================
+POST http://localhost:5000/api/auth/logout
+Cookies File: cookies.txt
+--------------------------------------------------------------------------------
+* Host localhost:5000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:5000...
+* Connected to localhost (::1) port 5000
+> POST /api/auth/logout HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/8.6.0
+> Accept: */*
+> Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTgsImV4cCI6MTc3OTYxMDQxOH0.JzifZiis1wCgS67_1G5KPMxEI5PpEuXhLyAQ5xZ1Jdw; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTgsImV4cCI6MTc3OTAwNjUxOH0.et6nQ2fDKeLr8j7obqN-eJrzgdCbKAzIRaR9VOoChB4
+> 
+< HTTP/1.1 200 OK
+< Access-Control-Allow-Origin: http://localhost:5173
+< Vary: Origin
+< Access-Control-Allow-Credentials: true
+< Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+< Cross-Origin-Opener-Policy: same-origin
+< Cross-Origin-Resource-Policy: same-origin
+< Origin-Agent-Cluster: ?1
+< Referrer-Policy: no-referrer
+< Strict-Transport-Security: max-age=31536000; includeSubDomains
+< X-Content-Type-Options: nosniff
+< X-DNS-Prefetch-Control: off
+< X-Download-Options: noopen
+< X-Frame-Options: SAMEORIGIN
+< X-Permitted-Cross-Domain-Policies: none
+< X-XSS-Protection: 0
+< RateLimit-Policy: 100;w=900
+< RateLimit-Limit: 100
+< RateLimit-Remaining: 87
+< RateLimit-Reset: 826
+* Replaced cookie token="" for domain localhost, path /, expire 1
+< Set-Cookie: token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+* Replaced cookie refreshToken="" for domain localhost, path /, expire 1
+< Set-Cookie: refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 52
+< ETag: W/"34-RTw5tHxjaaqEcEVbesn1aQCzRls"
+< Date: Sun, 17 May 2026 08:13:38 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< 
+{ [52 bytes data]
+100    52  100    52    0     0    173      0 --:--:-- --:--:-- --:--:--   173{"success":true,"message":"Logged out successfully"}
+* Connection #0 to host localhost left intact
+
+
+4️⃣  CHECK-AUTH REQUEST (Protected Route - After Logout)
+================================================================================
+GET http://localhost:5000/api/auth/check-auth
+Cookies File: cookies.txt
+--------------------------------------------------------------------------------
+Note: Unnecessary use of -X or --request, GET is already inferred.
+* Host localhost:5000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:5000...
+* Connected to localhost (::1) port 5000
+> GET /api/auth/check-auth HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/8.6.0
+> Accept: */*
+> 
+< HTTP/1.1 401 Unauthorized
+< Access-Control-Allow-Origin: http://localhost:5173
+< Vary: Origin
+< Access-Control-Allow-Credentials: true
+< Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+< Cross-Origin-Opener-Policy: same-origin
+< Cross-Origin-Resource-Policy: same-origin
+< Origin-Agent-Cluster: ?1
+< Referrer-Policy: no-referrer
+< Strict-Transport-Security: max-age=31536000; includeSubDomains
+< X-Content-Type-Options: nosniff
+< X-DNS-Prefetch-Control: off
+< X-Download-Options: noopen
+< X-Frame-Options: SAMEORIGIN
+< X-Permitted-Cross-Domain-Policies: none
+< X-XSS-Protection: 0
+< RateLimit-Policy: 100;w=900
+< RateLimit-Limit: 100
+< RateLimit-Remaining: 86
+< RateLimit-Reset: 825
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 62
+< ETag: W/"3e-KfcXnFd2hxHnaBMIXurbkwlAwm8"
+< Date: Sun, 17 May 2026 08:13:39 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< 
+{ [62 bytes data]
+100    62  100    62    0     0   8982      0 --:--:-- --:--:-- --:--:-- 10333{"success":false,"message":"Unauthorized - no token provided"}
+* Connection #0 to host localhost left intact
+
+
+5️⃣  LOGIN AGAIN
+================================================================================
+POST http://localhost:5000/api/auth/login
+Payload: {"email":"test_1779005610@test.com","password":"TestPass123!"}
+Cookies File: cookies.txt
+--------------------------------------------------------------------------------
+Note: Unnecessary use of -X or --request, POST is already inferred.
+* Host localhost:5000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:5000...
+* Connected to localhost (::1) port 5000
+> POST /api/auth/login HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/8.6.0
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 62
+> 
+} [62 bytes data]
+< HTTP/1.1 200 OK
+< Access-Control-Allow-Origin: http://localhost:5173
+< Vary: Origin
+< Access-Control-Allow-Credentials: true
+< Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+< Cross-Origin-Opener-Policy: same-origin
+< Cross-Origin-Resource-Policy: same-origin
+< Origin-Agent-Cluster: ?1
+< Referrer-Policy: no-referrer
+< Strict-Transport-Security: max-age=31536000; includeSubDomains
+< X-Content-Type-Options: nosniff
+< X-DNS-Prefetch-Control: off
+< X-Download-Options: noopen
+< X-Frame-Options: SAMEORIGIN
+< X-Permitted-Cross-Domain-Policies: none
+< X-XSS-Protection: 0
+< RateLimit-Policy: 100;w=900
+< RateLimit-Limit: 100
+< RateLimit-Remaining: 85
+< RateLimit-Reset: 825
+* Added cookie token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTksImV4cCI6MTc3OTAwNjUxOX0.w4zzDj1plohX1PT8Eb6MxZtjb5791eKZ0BScbojRlvs" for domain localhost, path /, expire 1779006520
+< Set-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTksImV4cCI6MTc3OTAwNjUxOX0.w4zzDj1plohX1PT8Eb6MxZtjb5791eKZ0BScbojRlvs; Max-Age=900; Path=/; Expires=Sun, 17 May 2026 08:28:39 GMT; HttpOnly; SameSite=Strict
+* Added cookie refreshToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTksImV4cCI6MTc3OTYxMDQxOX0.l2O60i2GxI4VbJWgvw-WTvwW4qbIn6M_J_URiSX5x1g" for domain localhost, path /, expire 1779610420
+< Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTksImV4cCI6MTc3OTYxMDQxOX0.l2O60i2GxI4VbJWgvw-WTvwW4qbIn6M_J_URiSX5x1g; Max-Age=604800; Path=/; Expires=Sun, 24 May 2026 08:13:39 GMT; HttpOnly; SameSite=Strict
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 1248
+< ETag: W/"4e0-6FgMaLzX7sfWWEa9EeqNbHF7ads"
+< Date: Sun, 17 May 2026 08:13:40 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< 
+{ [1248 bytes data]
+100  1310  100  1248  100    62   1584     78 --:--:-- --:--:-- --:--:--  1662100  1310  100  1248  100    62   1584     78 --:--:-- --:--:-- --:--:--  1662{"success":true,"message":"Logged in successfully","accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTksImV4cCI6MTc3OTAwNjUxOX0.w4zzDj1plohX1PT8Eb6MxZtjb5791eKZ0BScbojRlvs","user":{"locationCoords":{"type":"Point","coordinates":[0,0]},"notificationPreferences":{"emailNotifications":true,"pushNotifications":true,"smsNotifications":false,"listingAlerts":true,"exchangeUpdates":true,"messageNotifications":true,"systemAnnouncements":true,"marketingEmails":false},"_id":"6a0978aa4fc6fbc7ddb58f7b","email":"test_1779005610@test.com","name":"Test User","isVerified":false,"verificationToken":"173780","verificationTokenExpiresAt":"2026-05-18T08:13:30.974Z","ecoPoints":0,"userType":"individual","verifiedSeller":false,"location":"","phone":"","profilePicture":"","totalReviews":0,"interests":[],"achievements":[],"expertise":"","trustScore":80,"verificationDocs":[],"roleStatus":"none","isMfaEnabled":false,"mfaBackupCodes":[],"permissions":["create_listings","propose_exchanges"],"isBanned":false,"isActive":true,"authProvider":"local","lastLogin":"2026-05-17T08:13:39.579Z","deviceTokens":[],"createdAt":"2026-05-17T08:13:30.976Z","updatedAt":"2026-05-17T08:13:39.849Z","__v":0}}
+* Connection #0 to host localhost left intact
+
+
+================================================================================
+TEST COMPLETED
+================================================================================
+
+Cookies file content at the end:
+--------------------------------------------------------------------------------
+# Netscape HTTP Cookie File
+# https://curl.se/docs/http-cookies.html
+# This file was generated by libcurl! Edit at your own risk.
+
+#HttpOnly_localhost	FALSE	/	FALSE	1779610420	refreshToken	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTksImV4cCI6MTc3OTYxMDQxOX0.l2O60i2GxI4VbJWgvw-WTvwW4qbIn6M_J_URiSX5x1g
+#HttpOnly_localhost	FALSE	/	FALSE	1779006520	token	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5NzhhYTRmYzZmYmM3ZGRiNThmN2IiLCJpYXQiOjE3NzkwMDU2MTksImV4cCI6MTc3OTAwNjUxOX0.w4zzDj1plohX1PT8Eb6MxZtjb5791eKZ0BScbojRlvs

@@ -1,0 +1,116 @@
+{
+	"info": {
+		"_postman_id": "saved-search-alerts-module-6-001",
+		"name": "Module 6: Saved Search Alerts",
+		"description": "Collection for creating and managing saved searches, then running the admin alert job that generates match notifications.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Saved Searches (User)",
+			"item": [
+				{
+					"name": "List Saved Searches",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/api/users/saved-searches",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "users", "saved-searches"]
+						}
+					}
+				},
+				{
+					"name": "Create Saved Search",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Brake pads near me\",\n    \"query\": \"brake pads toyota\",\n    \"filters\": {\n        \"category\": \"vehicle\",\n        \"condition\": \"new\",\n        \"minPrice\": 50,\n        \"maxPrice\": 500\n    },\n    \"geo\": {\n        \"latitude\": 8.9806,\n        \"longitude\": 38.7578,\n        \"radiusKm\": 50\n    },\n    \"notify\": true\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/users/saved-searches",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "users", "saved-searches"]
+						}
+					}
+				},
+				{
+					"name": "Update Saved Search",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Brake pads (updated)\",\n    \"query\": \"brake pads\",\n    \"filters\": {\n        \"brand\": \"Toyota\",\n        \"maxPrice\": 350\n    },\n    \"geo\": {\n        \"radiusKm\": 30\n    },\n    \"notify\": true\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/users/saved-searches/:id",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "users", "saved-searches", ":id"],
+							"variable": [{ "key": "id", "value": "{{SAVED_SEARCH_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Delete Saved Search",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/api/users/saved-searches/:id",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "users", "saved-searches", ":id"],
+							"variable": [{ "key": "id", "value": "{{SAVED_SEARCH_ID}}" }]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin Jobs",
+			"item": [
+				{
+					"name": "Run Saved Search Alerts Job",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ADMIN_ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"limitSearches\": 20,\n    \"limitListingsPerSearch\": 5\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/admin/jobs/saved-search-alerts",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "admin", "jobs", "saved-search-alerts"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{ "key": "BASE_URL", "value": "http://localhost:5000" },
+		{ "key": "ACCESS_TOKEN", "value": "" },
+		{ "key": "ADMIN_ACCESS_TOKEN", "value": "" },
+		{ "key": "SAVED_SEARCH_ID", "value": "" }
+	]
+}

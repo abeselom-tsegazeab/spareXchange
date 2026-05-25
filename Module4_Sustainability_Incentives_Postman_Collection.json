@@ -1,0 +1,150 @@
+{
+	"info": {
+		"_postman_id": "sustainability-module-4-001",
+		"name": "Module 4: Sustainability & Incentives",
+		"description": "Comprehensive collection for verifying SpareXChange recycling, eco-points, tiered incentives, and leaderboard functionality.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Recycling Submissions",
+			"item": [
+				{
+					"name": "Create Recycling Submission (Weight Based)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"itemType\": \"vehicle-parts\",\n    \"itemDescription\": \"Old transmission housing\",\n    \"estimatedWeight\": 15,\n    \"location\": \"Eastside Recycling Center\",\n    \"latitude\": 40.7128,\n    \"longitude\": -74.0060,\n    \"notes\": \"Cast aluminum\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/recycling-submissions", "host": ["{{BASE_URL}}"], "path": ["api", "recycling-submissions"] }
+					}
+				},
+				{
+					"name": "Create Recycling Submission (Value Based)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"itemType\": \"electronics\",\n    \"itemDescription\": \"Faulty control module\",\n    \"estimatedValue\": 2000,\n    \"location\": \"Tech Scrapyard\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/recycling-submissions", "host": ["{{BASE_URL}}"], "path": ["api", "recycling-submissions"] }
+					}
+				},
+				{
+					"name": "Get My Submissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/recycling-submissions/user", "host": ["{{BASE_URL}}"], "path": ["api", "recycling-submissions", "user"] }
+					}
+				},
+				{
+					"name": "Nearby Recycling Discovery",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { 
+							"raw": "{{BASE_URL}}/api/recycling-submissions/discovery?latitude=40.7128&longitude=-74.0060&radius=50", 
+							"host": ["{{BASE_URL}}"], 
+							"path": ["api", "recycling-submissions", "discovery"],
+							"query": [
+								{ "key": "latitude", "value": "40.7128" },
+								{ "key": "longitude", "value": "-74.0060" },
+								{ "key": "radius", "value": "50" }
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Verification & Admin",
+			"item": [
+				{
+					"name": "Verify by 6-Digit Token (Recycler)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"{{VERIFICATION_TOKEN}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/recycling-submissions/verify-token", "host": ["{{BASE_URL}}"], "path": ["api", "recycling-submissions", "verify-token"] }
+					}
+				},
+				{
+					"name": "Approve Submission (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/recycling-submissions/:id/approve", "host": ["{{BASE_URL}}"], "path": ["api", "recycling-submissions", ":id", "approve"], "variable": [{ "key": "id", "value": "{{SUBMISSION_ID}}" }] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Gamification & Incentives",
+			"item": [
+				{
+					"name": "Get Eco-Leaderboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/users/leaderboard", "host": ["{{BASE_URL}}"], "path": ["api", "users", "leaderboard"] }
+					}
+				},
+				{
+					"name": "Check My Tier (Dashboard Proxy)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/auth/check-auth", "host": ["{{BASE_URL}}"], "path": ["api", "auth", "check-auth"] }
+					}
+				},
+				{
+					"name": "Redeem Points for Reward",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"points\": 100,\n    \"rewardDescription\": \"10% Discount on next Technician Fee\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/users/redeem-points", "host": ["{{BASE_URL}}"], "path": ["api", "users", "redeem-points"] }
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{ "key": "BASE_URL", "value": "http://localhost:5000" },
+		{ "key": "ACCESS_TOKEN", "value": "" },
+		{ "key": "SUBMISSION_ID", "value": "" },
+		{ "key": "VERIFICATION_TOKEN", "value": "" }
+	]
+}

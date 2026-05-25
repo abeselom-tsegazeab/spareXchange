@@ -1,0 +1,301 @@
+{
+	"info": {
+		"name": "SpareXChange - Module 1 (Identity & Security) - V2",
+		"description": "Postman Collection to test all endpoints for Identity & Security (Module 1).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Signup",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Postman Test User\",\n  \"email\": \"postmantest@example.com\",\n  \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/signup",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "signup"]
+				}
+			}
+		},
+		{
+			"name": "2. Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"postmantest@example.com\",\n  \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "login"]
+				}
+			}
+		},
+		{
+			"name": "3. Check Auth (Profile)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/auth/check-auth",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "check-auth"]
+				}
+			}
+		},
+		{
+			"name": "4. Verify Email",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"code\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/verify-email",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "verify-email"]
+				}
+			}
+		},
+		{
+			"name": "5. Update Profile",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"phone\": \"0911223344\",\n  \"location\": \"Addis Ababa\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/users/profile",
+					"host": ["{{base_url}}"],
+					"path": ["users", "profile"]
+				}
+			}
+		},
+		{
+			"name": "6. Forgot Password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"postmantest@example.com\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/forgot-password",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "forgot-password"]
+				}
+			}
+		},
+		{
+			"name": "7. Reset Password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"password\": \"newpassword123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/reset-password/YOUR_RESET_TOKEN_HERE",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "reset-password", "YOUR_RESET_TOKEN_HERE"]
+				}
+			}
+		},
+		{
+			"name": "8. MFA Setup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/auth/mfa/setup",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "mfa", "setup"]
+				}
+			}
+		},
+		{
+			"name": "9. MFA Verify",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"token\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/mfa/verify",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "mfa", "verify"]
+				}
+			}
+		},
+		{
+			"name": "10. MFA Validate (Login with MFA)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"postmantest@example.com\",\n  \"token\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/mfa/validate",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "mfa", "validate"]
+				}
+			}
+		},
+		{
+			"name": "11. Refresh Token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/auth/refresh-token",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "refresh-token"]
+				}
+			}
+		},
+		{
+			"name": "12. Request Verified Role (Documents Upload)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "role",
+							"value": "verified_user",
+							"type": "text"
+						},
+						{
+							"key": "documents",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/users/verify-role",
+					"host": ["{{base_url}}"],
+					"path": ["users", "verify-role"]
+				}
+			}
+		},
+		{
+			"name": "13. Request Verification (Auth Basic Route)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"requestedRole\": \"technician\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/request-verification",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "request-verification"]
+				}
+			}
+		},
+		{
+			"name": "14. Google Login (OAuth)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"token\": \"YOUR_GOOGLE_ID_TOKEN_HERE\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/oauth/google",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "oauth", "google"]
+				}
+			}
+		},
+		{
+			"name": "15. Logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/auth/logout",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "logout"]
+				}
+			}
+		}
+	]
+}

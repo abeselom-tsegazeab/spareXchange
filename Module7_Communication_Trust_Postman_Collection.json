@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "communication-trust-module-7-001",
+		"name": "Module 7: Communication, Trust & Dispute Resolution",
+		"description": "Modern and complete Postman collection for messaging, notifications, reviews, disputes, and advanced exchange safety workflows.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Messaging",
+			"item": [
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"receiverId\": \"{{OTHER_USER_ID}}\",\n    \"content\": \"Hi, is this listing still available?\",\n    \"listingId\": \"{{LISTING_ID}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/messages", "host": ["{{BASE_URL}}"], "path": ["api", "messages"] }
+					}
+				},
+				{
+					"name": "Get Conversations List",
+					"request": {
+						"method": "GET",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": { "raw": "{{BASE_URL}}/api/messages/conversations", "host": ["{{BASE_URL}}"], "path": ["api", "messages", "conversations"] }
+					}
+				},
+				{
+					"name": "Get Conversation With User",
+					"request": {
+						"method": "GET",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": {
+							"raw": "{{BASE_URL}}/api/messages/:userId",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "messages", ":userId"],
+							"variable": [{ "key": "userId", "value": "{{OTHER_USER_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Mark Conversation As Read",
+					"request": {
+						"method": "PUT",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": {
+							"raw": "{{BASE_URL}}/api/messages/read/:senderId",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "messages", "read", ":senderId"],
+							"variable": [{ "key": "senderId", "value": "{{OTHER_USER_ID}}" }]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get My Notifications",
+					"request": {
+						"method": "GET",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": { "raw": "{{BASE_URL}}/api/notifications", "host": ["{{BASE_URL}}"], "path": ["api", "notifications"] }
+					}
+				},
+				{
+					"name": "Get Unread Notification Count",
+					"request": {
+						"method": "GET",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": { "raw": "{{BASE_URL}}/api/notifications/unread-count", "host": ["{{BASE_URL}}"], "path": ["api", "notifications", "unread-count"] }
+					}
+				},
+				{
+					"name": "Mark Notification As Read",
+					"request": {
+						"method": "PUT",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": {
+							"raw": "{{BASE_URL}}/api/notifications/:id/read",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "notifications", ":id", "read"],
+							"variable": [{ "key": "id", "value": "{{NOTIFICATION_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Mark All Notifications As Read",
+					"request": {
+						"method": "PUT",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": { "raw": "{{BASE_URL}}/api/notifications/mark-all-read", "host": ["{{BASE_URL}}"], "path": ["api", "notifications", "mark-all-read"] }
+					}
+				},
+				{
+					"name": "Delete Notification",
+					"request": {
+						"method": "DELETE",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": {
+							"raw": "{{BASE_URL}}/api/notifications/:id",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "notifications", ":id"],
+							"variable": [{ "key": "id", "value": "{{NOTIFICATION_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Create Notification (Privileged)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ADMIN_ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{OTHER_USER_ID}}\",\n    \"title\": \"Safety Reminder\",\n    \"message\": \"Please meet in a verified safe zone.\",\n    \"type\": \"system\",\n    \"data\": {\n        \"context\": \"exchange\"\n    }\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/notifications", "host": ["{{BASE_URL}}"], "path": ["api", "notifications"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Reviews & Reputation",
+			"item": [
+				{
+					"name": "Create Review (Completed Exchange)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"revieweeId\": \"{{OTHER_USER_ID}}\",\n    \"exchangeId\": \"{{EXCHANGE_ID}}\",\n    \"rating\": 5,\n    \"comment\": \"Great communication and smooth handover.\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/reviews", "host": ["{{BASE_URL}}"], "path": ["api", "reviews"] }
+					}
+				},
+				{
+					"name": "Get User Reviews",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{BASE_URL}}/api/reviews/user/:userId",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "reviews", "user", ":userId"],
+							"variable": [{ "key": "userId", "value": "{{OTHER_USER_ID}}" }]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Exchange Safety & Disputes",
+			"item": [
+				{
+					"name": "List My Exchanges",
+					"request": {
+						"method": "GET",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": {
+							"raw": "{{BASE_URL}}/api/exchanges?status=accepted&page=1&limit=10",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "exchanges"],
+							"query": [
+								{ "key": "status", "value": "accepted" },
+								{ "key": "page", "value": "1" },
+								{ "key": "limit", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Exchange By ID",
+					"request": {
+						"method": "GET",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": {
+							"raw": "{{BASE_URL}}/api/exchanges/:id",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "exchanges", ":id"],
+							"variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Get Safe Zones",
+					"request": {
+						"method": "GET",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/info/safe-zones", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", "info", "safe-zones"] }
+					}
+				},
+				{
+					"name": "Generate Handshake Token (Seller)",
+					"request": {
+						"method": "PUT",
+						"header": [{ "key": "Authorization", "value": "Bearer {{SELLER_ACCESS_TOKEN}}" }],
+						"url": {
+							"raw": "{{BASE_URL}}/api/exchanges/:id/handshake/generate",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "exchanges", ":id", "handshake", "generate"],
+							"variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Verify Handshake (Buyer)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{BUYER_ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"{{HANDSHAKE_TOKEN}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/exchanges/:id/handshake/verify",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "exchanges", ":id", "handshake", "verify"],
+							"variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Upload Handover Photo",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"photoUrl\": \"https://images.example.com/handover-proof-1.jpg\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/exchanges/:id/handover-photo",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "exchanges", ":id", "handover-photo"],
+							"variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Open Exchange Dispute",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reason\": \"Item condition does not match the agreed details\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/exchanges/:id/dispute",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "exchanges", ":id", "dispute"],
+							"variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Resolve Exchange Dispute (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ADMIN_ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"resolution\": \"After review, completion is approved.\",\n    \"outcome\": \"buyer_wins\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/exchanges/:id/dispute/resolve",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "exchanges", ":id", "dispute", "resolve"],
+							"variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }]
+						}
+					}
+				},
+				{
+					"name": "Create Platform Dispute Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"targetId\": \"{{OTHER_USER_ID}}\",\n    \"exchangeId\": \"{{EXCHANGE_ID}}\",\n    \"reason\": \"fraud\",\n    \"description\": \"User refused to hand over agreed item after meeting.\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/disputes", "host": ["{{BASE_URL}}"], "path": ["api", "disputes"] }
+					}
+				},
+				{
+					"name": "List Disputes (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [{ "key": "Authorization", "value": "Bearer {{ADMIN_ACCESS_TOKEN}}" }],
+						"url": {
+							"raw": "{{BASE_URL}}/api/disputes?status=open",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "disputes"],
+							"query": [{ "key": "status", "value": "open" }]
+						}
+					}
+				},
+				{
+					"name": "Update Dispute Status (Admin)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ADMIN_ACCESS_TOKEN}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"resolved\",\n    \"adminNote\": \"Evidence reviewed and case closed.\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/disputes/:id",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "disputes", ":id"],
+							"variable": [{ "key": "id", "value": "{{DISPUTE_ID}}" }]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{ "key": "BASE_URL", "value": "http://localhost:5000" },
+		{ "key": "ACCESS_TOKEN", "value": "" },
+		{ "key": "ADMIN_ACCESS_TOKEN", "value": "" },
+		{ "key": "SELLER_ACCESS_TOKEN", "value": "" },
+		{ "key": "BUYER_ACCESS_TOKEN", "value": "" },
+		{ "key": "OTHER_USER_ID", "value": "" },
+		{ "key": "LISTING_ID", "value": "" },
+		{ "key": "EXCHANGE_ID", "value": "" },
+		{ "key": "NOTIFICATION_ID", "value": "" },
+		{ "key": "DISPUTE_ID", "value": "" },
+		{ "key": "HANDSHAKE_TOKEN", "value": "" }
+	]
+}

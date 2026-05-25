@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-size: 16px;
+    --background: #ffffff;
+    --foreground: oklch(0.145 0 0);
+    --card: #ffffff;
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: #16a34a;
+    --primary-foreground: #ffffff;
+    --secondary: #dcfce7;
+    --secondary-foreground: #166534;
+    --muted: #f3f4f6;
+    --muted-foreground: #6b7280;
+    --accent: #bbf7d0;
+    --accent-foreground: #166534;
+    --destructive: #d4183d;
+    --destructive-foreground: #ffffff;
+    --border: rgba(0, 0, 0, 0.1);
+    --input: transparent;
+    --input-background: #f9fafb;
+    --switch-background: #cbced4;
+    --font-weight-medium: 500;
+    --font-weight-normal: 400;
+    --ring: #16a34a;
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: #16a34a;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+    /* --background: 220 20% 98%;
+    --foreground: 220 20% 10%;
+    --card: 220 20% 98%;
+    --card-foreground: 220 20% 10%;
+    --popover: 220 20% 98%;
+    --popover-foreground: 220 20% 10%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 84% 85%;
+    --secondary-foreground: 160 84% 25%;
+    --muted: 220 20% 90%;
+    --muted-foreground: 220 20% 40%;
+    --accent: 220 20% 90%;
+    --accent-foreground: 220 20% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 20% 80%;
+    --input: 220 20% 80%;
+    --ring: 160 84% 39%; 
+    --radius: 0.5rem; */
+  }
+
+  .dark {
+    --background: 220 20% 10%;
+    --foreground: 220 20% 98%;
+    --card: 220 20% 10%;
+    --card-foreground: 220 20% 98%;
+    --popover: 220 20% 10%;
+    --popover-foreground: 220 20% 98%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 84% 25%;
+    --secondary-foreground: 160 84% 85%;
+    --muted: 220 20% 20%;
+    --muted-foreground: 220 20% 60%;
+    --accent: 220 20% 20%;
+    --accent-foreground: 220 20% 90%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 160 84% 39%;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  @keyframes fadeInDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fadeInDown {
+    animation: fadeInDown 0.3s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-bounceIn {
+    animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+}
