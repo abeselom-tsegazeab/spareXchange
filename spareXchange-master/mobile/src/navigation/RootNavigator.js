@@ -6,6 +6,7 @@ import AuthStack from './AuthStack';
 import MainTabs from './MainTabs';
 import CommunicationStack from './CommunicationStack';
 import OperationsStack from './OperationsStack';
+import CommunityStack from './CommunityStack';
 import SplashScreen from '../screens/SplashScreen';
 import { useAuthStore } from '../store/authStore';
 
@@ -30,6 +31,7 @@ export default function RootNavigator() {
 						<Stack.Screen name="Main" component={MainTabs} />
 						<Stack.Screen name="Communication" component={CommunicationStack} />
 						<Stack.Screen name="Operations" component={OperationsStack} />
+						<Stack.Screen name="Community" component={CommunityStack} />
 					</>
 				) : (
 					<Stack.Screen name="Auth" component={AuthStack} />

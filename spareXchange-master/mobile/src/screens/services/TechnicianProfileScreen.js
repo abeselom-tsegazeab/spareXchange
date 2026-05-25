@@ -72,6 +72,18 @@ export default function TechnicianProfileScreen({ route, navigation }) {
 			/>
 			<View style={{ height: spacing.sm }} />
 			<Button
+				title="View public profile"
+				variant="outline"
+				onPress={() =>
+					navigation.getParent()?.navigate('Community', {
+						screen: 'PublicProfile',
+						params: { userId: id, userName: technician.name },
+					})
+				}
+				size="lg"
+			/>
+			<View style={{ height: spacing.sm }} />
+			<Button
 				title="Message technician"
 				variant="secondary"
 				onPress={() =>

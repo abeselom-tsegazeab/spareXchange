@@ -49,6 +49,7 @@ export const storage = {
 export const StorageKeys = {
 	accessToken: 'sx_access_token',
 	user: 'sx_user',
+	pushToken: 'sx_push_token',
 };
 
 export default storage;

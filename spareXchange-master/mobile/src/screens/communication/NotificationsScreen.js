@@ -51,11 +51,23 @@ export default function NotificationsScreen({ navigation }) {
 			<View style={styles.header}>
 				<View style={styles.titleRow}>
 					<Text style={typography.h2}>Notifications</Text>
-					{unreadCount > 0 ? (
-						<Pressable onPress={markAllRead} hitSlop={8}>
-							<Text style={styles.markAll}>Mark all read</Text>
+					<View style={styles.headerLinks}>
+						<Pressable onPress={() => navigation.navigate('NotificationHistory')} hitSlop={8}>
+							<Text style={styles.link}>History</Text>
 						</Pressable>
-					) : null}
+						<Text style={styles.dot}>·</Text>
+						<Pressable onPress={() => navigation.navigate('NotificationPreferences')} hitSlop={8}>
+							<Text style={styles.link}>Settings</Text>
+						</Pressable>
+						{unreadCount > 0 ? (
+							<>
+								<Text style={styles.dot}>·</Text>
+								<Pressable onPress={markAllRead} hitSlop={8}>
+									<Text style={styles.link}>Mark all read</Text>
+								</Pressable>
+							</>
+						) : null}
+					</View>
 				</View>
 				<Text style={typography.muted}>
 					{unreadCount > 0 ? `${unreadCount} unread` : 'You are all caught up.'}
@@ -92,7 +104,9 @@ export default function NotificationsScreen({ navigation }) {
 
 const styles = StyleSheet.create({
 	header: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
-	titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-	markAll: { ...typography.caption, color: colors.primaryDark, fontWeight: '800' },
+	titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: spacing.sm },
+	headerLinks: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' },
+	link: { ...typography.caption, color: colors.primaryDark, fontWeight: '800' },
+	dot: { color: colors.textSubtle, marginHorizontal: 4 },
 	list: { paddingHorizontal: spacing.lg, paddingBottom: spacing.huge },
 });

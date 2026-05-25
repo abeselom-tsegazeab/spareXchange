@@ -82,6 +82,15 @@ export default function ListingDetailScreen({ route, navigation }) {
 		});
 	};
 
+	const viewSellerProfile = () => {
+		const sellerId = listing.seller?._id || listing.seller;
+		if (!sellerId) return;
+		navigation.getParent()?.navigate('Community', {
+			screen: 'PublicProfile',
+			params: { userId: String(sellerId), userName: listing.seller?.name },
+		});
+	};
+
 	const proposeExchange = () => {
 		// Jump into the Trades tab and open the propose screen with this listing.
 		navigation.getParent()?.navigate('Trades', {
@@ -153,7 +162,7 @@ export default function ListingDetailScreen({ route, navigation }) {
 					</View>
 				) : null}
 
-				<Card style={{ marginTop: spacing.lg }}>
+				<Card style={{ marginTop: spacing.lg }} onPress={viewSellerProfile}>
 					<View style={styles.sellerRow}>
 						<View style={styles.avatar}>
 							<Text style={styles.avatarText}>

@@ -170,7 +170,18 @@ export default function ExchangeDetailScreen({ route, navigation }) {
 					<Text style={typography.caption}>Trust score {counterparty.trustScore}/100</Text>
 				) : null}
 				{counterpartyId ? (
-					<View style={{ marginTop: spacing.sm, flexDirection: 'row', gap: spacing.lg }}>
+					<View style={{ marginTop: spacing.sm, flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg }}>
+						<Pressable
+							onPress={() =>
+								navigation.getParent()?.navigate('Community', {
+									screen: 'PublicProfile',
+									params: { userId: counterpartyId, userName: counterparty?.name },
+								})
+							}
+							hitSlop={6}
+						>
+							<Text style={{ color: colors.primaryDark, fontWeight: '700' }}>View profile</Text>
+						</Pressable>
 						<Pressable
 							onPress={() =>
 								navigation.navigate('Communication', {

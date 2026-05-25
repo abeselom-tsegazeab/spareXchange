@@ -51,6 +51,13 @@
           "locationAlwaysAndWhenInUsePermission": "SpareXChange uses your location to show nearby listings and recyclers."
         }
       ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#10B981"
+        }
+      ],
       "@react-native-community/datetimepicker"
     ],
     "extra": {

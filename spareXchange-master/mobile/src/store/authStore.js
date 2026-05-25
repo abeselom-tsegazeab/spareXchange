@@ -4,6 +4,7 @@
 import { create } from 'zustand';
 
 import authApi from '../api/auth.api';
+import { stopMobileIntegration } from '../services/realtimeService';
 import { storage, StorageKeys } from '../utils/storage';
 import { setAccessToken, setOnUnauthorized } from '../api/client';
 
@@ -306,6 +307,7 @@ export const useAuthStore = create((set, get) => ({
 				await authApi.logout().catch(() => {});
 			}
 		} finally {
+			await stopMobileIntegration();
 			setAccessToken(null);
 			await storage.remove(StorageKeys.accessToken);
 			await storage.remove(StorageKeys.user);

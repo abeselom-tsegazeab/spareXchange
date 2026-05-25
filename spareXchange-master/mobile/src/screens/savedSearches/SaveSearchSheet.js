@@ -240,7 +240,7 @@ export default function SaveSearchSheet({
 				<View style={styles.notifyRow}>
 					<View style={{ flex: 1 }}>
 						<Text style={typography.bodyStrong}>Alert me on new matches</Text>
-						<Text style={typography.caption}>Push notifications ship in Module 9.</Text>
+						<Text style={typography.caption}>Push notifications register on login.</Text>
 					</View>
 					<Switch
 						value={draft.notify}

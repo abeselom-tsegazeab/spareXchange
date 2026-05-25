@@ -100,6 +100,11 @@ export default function ProfileScreen({ navigation }) {
 				/>
 				<Divider />
 				<Row
+					label="Notification settings"
+					onPress={() => navigation.navigate('Communication', { screen: 'NotificationPreferences' })}
+				/>
+				<Divider />
+				<Row
 					label="Leave a review"
 					onPress={() => navigation.navigate('Communication', { screen: 'WriteReview' })}
 				/>
@@ -112,6 +117,16 @@ export default function ProfileScreen({ navigation }) {
 						/>
 					</>
 				) : null}
+				<Divider />
+				<Row
+					label="Community"
+					onPress={() => navigation.navigate('Community', { screen: 'CommunityHome' })}
+				/>
+				<Divider />
+				<Row
+					label="Achievements"
+					onPress={() => navigation.navigate('Community', { screen: 'Achievements' })}
+				/>
 				<Divider />
 				<Row
 					label="Saved searches"
