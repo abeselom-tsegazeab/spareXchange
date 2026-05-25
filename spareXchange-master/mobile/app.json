@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "SpareXChange",
+    "slug": "sparexchange-mobile",
+    "version": "1.0.0",
+    "scheme": "sparexchange",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sparexchange.mobile"
+    },
+    "android": {
+      "package": "com.sparexchange.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#10B981",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SpareXChange needs access to your photos to attach verification documents and listing images."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "SpareXChange uses the camera to scan QR codes during item handovers."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "SpareXChange uses your location to show nearby listings and recyclers."
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ],
+    "extra": {
+      "apiUrl": null
+    }
+  }
+}
