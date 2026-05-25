@@ -18,7 +18,7 @@ import EditProfilePage from "./pages/EditProfilePage";
 import AboutPage from "./pages/AboutPage";
 import FaqPage from "./pages/FaqPage";
 import ContactPage from "./pages/ContactPage";
-import Leaderboard from "./pages/LeaderboardPage";
+import LeaderboardPage from "./pages/LeaderboardPage";
 import CreateListingPage from "./pages/CreateListingPage";
 import MyListingsPage from "./pages/MyListingsPage";
 import EditListingPage from "./pages/EditListingPage";
