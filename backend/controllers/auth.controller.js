@@ -291,6 +291,79 @@ export const resetPassword = async (req, res) => {
 	}
 };
 
+export const updatePassword = async (req, res) => {
+	try {
+		const { currentPassword, newPassword } = req.body;
+		const userId = req.userId;
+
+		console.log("Update Password Request for user:", userId);
+
+		if (!currentPassword || !newPassword) {
+			return res.status(400).json({ 
+				success: false, 
+				message: "Current password and new password are required" 
+			});
+		}
+
+		if (newPassword.length < 8) {
+			return res.status(400).json({ 
+				success: false, 
+				message: "New password must be at least 8 characters long" 
+			});
+		}
+
+		const user = await User.findById(userId);
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
+
+		// Verify current password
+		const isPasswordCorrect = await bcryptjs.compare(currentPassword, user.password);
+		if (!isPasswordCorrect) {
+			console.log("Incorrect current password for user:", user.email);
+			return res.status(400).json({ 
+				success: false, 
+				message: "Current password is incorrect" 
+			});
+		}
+
+		// Check if new password is same as current
+		const isSamePassword = await bcryptjs.compare(newPassword, user.password);
+		if (isSamePassword) {
+			return res.status(400).json({ 
+				success: false, 
+				message: "New password must be different from current password" 
+			});
+		}
+
+		console.log("Current password verified for user:", user.email);
+		console.log("Updating to new password...");
+
+		// Hash and update new password
+		const hashedPassword = await bcryptjs.hash(newPassword, 10);
+		user.password = hashedPassword;
+		await user.save();
+
+		console.log("Password updated successfully for user:", user.email);
+
+		// Send confirmation email
+		try {
+			await sendResetSuccessEmail(user.email);
+			console.log("Password change confirmation email sent");
+		} catch (err) {
+			console.error("Confirmation email failed: ", err);
+		}
+
+		res.status(200).json({ 
+			success: true, 
+			message: "Password updated successfully" 
+		});
+	} catch (error) {
+		console.log("Error in updatePassword:", error);
+		res.status(400).json({ success: false, message: error.message });
+	}
+};
+
 export const checkAuth = async (req, res) => {
 	try {
 		const user = await User.findById(req.userId).select("-password");

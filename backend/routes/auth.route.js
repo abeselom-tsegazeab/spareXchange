@@ -6,6 +6,7 @@ import {
 	verifyEmail,
 	forgotPassword,
 	resetPassword,
+	updatePassword,
 	checkAuth,
 	requestRoleVerification,
 	resendVerificationEmail,
@@ -52,5 +53,8 @@ router.post("/oauth/google", googleLogin);
 
 // Password verification for sensitive operations
 router.post("/verify-password", verifyToken, verifyPassword);
+
+// Password update for logged-in users
+router.post("/update-password", verifyToken, updatePassword);
 
 export default router;

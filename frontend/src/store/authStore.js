@@ -238,6 +238,29 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+	updatePassword: async (currentPassword, newPassword) => {
+		set({ isLoading: true, error: null });
+		try {
+			console.log("Updating password...");
+			
+			const response = await axios.post(`${API_URL}/update-password`, { 
+				currentPassword, 
+				newPassword 
+			});
+			
+			console.log("Password update response:", response.data);
+			set({ message: response.data.message, isLoading: false });
+			return response.data;
+		} catch (error) {
+			console.error("Password update error:", error);
+			console.error("Error response:", error.response?.data);
+			set({
+				isLoading: false,
+				error: error.response?.data?.message || "Error updating password",
+			});
+			throw error;
+		}
+	},
 	requestVerification: async (userType, expertise, documents) => {
 		set({ isLoading: true, error: null });
 		try {

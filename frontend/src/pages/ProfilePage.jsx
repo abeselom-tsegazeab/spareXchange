@@ -6,6 +6,7 @@ import { useAuthStore } from "../store/authStore";
 import { useCommunityStore } from "../store/communityStore";
 import { useTheme } from "../contexts/ThemeContext";
 import PointsRedemptionModal from "../components/PointsRedemptionModal";
+import PasswordChangeForm from "../components/PasswordChangeForm";
 
 const ProfilePage = () => {
 	const { darkMode } = useTheme();
@@ -660,6 +661,7 @@ const ProfilePage = () => {
 							animate={{ opacity: 1 }}
 							className='bg-primary dark:bg-gray-800 rounded-xl p-6 border border-gray-700'
 						>
+							<PasswordChangeForm />
 							<h2 className='text-2xl font-bold mb-6'>Security Settings</h2>
 							<div className='space-y-6'>
 								<div className='p-4 bg-gray-700 rounded-lg'>
