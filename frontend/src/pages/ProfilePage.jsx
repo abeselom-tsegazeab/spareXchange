@@ -4,6 +4,7 @@ import { User, Mail, MapPin, Edit3, Star, Package, CreditCard, Settings, LogOut,
 import { useNavigate, Link } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { useCommunityStore } from "../store/communityStore";
+import { useListingStore } from "../store/listingStore";
 import { useTheme } from "../contexts/ThemeContext";
 import PointsRedemptionModal from "../components/PointsRedemptionModal";
 import PasswordChangeForm from "../components/PasswordChangeForm";
@@ -13,11 +14,21 @@ const ProfilePage = () => {
 	const navigate = useNavigate();
 	const { user, logout, requestVerificationWithFiles } = useAuthStore();
 	const { userAchievements, getUserAchievements } = useCommunityStore();
+	const { listings, getUserListings } = useListingStore();
 	const [activeTab, setActiveTab] = useState("profile");
 	const [showRedemptionModal, setShowRedemptionModal] = useState(false);
 	const [accountType, setAccountType] = useState("individual");
 	const [verificationFiles, setVerificationFiles] = useState([]);
 	const [isSubmittingVerification, setIsSubmittingVerification] = useState(false);
+	const [profileStats, setProfileStats] = useState({
+		ecoPoints: 0,
+		listings: 0,
+		itemsRecycled: 0,
+		rating: 0,
+		reviews: 0,
+		memberSince: null
+	});
+	const [statsLoading, setStatsLoading] = useState(true);
 	// const [notificationSettings, setNotificationSettings] = useState({
 	// 	messages_buyers: true,
 	// 	messages_sellers: true,
@@ -34,37 +45,62 @@ const ProfilePage = () => {
 	useEffect(() => {
 		// Load user achievements when profile page mounts
 		getUserAchievements();
-	}, []);
+		
+		// Load user's listings and update stats
+		fetchProfileData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []); // Only run once on mount
+
+	const fetchProfileData = async () => {
+		try {
+			setStatsLoading(true);
+			
+			// Immediately set stats from current user object (no waiting)
+			if (user) {
+				setProfileStats({
+					ecoPoints: user.ecoPoints || 0,
+					listings: user.listings || 0,
+					itemsRecycled: user.itemsRecycled || 0,
+					rating: user.rating || 0,
+					reviews: user.reviews || 0,
+					memberSince: user.memberSince || user.createdAt
+				});
+			}
+			
+			// Fetch user's listings from backend
+			await getUserListings();
+			
+			// Debug: Log the user object to see what data is available
+			console.log("Profile stats from user object:", {
+				ecoPoints: user?.ecoPoints,
+				listings: user?.listings,
+				itemsRecycled: user?.itemsRecycled,
+				rating: user?.rating,
+				reviews: user?.reviews,
+				memberSince: user?.memberSince
+			});
+		} catch (error) {
+			console.error("Error fetching profile data:", error);
+		} finally {
+			setStatsLoading(false);
+		}
+	};
 
 	if (!user) return null;
 
-	// Mock listings data
-	const listings = [
-		{
-			id: 1,
-			title: "Car Engine Block - Toyota Camry 2015",
-			price: 450,
-			status: "Active",
-			views: 124,
-			interested: 8,
-		},
-		{
-			id: 2,
-			title: "Laptop Battery - Dell Inspiron 15",
-			price: 85,
-			status: "Sold",
-			views: 89,
-			interested: 5,
-		},
-		{
-			id: 3,
-			title: "Motorcycle Carburetor - Honda CB125",
-			price: 120,
-			status: "Active",
-			views: 67,
-			interested: 3,
-		},
-	];
+	// Debug: Log the user object to see what data is available
+	console.log("ProfilePage - User object:", {
+		id: user._id,
+		ecoPoints: user.ecoPoints,
+		listings: user.listings,
+		itemsRecycled: user.itemsRecycled,
+		rating: user.rating,
+		reviews: user.reviews,
+		memberSince: user.memberSince,
+		createdAt: user.createdAt
+	});
+
+	// Load real listings from backend (stored in listings state from useListingStore)
 
 	const handleLogout = async () => {
 		await logout();
@@ -222,20 +258,22 @@ const ProfilePage = () => {
 									{!isAdmin && (
 										<>
 											<div className='text-center'>
-												<div className='text-2xl font-bold text-green-600 dark:text-white'>{user.ecoPoints}</div>
+												<div className='text-2xl font-bold text-green-600 dark:text-white'>
+													{statsLoading ? (user?.ecoPoints || 0) : profileStats.ecoPoints}
+												</div>
 												<div className='text-sm text-gray-700 dark:text-gray-300'>Eco Points</div>
 											</div>
-											<div className='text-center'>
-												<div className='text-2xl font-bold text-gray-900 dark:text-white'>{user.listings}</div>
+											{/* <div className='text-center'>
+												<div className='text-2xl font-bold text-gray-900 dark:text-white'>{statsLoading ? '...' : profileStats.listings}</div>
 												<div className='text-sm text-gray-700 dark:text-gray-300'>Listings</div>
 											</div>
 											<div className='text-center'>
 												<div className='flex items-center justify-center'>
 													<Star size={16} className='text-yellow-600 dark:text-yellow-400 fill-current mr-1' />
-													<span className='text-2xl font-bold text-gray-900 dark:text-white'>{user.rating}</span>
+													<span className='text-2xl font-bold text-gray-900 dark:text-white'>{statsLoading ? '...' : profileStats.rating}</span>
 												</div>
-												<div className='text-sm text-gray-700 dark:text-gray-300'>{user.reviews} Reviews</div>
-											</div>
+												<div className='text-sm text-gray-700 dark:text-gray-300'>{statsLoading ? '...' : profileStats.reviews} Reviews</div>
+											</div> */}
 										</>
 									)}
 									{isAdmin && (
@@ -246,7 +284,17 @@ const ProfilePage = () => {
 									)}
 								</div>
 								<div className='text-sm text-gray-700 dark:text-gray-300'>
-									Member since {user.memberSince}
+									{statsLoading ? (
+										'Member since ...'
+									) : profileStats.memberSince ? (
+										<>Member since {new Date(profileStats.memberSince).toLocaleDateString('en-US', { 
+											year: 'numeric', 
+											month: 'long',
+											day: 'numeric'
+										})}</>
+									) : (
+										'Member since N/A'
+									)}
 								</div>
 							</div>
 							<div className='mt-4 md:mt-0'>
@@ -408,16 +456,16 @@ const ProfilePage = () => {
 											<div className='bg-gray-700 rounded-lg p-4 mb-4'>
 												<div className='flex justify-between items-center mb-2'>
 													<span className='text-gray-300'>Total Eco Points</span>
-													<span className='text-2xl font-bold text-green-400'>{user.ecoPoints}</span>
+													<span className='text-2xl font-bold text-green-400'>{statsLoading ? '...' : profileStats.ecoPoints}</span>
 												</div>
 												<div className='w-full bg-gray-600 rounded-full h-2'>
 													<div
 														className='bg-green-500 h-2 rounded-full'
-														style={{ width: `${Math.min(100, (user.ecoPoints / 2000) * 100)}%` }}
+														style={{ width: `${Math.min(100, ((statsLoading ? 0 : profileStats.ecoPoints) / 2000) * 100)}%` }}
 													></div>
 												</div>
 												<div className='text-sm text-gray-400 mt-2 flex justify-between'>
-													<span>{2000 - user.ecoPoints} points to next level</span>
+													<span>{statsLoading ? '...' : `${Math.max(0, 2000 - profileStats.ecoPoints)} points to next level`}</span>
 													<button
 														onClick={() => {
 															if (user.roleStatus !== "verified") {

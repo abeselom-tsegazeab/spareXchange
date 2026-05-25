@@ -375,7 +375,54 @@ export const checkAuth = async (req, res) => {
 			return res.status(403).json({ success: false, message: "Account suspended" });
 		}
 
-		res.status(200).json({ success: true, user });
+		// Initialize stats with default values
+		let listingsCount = 0;
+		let recycledCount = 0;
+		let reviewsCount = 0;
+		let averageRating = 0;
+		let memberSince = user.joinedAt || user.createdAt;
+
+		// Calculate real-time statistics (with error handling)
+		try {
+			const { Listing } = await import("../models/listing.model.js");
+			const { RecyclingSubmission } = await import("../models/recyclingSubmission.model.js");
+			const { Review } = await import("../models/review.model.js");
+
+			console.log("Fetching stats for user:", user._id);
+			
+			listingsCount = await Listing.countDocuments({ seller: user._id });
+			console.log("Listings count:", listingsCount);
+			
+			recycledCount = await RecyclingSubmission.countDocuments({ 
+				userId: user._id, 
+				status: 'approved' 
+			});
+			console.log("Recycled count:", recycledCount);
+			
+			reviewsCount = await Review.countDocuments({ revieweeId: user._id });
+			console.log("Reviews count:", reviewsCount);
+
+			// Calculate average rating
+			const reviews = await Review.find({ revieweeId: user._id }).select('rating');
+			averageRating = reviews.length > 0
+				? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+				: 0;
+			console.log("Average rating:", averageRating);
+		} catch (statsError) {
+			console.error("Warning: Could not fetch user stats (non-critical):", statsError.message);
+			console.error("Stats error stack:", statsError.stack);
+			// Continue with default values (0)
+		}
+
+		// Return user with computed stats
+		const userResponse = user.toObject();
+		userResponse.listings = listingsCount;
+		userResponse.itemsRecycled = recycledCount;
+		userResponse.reviews = reviewsCount;
+		userResponse.rating = parseFloat(averageRating);
+		userResponse.memberSince = memberSince;
+
+		res.status(200).json({ success: true, user: userResponse });
 	} catch (error) {
 		console.log("Error in checkAuth ", error);
 		res.status(400).json({ success: false, message: error.message });
