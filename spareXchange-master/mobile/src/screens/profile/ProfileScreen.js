@@ -88,6 +88,11 @@ export default function ProfileScreen({ navigation }) {
 			<Card padding={0}>
 				<Row label="Edit profile" onPress={() => navigation.navigate('EditProfile')} />
 				<Divider />
+				<Row
+					label="Saved searches"
+					onPress={() => navigation.getParent()?.navigate('Marketplace', { screen: 'SavedSearches' })}
+				/>
+				<Divider />
 				<Row label="Apply for a verified role" onPress={() => navigation.navigate('RequestRole')} />
 				<Divider />
 				<Row label="Enable two-factor authentication" onPress={() => navigation.navigate('MFASetup')} />

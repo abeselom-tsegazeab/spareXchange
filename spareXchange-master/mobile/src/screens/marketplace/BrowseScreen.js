@@ -19,12 +19,14 @@ import EmptyState from '../../components/EmptyState';
 import Loader from '../../components/Loader';
 import Banner from '../../components/Banner';
 import FiltersSheet from './FiltersSheet';
+import SaveSearchSheet from '../savedSearches/SaveSearchSheet';
 
 import { colors, radius, spacing, typography } from '../../config/theme';
 import { CATEGORIES } from '../../config/catalog';
 import { resolveAssetUrl } from '../../config/env';
 import { useListingsStore } from '../../store/listingsStore';
 import { useAuthStore } from '../../store/authStore';
+import { useSavedSearchesStore } from '../../store/savedSearchesStore';
 
 const QUICK_CATEGORIES = [
 	{ key: null, label: 'All' },
@@ -45,7 +47,11 @@ export default function BrowseScreen({ navigation }) {
 		fetchRecommendations,
 	} = useListingsStore();
 
+	const { createSavedSearch, submitting: savingSearch } = useSavedSearchesStore();
+
 	const [sheetOpen, setSheetOpen] = useState(false);
+	const [saveSheetOpen, setSaveSheetOpen] = useState(false);
+	const [saveInfo, setSaveInfo] = useState(null);
 	const debounceRef = useRef(null);
 
 	// Initial load
@@ -106,6 +112,7 @@ export default function BrowseScreen({ navigation }) {
 	const visible = listings || [];
 
 	const activeFilterCount =
+		(filters.query?.trim() ? 1 : 0) +
 		(filters.category ? 1 : 0) +
 		(filters.condition ? 1 : 0) +
 		(filters.brand ? 1 : 0) +
@@ -115,18 +122,25 @@ export default function BrowseScreen({ navigation }) {
 		(filters.radiusKm ? 1 : 0) +
 		(filters.sort && filters.sort !== 'recent' ? 1 : 0);
 
+	const canSaveSearch = activeFilterCount > 0;
+
 	const goDetail = (l) => navigation.navigate('ListingDetail', { id: l._id });
 
 	const header = (
 		<View>
 			<View style={styles.headerRow}>
-				<View>
+				<View style={{ flex: 1 }}>
 					<Text style={typography.h2}>Marketplace</Text>
 					<Text style={typography.muted}>
 						Hi {user?.name?.split(' ')[0] || 'there'} — find a part or list one for sale.
 					</Text>
 				</View>
+				<Pressable onPress={() => navigation.navigate('SavedSearches')} hitSlop={8} style={styles.savedBtn}>
+					<Text style={styles.savedBtnText}>Saved</Text>
+				</Pressable>
 			</View>
+
+			{saveInfo ? <Banner tone="success" message={saveInfo} style={{ marginTop: spacing.sm }} /> : null}
 
 			<View style={{ marginVertical: spacing.lg }}>
 				<SearchBar
@@ -148,12 +162,26 @@ export default function BrowseScreen({ navigation }) {
 				))}
 			</ScrollView>
 
-			{activeFilterCount > 0 ? (
+			{canSaveSearch ? (
 				<View style={styles.activeFilters}>
-					<Text style={typography.caption}>{activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active</Text>
-					<Pressable onPress={resetFilters} hitSlop={8}>
-						<Text style={[typography.caption, { color: colors.primaryDark, fontWeight: '700' }]}>Clear all</Text>
-					</Pressable>
+					<Text style={typography.caption}>
+						{activeFilterCount} criteria active
+					</Text>
+					<View style={styles.activeFilterActions}>
+						<Pressable onPress={() => setSaveSheetOpen(true)} hitSlop={8}>
+							<Text style={[typography.caption, { color: colors.primaryDark, fontWeight: '700' }]}>
+								Save search
+							</Text>
+						</Pressable>
+						{activeFilterCount > 1 ? (
+							<>
+								<Text style={styles.filterDot}>·</Text>
+								<Pressable onPress={resetFilters} hitSlop={8}>
+									<Text style={[typography.caption, { color: colors.primaryDark, fontWeight: '700' }]}>Clear all</Text>
+								</Pressable>
+							</>
+						) : null}
+					</View>
 				</View>
 			) : null}
 
@@ -243,18 +271,43 @@ export default function BrowseScreen({ navigation }) {
 					setSheetOpen(false);
 				}}
 			/>
+			<SaveSearchSheet
+				visible={saveSheetOpen}
+				initial={{ filters }}
+				onClose={() => setSaveSheetOpen(false)}
+				onSubmit={async (payload) => {
+					const res = await createSavedSearch(payload);
+					if (res.success) {
+						setSaveInfo('Search saved — we will alert you on new matches.');
+						setSaveSheetOpen(false);
+					}
+					return res;
+				}}
+				submitting={savingSearch}
+			/>
 		</ScreenContainer>
 	);
 }
 
 const styles = StyleSheet.create({
-	headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
+	headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+	savedBtn: {
+		paddingHorizontal: spacing.md,
+		paddingVertical: spacing.xs,
+		borderRadius: radius.pill,
+		borderWidth: 1,
+		borderColor: colors.border,
+		backgroundColor: colors.surface,
+	},
+	savedBtnText: { ...typography.caption, fontWeight: '800', color: colors.primaryDark },
 	activeFilters: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		marginBottom: spacing.md,
 	},
+	activeFilterActions: { flexDirection: 'row', alignItems: 'center' },
+	filterDot: { color: colors.textSubtle, marginHorizontal: spacing.xs },
 	sectionHead: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm },
 	recommendCard: {
 		width: 160,

@@ -9,6 +9,7 @@ import MarketplaceStack from './MarketplaceStack';
 import SellStack from './SellStack';
 import TradesStack from './TradesStack';
 import EcoStack from './EcoStack';
+import ServicesStack from './ServicesStack';
 
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
@@ -82,6 +83,11 @@ export default function MainTabs() {
 				name="Trades"
 				component={TradesStack}
 				options={{ tabBarIcon: ({ focused }) => <TabIcon label="Trades" focused={focused} /> }}
+			/>
+			<Tab.Screen
+				name="Services"
+				component={ServicesStack}
+				options={{ tabBarIcon: ({ focused }) => <TabIcon label="Services" focused={focused} /> }}
 			/>
 			<Tab.Screen
 				name="Eco"
