@@ -70,13 +70,16 @@ export default function ListingDetailScreen({ route, navigation }) {
 	};
 
 	const contactSeller = () => {
-		// Module 7 will navigate into the conversation. For now show a friendly hint.
-		Alert.alert(
-			'Contact seller',
-			`Messaging arrives in Module 7. You'll be able to chat with ${
-				listing.seller?.name || 'the seller'
-			} directly from this screen.`
-		);
+		const sellerId = listing.seller?._id || listing.seller;
+		if (!sellerId) return;
+		navigation.navigate('Communication', {
+			screen: 'Chat',
+			params: {
+				userId: String(sellerId),
+				userName: listing.seller?.name,
+				listingId: listing._id,
+			},
+		});
 	};
 
 	const proposeExchange = () => {

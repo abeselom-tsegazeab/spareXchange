@@ -74,9 +74,12 @@ export default function TechnicianProfileScreen({ route, navigation }) {
 			<Button
 				title="Message technician"
 				variant="secondary"
-				onPress={() => {
-					// Module 7 will deep-link this to messages.
-				}}
+				onPress={() =>
+					navigation.navigate('Communication', {
+						screen: 'Chat',
+						params: { userId: id, userName: technician.name },
+					})
+				}
 				size="lg"
 			/>
 		</ScreenContainer>

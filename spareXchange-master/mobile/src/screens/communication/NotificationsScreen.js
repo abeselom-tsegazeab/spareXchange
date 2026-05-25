@@ -31,7 +31,7 @@ export default function NotificationsScreen({ navigation }) {
 	const onPress = async (item) => {
 		if (!item.isRead) await markRead(item._id);
 		const relatedId = item.relatedId || item.data?.exchangeId || item.data?.listingId;
-		if (item.type?.startsWith('exchange') && relatedId) {
+		if (relatedId) {
 			navigation.getParent()?.navigate('Main', {
 				screen: 'Trades',
 				params: { screen: 'ExchangeDetail', params: { id: String(relatedId) } },

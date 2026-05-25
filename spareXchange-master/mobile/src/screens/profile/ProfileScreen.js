@@ -89,6 +89,21 @@ export default function ProfileScreen({ navigation }) {
 				<Row label="Edit profile" onPress={() => navigation.navigate('EditProfile')} />
 				<Divider />
 				<Row
+					label="Messages"
+					onPress={() => navigation.navigate('Communication', { screen: 'ConversationsList' })}
+				/>
+				<Divider />
+				<Row
+					label="Notifications"
+					onPress={() => navigation.navigate('Communication', { screen: 'Notifications' })}
+				/>
+				<Divider />
+				<Row
+					label="Leave a review"
+					onPress={() => navigation.navigate('Communication', { screen: 'WriteReview' })}
+				/>
+				<Divider />
+				<Row
 					label="Saved searches"
 					onPress={() => navigation.getParent()?.navigate('Marketplace', { screen: 'SavedSearches' })}
 				/>

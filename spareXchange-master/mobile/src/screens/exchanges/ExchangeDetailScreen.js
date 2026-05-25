@@ -25,6 +25,8 @@ import { useAuthStore } from '../../store/authStore';
 
 const fmtDate = (d) => (d ? new Date(d).toLocaleString() : '—');
 
+const idOf = (v) => (v && typeof v === 'object' ? v._id : v);
+
 const historyLabel = (a) =>
 	({
 		pending: 'Proposed',
@@ -80,6 +82,7 @@ export default function ExchangeDetailScreen({ route, navigation }) {
 
 	const { isBuyer, isSeller, isParticipant } = getRoleFor(exchange, me?._id);
 	const counterparty = isBuyer ? exchange.sellerId : exchange.buyerId;
+	const counterpartyId = idOf(counterparty);
 	const meeting = exchange.meetingDetails || {};
 	const status = exchange.status;
 	const disputed = exchange.disputeStatus === 'open';
@@ -165,6 +168,32 @@ export default function ExchangeDetailScreen({ route, navigation }) {
 				</Text>
 				{counterparty?.trustScore ? (
 					<Text style={typography.caption}>Trust score {counterparty.trustScore}/100</Text>
+				) : null}
+				{counterpartyId ? (
+					<View style={{ marginTop: spacing.sm, flexDirection: 'row', gap: spacing.lg }}>
+						<Pressable
+							onPress={() =>
+								navigation.navigate('Communication', {
+									screen: 'UserReviews',
+									params: { userId: counterpartyId, userName: counterparty?.name },
+								})
+							}
+							hitSlop={6}
+						>
+							<Text style={{ color: colors.primaryDark, fontWeight: '700' }}>See reviews</Text>
+						</Pressable>
+						<Pressable
+							onPress={() =>
+								navigation.navigate('Communication', {
+									screen: 'Chat',
+									params: { userId: counterpartyId, userName: counterparty?.name },
+								})
+							}
+							hitSlop={6}
+						>
+							<Text style={{ color: colors.primaryDark, fontWeight: '700' }}>Message</Text>
+						</Pressable>
+					</View>
 				) : null}
 			</Card>
 
@@ -309,6 +338,48 @@ export default function ExchangeDetailScreen({ route, navigation }) {
 							<View style={{ height: spacing.lg }} />
 							<Pressable onPress={() => setDisputeOpen(true)} hitSlop={6} style={{ alignSelf: 'center' }}>
 								<Text style={{ color: colors.danger, fontWeight: '700' }}>⚑ Open a dispute</Text>
+							</Pressable>
+						</>
+					) : null}
+
+					{status === 'fully_completed' || status === 'fully_completed_vid_handshake' ? (
+						<>
+							<View style={{ height: spacing.lg }} />
+							<Button
+								title="Leave a review"
+								onPress={() =>
+									navigation.navigate('Communication', {
+										screen: 'WriteReview',
+										params: {
+											revieweeId: counterpartyId,
+											revieweeName: counterparty?.name,
+											exchangeId: exchange._id,
+											listingTitle: exchange.listingId?.title,
+										},
+									})
+								}
+							/>
+						</>
+					) : null}
+
+					{isParticipant && counterpartyId ? (
+						<>
+							<View style={{ height: spacing.md }} />
+							<Pressable
+								onPress={() =>
+									navigation.navigate('Communication', {
+										screen: 'ReportUser',
+										params: {
+											targetId: counterpartyId,
+											targetName: counterparty?.name,
+											exchangeId: exchange._id,
+										},
+									})
+								}
+								hitSlop={6}
+								style={{ alignSelf: 'center' }}
+							>
+								<Text style={{ color: colors.textMuted, fontWeight: '700' }}>Report this user</Text>
 							</Pressable>
 						</>
 					) : null}

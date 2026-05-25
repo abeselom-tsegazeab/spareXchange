@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -39,7 +39,7 @@ export default function ConversationsListScreen({ navigation }) {
 					refreshControl={
 						<RefreshControl refreshing={loading} onRefresh={fetchConversations} tintColor={colors.primary} />
 					}
-					renderItem={({ item) => (
+					renderItem={({ item }) => (
 						<ConversationRow
 							conversation={item}
 							onPress={() =>
