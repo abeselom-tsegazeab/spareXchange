@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthStack from './AuthStack';
 import MainTabs from './MainTabs';
 import CommunicationStack from './CommunicationStack';
+import OperationsStack from './OperationsStack';
 import SplashScreen from '../screens/SplashScreen';
 import { useAuthStore } from '../store/authStore';
 
@@ -28,6 +29,7 @@ export default function RootNavigator() {
 					<>
 						<Stack.Screen name="Main" component={MainTabs} />
 						<Stack.Screen name="Communication" component={CommunicationStack} />
+						<Stack.Screen name="Operations" component={OperationsStack} />
 					</>
 				) : (
 					<Stack.Screen name="Auth" component={AuthStack} />

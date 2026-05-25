@@ -128,6 +128,9 @@ export default function MyListingsScreen({ navigation }) {
 						</Pressable>
 					))}
 				</View>
+				<Pressable onPress={() => navigation.navigate('MarketInsights')} style={styles.insightsLink} hitSlop={6}>
+					<Text style={styles.insightsText}>📈 View market insights — high-demand searches</Text>
+				</Pressable>
 			</View>
 
 			<FlatList
@@ -184,6 +187,8 @@ const styles = StyleSheet.create({
 	tabActive: { backgroundColor: colors.surface, ...shadow.sm },
 	tabText: { ...typography.caption, fontWeight: '700', color: colors.textMuted },
 	tabTextActive: { color: colors.primaryDark },
+	insightsLink: { marginBottom: spacing.sm },
+	insightsText: { ...typography.caption, color: colors.primaryDark, fontWeight: '700' },
 	row: { marginBottom: spacing.lg },
 	actions: {
 		flexDirection: 'row',

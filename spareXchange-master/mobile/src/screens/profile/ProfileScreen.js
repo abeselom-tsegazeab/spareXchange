@@ -7,6 +7,7 @@ import Button from '../../components/Button';
 import { colors, radius, spacing, typography } from '../../config/theme';
 import { resolveAssetUrl } from '../../config/env';
 import { useAuthStore } from '../../store/authStore';
+import { isOperationsUser } from '../../utils/adminAccess';
 
 const ROLE_LABELS = {
 	individual: 'Individual',
@@ -102,6 +103,15 @@ export default function ProfileScreen({ navigation }) {
 					label="Leave a review"
 					onPress={() => navigation.navigate('Communication', { screen: 'WriteReview' })}
 				/>
+				{isOperationsUser(user) ? (
+					<>
+						<Divider />
+						<Row
+							label="Operations dashboard"
+							onPress={() => navigation.navigate('Operations', { screen: 'OperationsHome' })}
+						/>
+					</>
+				) : null}
 				<Divider />
 				<Row
 					label="Saved searches"

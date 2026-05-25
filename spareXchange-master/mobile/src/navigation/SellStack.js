@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MyListingsScreen from '../screens/marketplace/MyListingsScreen';
 import ListingFormScreen from '../screens/marketplace/ListingFormScreen';
 import ListingDetailScreen from '../screens/marketplace/ListingDetailScreen';
+import MarketInsightsScreen from '../screens/operations/MarketInsightsScreen';
 import { colors } from '../config/theme';
 
 const Stack = createNativeStackNavigator();
@@ -32,6 +33,11 @@ export default function SellStack() {
 				name="ListingDetail"
 				component={ListingDetailScreen}
 				options={{ headerShown: false }}
+			/>
+			<Stack.Screen
+				name="MarketInsights"
+				component={MarketInsightsScreen}
+				options={{ title: 'Market insights' }}
 			/>
 		</Stack.Navigator>
 	);
