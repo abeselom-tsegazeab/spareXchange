@@ -12,7 +12,10 @@ import {
   Trash2,
   FileText,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Package,
+  User,
+  Handshake
 } from "lucide-react";
 import { useDisputeStore } from "../store/disputeStore";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -527,6 +530,168 @@ const DisputeDetail = ({ dispute, onBack, onAction, onDelete }) => {
               <p className='text-sm text-gray-400'>{dispute.targetId?.email}</p>
             </div>
           </div>
+
+          {/* Disputed Item Details */}
+          {dispute.targetModel === "Listing" && dispute.listingId && (
+            <div className='mb-6 p-5 bg-gradient-to-r from-purple-900/20 to-blue-900/20 border border-purple-700 rounded-lg'>
+              <div className='flex items-start gap-4'>
+                {dispute.listingId.images?.[0] && (
+                  <img
+                    src={dispute.listingId.images[0]}
+                    alt={dispute.listingId.title}
+                    className='w-24 h-24 object-cover rounded-lg border border-purple-600'
+                  />
+                )}
+                <div className='flex-1'>
+                  <h3 className='text-lg font-bold text-purple-300 mb-2 flex items-center gap-2'>
+                    <Package size={20} />
+                    Disputed Listing Details
+                  </h3>
+                  <div className='grid grid-cols-2 gap-3 text-sm'>
+                    <div>
+                      <p className='text-gray-400'>Title</p>
+                      <p className='font-semibold text-white'>{dispute.listingId.title}</p>
+                    </div>
+                    <div>
+                      <p className='text-gray-400'>Category</p>
+                      <p className='font-semibold text-white'>{dispute.listingId.category}</p>
+                    </div>
+                    <div>
+                      <p className='text-gray-400'>Price</p>
+                      <p className='font-semibold text-green-400'>ETB {dispute.listingId.price}</p>
+                    </div>
+                    <div>
+                      <p className='text-gray-400'>Condition</p>
+                      <p className='font-semibold text-white capitalize'>{dispute.listingId.condition}</p>
+                    </div>
+                    <div className='col-span-2'>
+                      <p className='text-gray-400'>Description</p>
+                      <p className='text-white'>{dispute.listingId.description || 'No description'}</p>
+                    </div>
+                    <div>
+                      <p className='text-gray-400'>Status</p>
+                      <p className='font-semibold text-white capitalize'>{dispute.listingId.available ? 'Available' : 'Unavailable'}</p>
+                    </div>
+                    <div>
+                      <p className='text-gray-400'>Created</p>
+                      <p className='font-semibold text-white'>{new Date(dispute.listingId.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <div className='mt-3 flex gap-2'>
+                    <a
+                      href={`/listings/${dispute.listingId._id}`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded transition'
+                    >
+                      View Listing
+                    </a>
+                    <a
+                      href={`/edit-listing/${dispute.listingId._id}`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition'
+                    >
+                      Edit Listing
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {dispute.targetModel === "User" && dispute.targetId && (
+            <div className='mb-6 p-5 bg-gradient-to-r from-red-900/20 to-orange-900/20 border border-red-700 rounded-lg'>
+              <h3 className='text-lg font-bold text-red-300 mb-3 flex items-center gap-2'>
+                <User size={20} />
+                Reported User Details
+              </h3>
+              <div className='grid grid-cols-2 gap-3 text-sm'>
+                <div>
+                  <p className='text-gray-400'>Name</p>
+                  <p className='font-semibold text-white'>{dispute.targetId.name}</p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Email</p>
+                  <p className='font-semibold text-white'>{dispute.targetId.email}</p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Role</p>
+                  <p className='font-semibold text-white capitalize'>{dispute.targetId.role}</p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Verified</p>
+                  <p className='font-semibold'>{dispute.targetId.isVerified ? 
+                    <span className='text-green-400'>✓ Yes</span> : 
+                    <span className='text-red-400'>✗ No</span>}
+                  </p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Location</p>
+                  <p className='font-semibold text-white'>{dispute.targetId.location || 'Not specified'}</p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Account Created</p>
+                  <p className='font-semibold text-white'>{new Date(dispute.targetId.createdAt).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <div className='mt-3'>
+                <a
+                  href={`/admin/users/${dispute.targetId._id}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition'
+                >
+                  View User Profile
+                </a>
+              </div>
+            </div>
+          )}
+
+          {dispute.targetModel === "Exchange" && dispute.exchangeId && (
+            <div className='mb-6 p-5 bg-gradient-to-r from-teal-900/20 to-cyan-900/20 border border-teal-700 rounded-lg'>
+              <h3 className='text-lg font-bold text-teal-300 mb-3 flex items-center gap-2'>
+                <Handshake size={20} />
+                Exchange Details
+              </h3>
+              <div className='grid grid-cols-2 gap-3 text-sm'>
+                <div>
+                  <p className='text-gray-400'>Exchange ID</p>
+                  <p className='font-semibold text-white font-mono'>{dispute.exchangeId._id}</p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Status</p>
+                  <p className='font-semibold text-white capitalize'>{dispute.exchangeId.status}</p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Initiator</p>
+                  <p className='font-semibold text-white'>{dispute.exchangeId.initiatorId?.name || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Receiver</p>
+                  <p className='font-semibold text-white'>{dispute.exchangeId.receiverId?.name || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Created</p>
+                  <p className='font-semibold text-white'>{new Date(dispute.exchangeId.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className='text-gray-400'>Type</p>
+                  <p className='font-semibold text-white capitalize'>{dispute.exchangeId.exchangeType || 'Standard'}</p>
+                </div>
+              </div>
+              <div className='mt-3'>
+                <a
+                  href={`/exchanges/${dispute.exchangeId._id}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='px-3 py-1 bg-teal-600 hover:bg-teal-700 text-white text-sm rounded transition'
+                >
+                  View Exchange Details
+                </a>
+              </div>
+            </div>
+          )}
 
           {dispute.description && (
             <div className='mb-6 p-4 bg-gray-900/50 rounded-lg'>

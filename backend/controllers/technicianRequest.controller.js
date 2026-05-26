@@ -14,6 +14,19 @@ export const createTechnicianRequest = async (req, res) => {
 			return res.status(400).json({ success: false, message: "Service type, description, and location are required" });
 		}
 
+		// Check if user's account is verified
+		const user = await User.findById(req.userId);
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
+
+		if (!user.verifiedSeller) {
+			return res.status(403).json({ 
+				success: false, 
+				message: "Your account must be verified before creating service requests. Please contact admin or complete the verification process." 
+			});
+		}
+
 		const newRequest = new TechnicianRequest({
 			userId: req.userId,
 			serviceType,
