@@ -195,7 +195,7 @@ const MyListingsPage = () => {
 									<div className='p-4'>
 										<h3 className='font-bold text-lg mb-2 truncate text-gray-900 dark:text-white'>{listing.title}</h3>
 										<div className='flex justify-between items-center mb-2'>
-											<span className='text-green-600 dark:text-green-400 font-bold text-xl'>${listing.price}</span>
+											<span className='text-green-600 dark:text-green-400 font-bold text-xl'>ETB {listing.price}</span>
 											<span className='text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded'>{listing.condition}</span>
 										</div>
 										<div className='text-sm text-gray-600 dark:text-gray-400 mb-2'>

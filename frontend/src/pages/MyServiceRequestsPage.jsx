@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTechnicianRequestStore } from "../store/technicianRequestStore";
 import { toast } from "react-hot-toast";
-import { Wrench, Clock, MapPin, DollarSign, ArrowRight, AlertCircle, PlusCircle } from "lucide-react";
+import { Wrench, Clock, MapPin, Wallet, ArrowRight, AlertCircle, PlusCircle } from "lucide-react";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const STATUS_COLORS = {
@@ -145,8 +145,8 @@ const MyServiceRequestsPage = () => {
 										</div>
 										{request.budgetMin && request.budgetMax && (
 											<p className='text-green-600 dark:text-green-400 text-sm mt-2 flex items-center gap-1'>
-												<DollarSign size={14} />
-												Budget: ${request.budgetMin} - ${request.budgetMax}
+												<Wallet size={14} />
+												Budget: ETB {request.budgetMin} - ETB {request.budgetMax}
 											</p>
 										)}
 									</div>

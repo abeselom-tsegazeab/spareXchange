@@ -15,7 +15,7 @@ import {
 	Settings,
 	History,
 	Search,
-	DollarSign,
+	Wallet,
 	MapPin,
 	Package
 } from "lucide-react";
@@ -255,12 +255,12 @@ const NotificationsPage = () => {
 																						
 													<div className="space-y-1.5 text-sm">
 														{/* Price */}
-														{notification.data.listingPrice && (
-															<div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold">
-																<DollarSign size={14} />
-																<span>${notification.data.listingPrice}</span>
-															</div>
-														)}
+															{notification.data.listingPrice && (
+																<div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold">
+																	<Wallet size={14} />
+																	<span>ETB {notification.data.listingPrice}</span>
+																</div>
+															)}
 																							
 														{/* Condition & Category */}
 														<div className="flex flex-wrap gap-2">

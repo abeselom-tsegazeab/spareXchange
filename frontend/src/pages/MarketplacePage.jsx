@@ -237,7 +237,7 @@ const MarketplacePage = () => {
 							<div className='p-4'>
 								<div className='flex justify-between items-start mb-2'>
 									<h3 className='text-gray-900 dark:text-white font-bold text-lg truncate' title={listing.title}>{listing.title}</h3>
-									<span className='text-green-600 dark:text-green-400 font-bold'>${listing.price}</span>
+									<span className='text-green-600 dark:text-green-400 font-bold'>ETB {listing.price}</span>
 								</div>
 								<div className='flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2'>
 									<MapPin size={16} className='mr-1' />

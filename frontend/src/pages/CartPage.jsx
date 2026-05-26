@@ -136,10 +136,10 @@ const CartPage = () => {
 												</div>
 												<div className="text-right">
 													<p className="text-2xl font-bold text-green-600 dark:text-green-400">
-														${(item.price * item.quantity).toFixed(2)}
+														ETB {(item.price * item.quantity).toFixed(2)}
 													</p>
 													<p className="text-sm text-gray-600 dark:text-gray-400">
-														${item.price} each
+														ETB {item.price} each
 													</p>
 												</div>
 											</div>

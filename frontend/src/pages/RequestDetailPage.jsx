@@ -5,7 +5,7 @@ import { useTechnicianRequestStore } from "../store/technicianRequestStore";
 import { useAuthStore } from "../store/authStore";
 import { toast } from "react-hot-toast";
 import {
-	MapPin, Clock, DollarSign, User, Phone, Mail,
+	MapPin, Clock, Wallet, User, Phone, Mail,
 	ArrowLeft, CheckCircle, MessageSquare, Shield
 } from "lucide-react";
 
@@ -161,8 +161,8 @@ const RequestDetailPage = () => {
 						</div>
 						{currentRequest.budgetMin && currentRequest.budgetMax && (
 							<div className='flex items-center gap-2 text-green-600 dark:text-green-400'>
-								<DollarSign size={18} />
-								<span>${currentRequest.budgetMin} - ${currentRequest.budgetMax}</span>
+								<Wallet size={18} />
+								<span>ETB {currentRequest.budgetMin} - ETB {currentRequest.budgetMax}</span>
 							</div>
 						)}
 						<div className='flex items-center gap-2 text-gray-700 dark:text-gray-300'>
@@ -258,7 +258,7 @@ const RequestDetailPage = () => {
 											</div>
 											<div className='mt-3'>
 												<p className='text-3xl font-bold text-green-600 dark:text-green-400 mb-2'>
-													<DollarSign size={28} className='inline' />{quote.estimatedCost}
+													<Wallet size={28} className='inline' /> ETB {quote.estimatedCost}
 												</p>
 												{quote.additionalNotes && (
 													<p className='text-gray-700 dark:text-gray-300'>{quote.additionalNotes}</p>

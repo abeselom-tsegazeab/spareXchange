@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Plus, X, Upload, MapPin, DollarSign, Tag } from "lucide-react";
+import { Plus, X, Upload, MapPin, Wallet, Tag } from "lucide-react";
 import { useListingStore } from "../store/listingStore";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
@@ -233,7 +233,7 @@ const CreateListingPage = () => {
 								</h3>
 								<div className='mt-1 text-sm text-yellow-700 dark:text-yellow-300'>
 									<p>You need to verify your account before creating listings.</p>
-									<p className='mt-1'>Please check your email for the verification link or contact support.</p>
+									<p className='mt-1'>Please check your profile and submit your verification request with a proper document.</p>
 								</div>
 							</div>
 						</div>
@@ -290,8 +290,8 @@ const CreateListingPage = () => {
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 								<div>
 									<label className='block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300'>
-										<DollarSign size={16} className='inline mr-1 text-green-600 dark:text-green-400' />
-										Price *
+										<Wallet size={16} className='inline mr-1 text-green-600 dark:text-green-400' />
+										Price (ETB) *
 									</label>
 									<input
 										type='number'

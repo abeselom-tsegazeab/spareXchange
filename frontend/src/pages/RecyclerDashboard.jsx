@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { formatDate } from "../utils/date";
 import TierBadge from "../components/TierBadge";
 import { 
-  Trophy, Recycle, DollarSign, Clock, CheckCircle, Package, ArrowUpRight, ArrowRight, PlusCircle, Eye, MapPin, Weight
+  Trophy, Recycle, Wallet, Clock, CheckCircle, Package, ArrowUpRight, ArrowRight, PlusCircle, Eye, MapPin, Weight
 } from "lucide-react";
 import axios from "axios";
 
@@ -61,7 +61,7 @@ const RecyclerDashboard = () => {
     { label: "Pending Submissions", value: stats.pending, icon: Clock, color: "from-yellow-400 to-orange-600", link: "/recycling" },
     { label: "Approved", value: stats.approved, icon: CheckCircle, color: "from-green-400 to-emerald-600", link: "/recycling" },
     { label: "Total Weight (kg)", value: stats.totalWeight.toFixed(1), icon: Weight, color: "from-blue-400 to-cyan-600", link: "/analytics" },
-    { label: "Points Earned", value: stats.totalPoints, icon: DollarSign, color: "from-purple-400 to-pink-600", link: "/leaderboard" },
+    { label: "Points Earned", value: stats.totalPoints, icon: Wallet, color: "from-purple-400 to-pink-600", link: "/leaderboard" },
   ];
 
   const quickActions = [
@@ -176,7 +176,7 @@ const RecyclerDashboard = () => {
                     <div className='flex items-start justify-between'>
                       <div className='flex-1'>
                         <h3 className='text-gray-900 dark:text-white font-semibold mb-1'>{listing.title}</h3>
-                        <p className='text-gray-600 dark:text-gray-400 text-sm mb-2'>{listing.category} • ${listing.price}</p>
+                        <p className='text-gray-600 dark:text-gray-400 text-sm mb-2'>{listing.category} • ETB {listing.price}</p>
                         <div className='flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500'>
                           <span className='flex items-center gap-1'><Eye size={12} />{listing.views || 0} views</span>
                         </div>

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTechnicianRequestStore } from "../store/technicianRequestStore";
 import { toast } from "react-hot-toast";
-import { Wrench, MapPin, DollarSign, AlertCircle } from "lucide-react";
+import { Wrench, MapPin, Wallet, AlertCircle } from "lucide-react";
 
 const SERVICE_TYPES = [
 	"repair",
@@ -278,9 +278,9 @@ const CreateTechnicianRequestPage = () => {
 					{/* Budget Range */}
 					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 						<div>
-							<label className='block text-gray-700 dark:text-gray-300 font-semibold mb-2'>Minimum Budget ($)</label>
+							<label className='block text-gray-700 dark:text-gray-300 font-semibold mb-2'>Minimum Budget (ETB)</label>
 							<div className='relative'>
-								<DollarSign className='absolute left-3 top-3.5 text-gray-500 dark:text-gray-400' size={20} />
+								<Wallet className='absolute left-3 top-3.5 text-gray-500 dark:text-gray-400' size={20} />
 								<input
 									type='number'
 									name='budgetMin'
@@ -292,9 +292,9 @@ const CreateTechnicianRequestPage = () => {
 							</div>
 						</div>
 						<div>
-							<label className='block text-gray-700 dark:text-gray-300 font-semibold mb-2'>Maximum Budget ($)</label>
+							<label className='block text-gray-700 dark:text-gray-300 font-semibold mb-2'>Maximum Budget (ETB)</label>
 							<div className='relative'>
-								<DollarSign className='absolute left-3 top-3.5 text-gray-500 dark:text-gray-400' size={20} />
+								<Wallet className='absolute left-3 top-3.5 text-gray-500 dark:text-gray-400' size={20} />
 								<input
 									type='number'
 									name='budgetMax'

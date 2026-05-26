@@ -107,7 +107,7 @@ const ProposeExchangeModal = ({ isOpen, onClose, listingId }) => {
                   <textarea
                     value={offeredItems}
                     onChange={(e) => setOfferedItems(e.target.value)}
-                    placeholder="e.g., 'Brake Pads + $50 Cash', 'OEM Alternator', etc."
+                    placeholder="e.g., 'Brake Pads + ETB 50 Cash', 'OEM Alternator', etc."
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-green-500 transition"
                     rows="3"
                     required
@@ -134,7 +134,7 @@ const ProposeExchangeModal = ({ isOpen, onClose, listingId }) => {
                         .filter(l => l.available)
                         .map(listing => (
                           <option key={listing._id} value={listing._id}>
-                            {listing.title} - ${listing.price}
+                            {listing.title} - ETB {listing.price}
                           </option>
                         ))}
                     </select>

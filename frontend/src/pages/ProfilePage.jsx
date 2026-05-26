@@ -649,7 +649,7 @@ const ProfilePage = () => {
 												<td className='p-4'>
 													<div className='font-medium'>{listing.title}</div>
 												</td>
-												<td className='p-4'>${listing.price}</td>
+												<td className='p-4'>ETB {listing.price}</td>
 												<td className='p-4'>
 													<span className={`px-2 py-1 rounded-full text-xs font-bold ${listing.status === "Active"
 														? "bg-green-900 text-green-300"

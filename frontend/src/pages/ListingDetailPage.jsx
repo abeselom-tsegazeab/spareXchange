@@ -230,7 +230,7 @@ const ListingDetailPage = () => {
 						{/* Price */}
 						<div className='mb-6'>
 							<div className='flex items-baseline'>
-								<span className='text-3xl font-bold text-green-400'>${listing.price}</span>
+								<span className='text-3xl font-bold text-green-400'>ETB {listing.price}</span>
 							</div>
 							<div className='flex items-center mt-2'>
 								<span className='text-sm bg-green-100 dark:bg-green-900 dark:bg-opacity-30 text-green-700 dark:text-green-400 px-2 py-1 rounded-full mr-2'>

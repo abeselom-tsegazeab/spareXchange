@@ -298,7 +298,7 @@ const AdminItemListingsPage = () => {
                 {/* Content */}
                 <div className='p-4'>
                   <h3 className='text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1'>{listing.title}</h3>
-                  <p className='text-purple-600 dark:text-purple-400 text-xl font-bold mb-2'>${listing.price}</p>
+                  <p className='text-purple-600 dark:text-purple-400 text-xl font-bold mb-2'>ETB {listing.price}</p>
                   
                   <div className='space-y-1 text-sm text-gray-600 dark:text-gray-400 mb-3'>
                     <div className='flex items-center gap-2'>

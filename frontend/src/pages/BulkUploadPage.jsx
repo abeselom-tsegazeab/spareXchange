@@ -158,7 +158,7 @@ const BulkUploadPage = () => {
 										<div key={index} className='flex justify-between items-center p-3 bg-gray-700 bg-opacity-50 rounded-lg border border-gray-600'>
 											<div>
 												<div className='font-medium'>{listing.title}</div>
-												<div className='text-sm text-gray-400'>${listing.price} - {listing.category}</div>
+												<div className='text-sm text-gray-400'>ETB {listing.price} - {listing.category}</div>
 											</div>
 											<button onClick={() => removeListing(index)} className='p-1 bg-red-600 rounded-full hover:bg-red-700'>
 												<X size={16} />
