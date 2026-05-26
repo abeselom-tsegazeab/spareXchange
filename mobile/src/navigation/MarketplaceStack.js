@@ -4,17 +4,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BrowseScreen from '../screens/marketplace/BrowseScreen';
 import ListingDetailScreen from '../screens/marketplace/ListingDetailScreen';
 import SavedSearchesScreen from '../screens/savedSearches/SavedSearchesScreen';
-import { colors } from '../config/theme';
+import { useStackScreenDefaults } from './navigationStyles';
 
 const Stack = createNativeStackNavigator();
 
 export default function MarketplaceStack() {
+	const hdr = useStackScreenDefaults();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTitleStyle: { color: colors.text, fontWeight: '700' },
-				headerTintColor: colors.primary,
+				...hdr,
 			}}
 		>
 			<Stack.Screen name="Browse" component={BrowseScreen} options={{ headerShown: false }} />

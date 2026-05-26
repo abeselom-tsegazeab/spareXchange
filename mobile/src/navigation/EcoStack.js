@@ -9,17 +9,16 @@ import LeaderboardScreen from '../screens/eco/LeaderboardScreen';
 import RedeemPointsScreen from '../screens/eco/RedeemPointsScreen';
 import NearbyRecyclersScreen from '../screens/eco/NearbyRecyclersScreen';
 import VerifyTokenScreen from '../screens/eco/VerifyTokenScreen';
-import { colors } from '../config/theme';
+import { useStackScreenDefaults } from './navigationStyles';
 
 const Stack = createNativeStackNavigator();
 
 export default function EcoStack() {
+	const hdr = useStackScreenDefaults();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTitleStyle: { color: colors.text, fontWeight: '700' },
-				headerTintColor: colors.primary,
+				...hdr,
 			}}
 		>
 			<Stack.Screen name="EcoHome" component={EcoHomeScreen} options={{ headerShown: false }} />

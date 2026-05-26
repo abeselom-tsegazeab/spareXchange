@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { colors, spacing, typography } from '../config/theme';
+
+import { spacing } from '../config/theme';
+import { useTheme } from '../context/ThemeContext';
 
 const Loader = ({ label, fullscreen = false }) => {
+	const { colors, typography, colorScheme } = useTheme();
+	const styles = useMemo(
+		() =>
+			StyleSheet.create({
+				wrap: { alignItems: 'center', justifyContent: 'center', padding: spacing.lg },
+				fullscreen: { flex: 1, backgroundColor: colors.bg },
+				label: { ...typography.muted, marginTop: spacing.md },
+			}),
+		[colorScheme, colors.bg]
+	);
+
 	return (
 		<View style={[styles.wrap, fullscreen && styles.fullscreen]}>
 			<ActivityIndicator size="large" color={colors.primary} />
@@ -10,11 +23,5 @@ const Loader = ({ label, fullscreen = false }) => {
 		</View>
 	);
 };
-
-const styles = StyleSheet.create({
-	wrap: { alignItems: 'center', justifyContent: 'center', padding: spacing.lg },
-	fullscreen: { flex: 1, backgroundColor: colors.bg },
-	label: { ...typography.muted, marginTop: spacing.md },
-});
 
 export default Loader;

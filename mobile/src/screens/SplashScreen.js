@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { colors, spacing } from '../config/theme';
+
+import { spacing } from '../config/theme';
 import Logo from '../components/Logo';
+import { useTheme } from '../context/ThemeContext';
 
 export default function SplashScreen() {
+	const { colors } = useTheme();
+	const styles = useMemo(
+		() =>
+			StyleSheet.create({
+				wrap: {
+					flex: 1,
+					backgroundColor: colors.bg,
+					alignItems: 'center',
+					justifyContent: 'center',
+				},
+			}),
+		[colors.bg]
+	);
+
 	return (
 		<View style={styles.wrap}>
 			<Logo size="lg" />
@@ -11,12 +27,3 @@ export default function SplashScreen() {
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	wrap: {
-		flex: 1,
-		backgroundColor: colors.bg,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-});

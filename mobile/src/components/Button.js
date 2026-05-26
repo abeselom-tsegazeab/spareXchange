@@ -6,21 +6,22 @@ import {
 	Text,
 	View,
 } from 'react-native';
-import { colors, radius, spacing, typography } from '../config/theme';
+import { useTheme } from '../context/ThemeContext';
 
 const Button = ({
 	title,
 	onPress,
 	loading = false,
 	disabled = false,
-	variant = 'primary', // primary | secondary | ghost | danger
-	size = 'md',         // sm | md | lg
+	variant = 'primary',
+	size = 'md',
 	leftIcon,
 	rightIcon,
 	style,
 	fullWidth = true,
 }) => {
-	const v = variantStyle(variant, disabled || loading);
+	const { colors, typography, radius, spacing } = useTheme();
+	const v = variantStyle(variant, disabled || loading, colors, typography);
 	const s = sizeStyle(size);
 
 	return (
@@ -29,6 +30,7 @@ const Button = ({
 			disabled={disabled || loading}
 			style={({ pressed }) => [
 				styles.base,
+				{ borderRadius: radius.card },
 				v.container,
 				s.container,
 				fullWidth && { alignSelf: 'stretch' },
@@ -53,15 +55,15 @@ const Button = ({
 	);
 };
 
-const variantStyle = (variant, dimmed) => {
-	const dimColor = dimmed ? '#9CA3AF' : null;
+const variantStyle = (variant, dimmed, colors, typography) => {
+	const dimColor = dimmed ? colors.textSubtle : null;
 	switch (variant) {
 		case 'secondary':
 			return {
 				container: {
 					backgroundColor: colors.surface,
 					borderWidth: 1,
-					borderColor: dimColor || colors.borderStrong,
+					borderColor: dimColor || colors.border,
 				},
 				label: { ...typography.bodyStrong, color: dimColor || colors.text },
 			};
@@ -72,14 +74,22 @@ const variantStyle = (variant, dimmed) => {
 			};
 		case 'danger':
 			return {
-				container: { backgroundColor: dimColor || colors.danger },
-				label: { ...typography.bodyStrong, color: colors.textInverse },
+				container: {
+					backgroundColor: dimColor || colors.danger,
+				},
+				label: {
+					...typography.bodyStrong,
+					color: '#FFFFFF',
+				},
 			};
 		case 'primary':
 		default:
 			return {
 				container: { backgroundColor: dimColor || colors.primary },
-				label: { ...typography.bodyStrong, color: colors.textInverse },
+				label: {
+					...typography.bodyStrong,
+					color: colors.textInverse,
+				},
 			};
 	}
 };
@@ -107,7 +117,6 @@ const sizeStyle = (size) => {
 
 const styles = StyleSheet.create({
 	base: {
-		borderRadius: radius.lg,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import ScreenContainer from '../../components/ScreenContainer';
@@ -6,11 +6,13 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Banner from '../../components/Banner';
 import Logo from '../../components/Logo';
-import { colors, spacing, typography } from '../../config/theme';
+import { spacing } from '../../config/theme';
+import { useTheme } from '../../context/ThemeContext';
 import { isEmail, isNonEmpty } from '../../utils/validators';
 import { useAuthStore } from '../../store/authStore';
 
 export default function LoginScreen({ navigation }) {
+	const { colors, typography } = useTheme();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [touched, setTouched] = useState({});
@@ -19,6 +21,22 @@ export default function LoginScreen({ navigation }) {
 	const login = useAuthStore((s) => s.login);
 	const setPendingMfa = useAuthStore((s) => s.setPendingMfa);
 	const submitting = useAuthStore((s) => s.isSubmitting);
+
+	const styles = useMemo(
+		() =>
+			StyleSheet.create({
+				header: { marginTop: spacing.md, marginBottom: spacing.xxxl, alignItems: 'flex-start' },
+				divider: { flexDirection: 'row', alignItems: 'center', marginVertical: spacing.xl },
+				line: { flex: 1, height: 1, backgroundColor: colors.border },
+				footer: {
+					flexDirection: 'row',
+					justifyContent: 'center',
+					alignItems: 'center',
+					marginTop: spacing.xxl,
+				},
+			}),
+		[colors.border]
+	);
 
 	const errors = {
 		email: touched.email && !isEmail(email) ? 'Enter a valid email address' : null,
@@ -87,7 +105,7 @@ export default function LoginScreen({ navigation }) {
 				style={{ alignSelf: 'flex-end', marginTop: -spacing.sm, marginBottom: spacing.lg }}
 				hitSlop={8}
 			>
-				<Text style={[typography.caption, { color: colors.primaryDark, fontWeight: '700' }]}>
+				<Text style={[typography.caption, { color: colors.primary, fontWeight: '600' }]}>
 					Forgot password?
 				</Text>
 			</Pressable>
@@ -110,7 +128,7 @@ export default function LoginScreen({ navigation }) {
 			<View style={styles.footer}>
 				<Text style={typography.muted}>Don't have an account?</Text>
 				<Pressable onPress={() => navigation.navigate('Signup')} hitSlop={8}>
-					<Text style={[typography.bodyStrong, { color: colors.primaryDark, marginLeft: 6 }]}>
+					<Text style={[typography.bodyStrong, { color: colors.primary, marginLeft: 6 }]}>
 						Create account
 					</Text>
 				</Pressable>
@@ -118,15 +136,3 @@ export default function LoginScreen({ navigation }) {
 		</ScreenContainer>
 	);
 }
-
-const styles = StyleSheet.create({
-	header: { marginTop: spacing.md, marginBottom: spacing.xxxl, alignItems: 'flex-start' },
-	divider: { flexDirection: 'row', alignItems: 'center', marginVertical: spacing.xl },
-	line: { flex: 1, height: 1, backgroundColor: colors.border },
-	footer: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-		marginTop: spacing.xxl,
-	},
-});

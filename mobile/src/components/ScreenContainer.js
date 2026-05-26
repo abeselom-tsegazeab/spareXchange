@@ -7,18 +7,20 @@ import {
 	View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing } from '../config/theme';
+import { useTheme } from '../context/ThemeContext';
 
 const ScreenContainer = ({
 	children,
 	scroll = false,
 	keyboard = false,
 	padded = true,
-	background = colors.bg,
+	background,
 	contentContainerStyle,
 	edges = ['top', 'left', 'right'],
 	bottomBar,
 }) => {
+	const { colors, spacing } = useTheme();
+	const bg = background ?? colors.bg;
 	const padStyle = padded ? { padding: spacing.lg } : null;
 
 	const inner = scroll ? (
@@ -45,23 +47,26 @@ const ScreenContainer = ({
 		inner
 	);
 
+	const stylesBottom = StyleSheet.create({
+		bar: {
+			paddingHorizontal: spacing.lg,
+			paddingVertical: spacing.md,
+			borderTopWidth: 1,
+			borderTopColor: colors.border,
+			backgroundColor: colors.surface,
+		},
+	});
+
 	return (
-		<SafeAreaView edges={edges} style={[styles.safe, { backgroundColor: background }]}>
+		<SafeAreaView edges={edges} style={[styles.safe, { backgroundColor: bg }]}>
 			{body}
-			{bottomBar ? <View style={styles.bottomBar}>{bottomBar}</View> : null}
+			{bottomBar ? <View style={stylesBottom.bar}>{bottomBar}</View> : null}
 		</SafeAreaView>
 	);
 };
 
 const styles = StyleSheet.create({
 	safe: { flex: 1 },
-	bottomBar: {
-		paddingHorizontal: spacing.lg,
-		paddingVertical: spacing.md,
-		borderTopWidth: 1,
-		borderTopColor: colors.border,
-		backgroundColor: colors.surface,
-	},
 });
 
 export default ScreenContainer;

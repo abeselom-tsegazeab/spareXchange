@@ -8,17 +8,16 @@ import NearbyJobsScreen from '../screens/services/NearbyJobsScreen';
 import RequestDetailScreen from '../screens/services/RequestDetailScreen';
 import TechniciansDirectoryScreen from '../screens/services/TechniciansDirectoryScreen';
 import TechnicianProfileScreen from '../screens/services/TechnicianProfileScreen';
-import { colors } from '../config/theme';
+import { useStackScreenDefaults } from './navigationStyles';
 
 const Stack = createNativeStackNavigator();
 
 export default function ServicesStack() {
+	const hdr = useStackScreenDefaults();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTitleStyle: { color: colors.text, fontWeight: '700' },
-				headerTintColor: colors.primary,
+				...hdr,
 			}}
 		>
 			<Stack.Screen name="ServicesHome" component={ServicesHomeScreen} options={{ headerShown: false }} />

@@ -6,17 +6,16 @@ import AnalyticsHubScreen from '../screens/operations/AnalyticsHubScreen';
 import ReportsListScreen from '../screens/operations/ReportsListScreen';
 import ReportDetailScreen from '../screens/operations/ReportDetailScreen';
 import AdminJobsScreen from '../screens/operations/AdminJobsScreen';
-import { colors } from '../config/theme';
+import { useStackScreenDefaults } from './navigationStyles';
 
 const Stack = createNativeStackNavigator();
 
 export default function OperationsStack() {
+	const hdr = useStackScreenDefaults();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTitleStyle: { color: colors.text, fontWeight: '700' },
-				headerTintColor: colors.primary,
+				...hdr,
 			}}
 		>
 			<Stack.Screen name="OperationsHome" component={OperationsHomeScreen} options={{ title: 'Operations' }} />

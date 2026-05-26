@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
 	Pressable,
 	StyleSheet,
@@ -6,7 +6,7 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
-import { colors, radius, spacing, typography } from '../config/theme';
+import { useTheme } from '../context/ThemeContext';
 
 const Input = ({
 	label,
@@ -30,26 +30,48 @@ const Input = ({
 	style,
 	inputStyle,
 }) => {
+	const { colors, typography, radius, spacing } = useTheme();
 	const [focused, setFocused] = useState(false);
 	const [hidden, setHidden] = useState(secureTextEntry);
 
-	const borderColor = error
-		? colors.danger
-		: focused
-			? colors.primary
-			: colors.border;
+	const styles = useMemo(
+		() =>
+			StyleSheet.create({
+				fieldRowBase: {
+					flexDirection: 'row',
+					alignItems: 'center',
+					borderWidth: 1,
+					borderRadius: radius.input,
+					paddingHorizontal: spacing.md,
+					minHeight: 48,
+				},
+				inputInner: {
+					flex: 1,
+					fontSize: 15,
+					fontWeight: '400',
+					color: colors.text,
+					paddingVertical: 0,
+				},
+			}),
+		[colors.text, radius.input, spacing.md]
+	);
+
+	const borderColor = error ? colors.danger : focused ? colors.primary : colors.border;
 
 	return (
-		<View style={[styles.wrap, style]}>
-			{label ? <Text style={styles.label}>{label}</Text> : null}
+		<View style={[ { marginBottom: spacing.lg }, style]}>
+			{label ? <Text style={[typography.label, stylesWrap.mb]}>{label}</Text> : null}
 			<View
 				style={[
-					styles.fieldRow,
-					{ borderColor, backgroundColor: editable ? colors.surface : colors.surfaceAlt },
+					styles.fieldRowBase,
+					{
+						borderColor,
+						backgroundColor: editable ? colors.inputBackground : colors.surfaceAlt,
+					},
 					multiline && { minHeight: 96, alignItems: 'flex-start', paddingVertical: spacing.md },
 				]}
 			>
-				{leftIcon ? <View style={styles.leftIcon}>{leftIcon}</View> : null}
+				{leftIcon ? <View style={stylesWrap.left}>{leftIcon}</View> : null}
 				<TextInput
 					value={value}
 					onChangeText={onChangeText}
@@ -65,57 +87,39 @@ const Input = ({
 					editable={editable}
 					onFocus={(e) => {
 						setFocused(true);
-						onFocus && onFocus(e);
+						onFocus?.(e);
 					}}
 					onBlur={(e) => {
 						setFocused(false);
-						onBlur && onBlur(e);
+						onBlur?.(e);
 					}}
-					style={[styles.input, inputStyle]}
+					style={[styles.inputInner, inputStyle]}
 				/>
 				{secureTextEntry ? (
-					<Pressable hitSlop={8} onPress={() => setHidden((h) => !h)} style={styles.rightIcon}>
-						<Text style={styles.toggle}>{hidden ? 'Show' : 'Hide'}</Text>
+					<Pressable hitSlop={8} onPress={() => setHidden((h) => !h)} style={stylesWrap.right}>
+						<Text style={[typography.caption, stylesWrap.toggle, { color: colors.primary }]}>
+							{hidden ? 'Show' : 'Hide'}
+						</Text>
 					</Pressable>
 				) : rightAccessory ? (
-					<View style={styles.rightIcon}>{rightAccessory}</View>
+					<View style={stylesWrap.right}>{rightAccessory}</View>
 				) : null}
 			</View>
 			{error ? (
-				<Text style={styles.error}>{error}</Text>
+				<Text style={[typography.caption, stylesWrap.mt, { color: colors.danger }]}>{error}</Text>
 			) : helper ? (
-				<Text style={styles.helper}>{helper}</Text>
+				<Text style={[typography.caption, stylesWrap.mt, { color: colors.textMuted }]}>{helper}</Text>
 			) : null}
 		</View>
 	);
 };
 
-const styles = StyleSheet.create({
-	wrap: { marginBottom: spacing.lg },
-	label: { ...typography.label, marginBottom: spacing.xs },
-	fieldRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		borderWidth: 1,
-		borderRadius: radius.lg,
-		paddingHorizontal: spacing.md,
-		minHeight: 48,
-	},
-	input: {
-		flex: 1,
-		fontSize: 15,
-		color: colors.text,
-		paddingVertical: 0,
-	},
-	leftIcon: { marginRight: spacing.sm },
-	rightIcon: { marginLeft: spacing.sm, paddingHorizontal: spacing.xs },
-	toggle: {
-		...typography.caption,
-		color: colors.primaryDark,
-		fontWeight: '700',
-	},
-	error: { ...typography.caption, color: colors.danger, marginTop: spacing.xs },
-	helper: { ...typography.caption, color: colors.textMuted, marginTop: spacing.xs },
+const stylesWrap = StyleSheet.create({
+	mb: { marginBottom: 4 },
+	left: { marginRight: 8 },
+	right: { marginLeft: 8, paddingHorizontal: 4 },
+	toggle: { fontWeight: '600' },
+	mt: { marginTop: 4 },
 });
 
 export default Input;

@@ -5,17 +5,16 @@ import MyListingsScreen from '../screens/marketplace/MyListingsScreen';
 import ListingFormScreen from '../screens/marketplace/ListingFormScreen';
 import ListingDetailScreen from '../screens/marketplace/ListingDetailScreen';
 import MarketInsightsScreen from '../screens/operations/MarketInsightsScreen';
-import { colors } from '../config/theme';
+import { useStackScreenDefaults } from './navigationStyles';
 
 const Stack = createNativeStackNavigator();
 
 export default function SellStack() {
+	const hdr = useStackScreenDefaults();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTitleStyle: { color: colors.text, fontWeight: '700' },
-				headerTintColor: colors.primary,
+				...hdr,
 			}}
 		>
 			<Stack.Screen name="MyListings" component={MyListingsScreen} options={{ headerShown: false }} />

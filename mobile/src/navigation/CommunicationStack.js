@@ -9,17 +9,16 @@ import NotificationPreferencesScreen from '../screens/communication/Notification
 import WriteReviewScreen from '../screens/communication/WriteReviewScreen';
 import UserReviewsScreen from '../screens/communication/UserReviewsScreen';
 import ReportUserScreen from '../screens/communication/ReportUserScreen';
-import { colors } from '../config/theme';
+import { useStackScreenDefaults } from './navigationStyles';
 
 const Stack = createNativeStackNavigator();
 
 export default function CommunicationStack() {
+	const hdr = useStackScreenDefaults();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTitleStyle: { color: colors.text, fontWeight: '700' },
-				headerTintColor: colors.primary,
+				...hdr,
 			}}
 		>
 			<Stack.Screen name="ConversationsList" component={ConversationsListScreen} options={{ title: 'Messages' }} />

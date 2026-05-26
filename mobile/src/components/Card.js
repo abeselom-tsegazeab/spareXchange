@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { colors, radius, shadow, spacing } from '../config/theme';
+import { useTheme } from '../context/ThemeContext';
 
-const Card = ({ children, onPress, style, flat = false, padding = spacing.lg }) => {
+const Card = ({ children, onPress, style, flat = false, padding }) => {
+	const { colors, radius, shadow: shadowTokens, spacing } = useTheme();
+	const pad = padding ?? spacing.lg;
+
+	const styles = useMemo(
+		() =>
+			StyleSheet.create({
+				base: {
+					backgroundColor: colors.surface,
+					borderRadius: radius.card,
+					borderWidth: 1,
+					borderColor: colors.border,
+				},
+			}),
+		[colors.surface, colors.border, radius.card]
+	);
+
 	const content = (
 		<View
 			style={[
 				styles.base,
-				{ padding },
-				!flat && shadow.sm,
+				{ padding: pad },
+				!flat && shadowTokens.sm,
 				style,
 			]}
 		>
@@ -25,14 +41,5 @@ const Card = ({ children, onPress, style, flat = false, padding = spacing.lg }) 
 	}
 	return content;
 };
-
-const styles = StyleSheet.create({
-	base: {
-		backgroundColor: colors.surface,
-		borderRadius: radius.lg,
-		borderWidth: 1,
-		borderColor: colors.border,
-	},
-});
 
 export default Card;

@@ -7,17 +7,16 @@ import ProposeExchangeScreen from '../screens/exchanges/ProposeExchangeScreen';
 import NegotiateMeetingScreen from '../screens/exchanges/NegotiateMeetingScreen';
 import HandshakeScreen from '../screens/exchanges/HandshakeScreen';
 import HandoverPhotoScreen from '../screens/exchanges/HandoverPhotoScreen';
-import { colors } from '../config/theme';
+import { useStackScreenDefaults } from './navigationStyles';
 
 const Stack = createNativeStackNavigator();
 
 export default function TradesStack() {
+	const hdr = useStackScreenDefaults();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTitleStyle: { color: colors.text, fontWeight: '700' },
-				headerTintColor: colors.primary,
+				...hdr,
 			}}
 		>
 			<Stack.Screen name="ExchangesList" component={ExchangesListScreen} options={{ headerShown: false }} />

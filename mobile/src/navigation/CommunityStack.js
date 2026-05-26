@@ -6,17 +6,16 @@ import ActivityFeedScreen from '../screens/community/ActivityFeedScreen';
 import AchievementsScreen from '../screens/community/AchievementsScreen';
 import AchievementLeaderboardScreen from '../screens/community/AchievementLeaderboardScreen';
 import PublicProfileScreen from '../screens/community/PublicProfileScreen';
-import { colors } from '../config/theme';
+import { useStackScreenDefaults } from './navigationStyles';
 
 const Stack = createNativeStackNavigator();
 
 export default function CommunityStack() {
+	const hdr = useStackScreenDefaults();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTitleStyle: { color: colors.text, fontWeight: '700' },
-				headerTintColor: colors.primary,
+				...hdr,
 			}}
 		>
 			<Stack.Screen name="CommunityHome" component={CommunityHomeScreen} options={{ title: 'Community' }} />

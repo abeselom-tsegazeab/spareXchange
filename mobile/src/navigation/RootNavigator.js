@@ -9,10 +9,12 @@ import OperationsStack from './OperationsStack';
 import CommunityStack from './CommunityStack';
 import SplashScreen from '../screens/SplashScreen';
 import { useAuthStore } from '../store/authStore';
+import { useTheme } from '../context/ThemeContext';
 
 const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
+	const { navigationTheme } = useTheme();
 	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 	const isHydrating = useAuthStore((s) => s.isHydrating);
 	const hydrate = useAuthStore((s) => s.hydrate);
@@ -22,7 +24,7 @@ export default function RootNavigator() {
 	}, [hydrate]);
 
 	return (
-		<NavigationContainer>
+		<NavigationContainer theme={navigationTheme}>
 			<Stack.Navigator screenOptions={{ headerShown: false }}>
 				{isHydrating ? (
 					<Stack.Screen name="Splash" component={SplashScreen} />

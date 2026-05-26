@@ -7,17 +7,19 @@ import VerifyEmailScreen from '../screens/auth/VerifyEmailScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
 import MFAValidateScreen from '../screens/auth/MFAValidateScreen';
+import { useTheme } from '../context/ThemeContext';
 
 const Stack = createNativeStackNavigator();
 
 export default function AuthStack() {
+	const { colors } = useTheme();
 	return (
 		<Stack.Navigator
 			initialRouteName="Login"
 			screenOptions={{
 				headerShown: false,
 				animation: 'slide_from_right',
-				contentStyle: { backgroundColor: '#F9FAFB' },
+				contentStyle: { backgroundColor: colors.bg },
 			}}
 		>
 			<Stack.Screen name="Login" component={LoginScreen} />

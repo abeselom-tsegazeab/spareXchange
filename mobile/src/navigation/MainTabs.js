@@ -17,32 +17,36 @@ import MFASetupScreen from '../screens/auth/MFASetupScreen';
 import MFAVerifyScreen from '../screens/auth/MFAVerifyScreen';
 import RequestRoleScreen from '../screens/auth/RequestRoleScreen';
 
-import { colors } from '../config/theme';
+import { useStackScreenDefaults } from './navigationStyles';
+import { useTheme } from '../context/ThemeContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-const TabIcon = ({ label, focused }) => (
-	<View style={{ alignItems: 'center', justifyContent: 'center' }}>
-		<Text
-			style={{
-				fontSize: 11,
-				fontWeight: focused ? '700' : '500',
-				color: focused ? colors.primary : colors.textMuted,
-			}}
-		>
-			{label}
-		</Text>
-	</View>
-);
+const TabIcon = ({ label, focused }) => {
+	const { colors } = useTheme();
+	return (
+		<View style={{ alignItems: 'center', justifyContent: 'center' }}>
+			<Text
+				style={{
+					fontSize: 11,
+					fontWeight: focused ? '600' : '500',
+					color: focused ? colors.primary : colors.tabBarInactive,
+				}}
+			>
+				{label}
+			</Text>
+		</View>
+	);
+};
 
 function ProfileStack() {
+	const hdr = useStackScreenDefaults();
 	return (
 		<Stack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTitleStyle: { color: colors.text, fontWeight: '700' },
-				headerTintColor: colors.primary,
+				...hdr,
+				headerShown: true,
 			}}
 		>
 			<Stack.Screen name="ProfileHome" component={ProfileScreen} options={{ title: 'My Profile' }} />
@@ -55,6 +59,7 @@ function ProfileStack() {
 }
 
 export default function MainTabs() {
+	const { colors } = useTheme();
 	return (
 		<Tab.Navigator
 			screenOptions={{
@@ -67,6 +72,8 @@ export default function MainTabs() {
 					paddingBottom: 8,
 					paddingTop: 8,
 				},
+				tabBarActiveTintColor: colors.primary,
+				tabBarInactiveTintColor: colors.tabBarInactive,
 			}}
 		>
 			<Tab.Screen

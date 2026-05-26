@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "SpareXChange",
-    "slug": "sparexchange-mobile",
+    "slug": "sparexchange",
     "version": "1.0.0",
     "scheme": "sparexchange",
     "orientation": "portrait",
@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sparexchange.mobile"
+      "bundleIdentifier": "com.sparexchange.mobile",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.sparexchange.mobile",
@@ -21,11 +24,12 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "permissions": [
-        "CAMERA",
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -61,7 +65,11 @@
       "@react-native-community/datetimepicker"
     ],
     "extra": {
-      "apiUrl": null
-    }
+      "apiUrl": {},
+      "eas": {
+        "projectId": "e6ef9dd4-4063-4a31-ae88-0a2589f3ba24"
+      }
+    },
+    "owner": "astu-graduation-cse-students"
   }
 }
