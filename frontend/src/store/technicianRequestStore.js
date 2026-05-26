@@ -120,6 +120,29 @@ export const useTechnicianRequestStore = create((set, get) => ({
 		}
 	},
 
+	// Update request status (user only)
+	updateRequestStatus: async (requestId, status) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.patch(`${API_URL}/${requestId}/status`, { status });
+			set({ 
+				isLoading: false, 
+				message: response.data.message
+			});
+			// Refresh my requests to show updated status
+			await get().getMyRequests();
+			// Also refresh current request if it's the same one
+			const { currentRequest } = get();
+			if (currentRequest && currentRequest._id === requestId) {
+				await get().getTechnicianRequest(requestId);
+			}
+			return response.data;
+		} catch (error) {
+			set({ error: error.response?.data?.message || "Error updating request status", isLoading: false });
+			throw error;
+		}
+	},
+
 	// Generate handshake token (technician only)
 	generateHandshakeToken: async (requestId) => {
 		set({ isLoading: true, error: null });

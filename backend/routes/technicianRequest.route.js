@@ -6,6 +6,7 @@ import {
 	getTechnicianRequest,
 	submitQuote,
 	acceptQuote,
+	updateRequestStatus,
 	generateVerificationToken,
 	completeWithToken,
 	cancelTechnicianRequest
@@ -22,6 +23,7 @@ router.get("/:id", verifyToken, getTechnicianRequest);
 // User Actions
 router.post("/", verifyToken, createTechnicianRequest);
 router.post("/:id/accept-quote/:techId", verifyToken, acceptQuote);
+router.patch("/:id/status", verifyToken, updateRequestStatus);
 router.post("/:id/complete-handshake", verifyToken, completeWithToken);
 router.put("/:id/cancel", verifyToken, cancelTechnicianRequest);
 

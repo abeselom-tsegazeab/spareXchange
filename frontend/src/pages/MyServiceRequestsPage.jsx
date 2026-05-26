@@ -26,9 +26,11 @@ const PRIORITY_COLORS = {
 };
 
 const MyServiceRequestsPage = () => {
-	const { myRequests, getMyRequests, cancelRequest, isLoading } = useTechnicianRequestStore();
+	const { myRequests, getMyRequests, cancelRequest, updateRequestStatus, isLoading } = useTechnicianRequestStore();
 	const { user } = useAuthStore();
 	const [cancelModal, setCancelModal] = useState(null);
+	const [statusModal, setStatusModal] = useState(null);
+	const [selectedStatus, setSelectedStatus] = useState('');
 
 	useEffect(() => {
 		// Check if user is verified
@@ -53,6 +55,22 @@ const MyServiceRequestsPage = () => {
 			setCancelModal(null);
 		} catch (error) {
 			toast.error(error.response?.data?.message || "Failed to cancel request");
+		}
+	};
+
+	const handleStatusUpdate = async (requestId) => {
+		if (!selectedStatus) {
+			toast.error("Please select a status");
+			return;
+		}
+
+		try {
+			await updateRequestStatus(requestId, selectedStatus);
+			toast.success(`Status updated to ${selectedStatus.replace('-', ' ')}`);
+			setStatusModal(null);
+			setSelectedStatus('');
+		} catch (error) {
+			toast.error(error.response?.data?.message || "Failed to update status");
 		}
 	};
 
@@ -223,12 +241,23 @@ const MyServiceRequestsPage = () => {
 									</div>
 									<div className='flex items-center gap-2 ml-4'>
 										{request.status !== 'completed' && request.status !== 'cancelled' && (
-											<button
-												onClick={() => setCancelModal(request)}
-												className='px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition duration-200'
-											>
-												Cancel
-											</button>
+											<>
+												<button
+													onClick={() => {
+														setStatusModal(request);
+														setSelectedStatus(request.status);
+													}}
+													className='px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition duration-200'
+												>
+													Update Status
+												</button>
+												<button
+													onClick={() => setCancelModal(request)}
+													className='px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition duration-200'
+												>
+													Cancel
+												</button>
+											</>
 										)}
 										<Link
 											to={`/technician-requests/${request._id}`}
@@ -269,6 +298,61 @@ const MyServiceRequestsPage = () => {
 									className='flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200 disabled:opacity-50'
 								>
 									{isLoading ? 'Cancelling...' : 'Yes, Cancel'}
+								</button>
+							</div>
+						</motion.div>
+					</div>
+				)}
+
+				{/* Status Update Modal */}
+				{statusModal && (
+					<div className='fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4'>
+						<motion.div
+							initial={{ opacity: 0, scale: 0.9 }}
+							animate={{ opacity: 1, scale: 1 }}
+							className='bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full border border-gray-200 dark:border-gray-700'
+						>
+							<h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-2'>Update Request Status</h3>
+							<p className='text-gray-600 dark:text-gray-400 mb-4'>
+								Current status: <span className='font-semibold capitalize'>{statusModal.status}</span>
+							</p>
+							
+							<div className='mb-6'>
+								<label className='block text-gray-700 dark:text-gray-300 font-semibold mb-2'>
+									New Status
+								</label>
+								<select
+									value={selectedStatus}
+									onChange={(e) => setSelectedStatus(e.target.value)}
+									className='w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500'
+								>
+									<option value='pending'>Pending</option>
+									<option value='quoted'>Quoted</option>
+									<option value='accepted'>Accepted</option>
+									<option value='in-progress'>In Progress</option>
+									<option value='arrived'>Arrived</option>
+									<option value='started'>Started</option>
+									<option value='completed'>Completed</option>
+									<option value='cancelled'>Cancelled</option>
+								</select>
+							</div>
+
+							<div className='flex gap-3'>
+								<button
+									onClick={() => {
+										setStatusModal(null);
+										setSelectedStatus('');
+									}}
+									className='flex-1 py-3 px-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg transition duration-200'
+								>
+									Cancel
+								</button>
+								<button
+									onClick={() => handleStatusUpdate(statusModal._id)}
+									disabled={isLoading}
+									className='flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200 disabled:opacity-50'
+								>
+									{isLoading ? 'Updating...' : 'Update Status'}
 								</button>
 							</div>
 						</motion.div>
