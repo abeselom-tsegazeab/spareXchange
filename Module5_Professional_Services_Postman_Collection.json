@@ -1,0 +1,117 @@
+{
+	"info": {
+		"_postman_id": "professional-services-module-5-001",
+		"name": "Module 5: Advanced Professional Services",
+		"description": "Comprehensive collection for verifying SpareXChange technician bidding, automated matching, and secure handshake completion.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Service Requests",
+			"item": [
+				{
+					"name": "Create Technician Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"Engine Repair\",\n    \"description\": \"My car engine is making a clicking sound.\",\n    \"location\": \"Downtown Workshop\",\n    \"latitude\": 40.7128,\n    \"longitude\": -74.0060,\n    \"priority\": \"high\",\n    \"budgetMin\": 200,\n    \"budgetMax\": 600\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/technician-requests", "host": ["{{BASE_URL}}"], "path": ["api", "technician-requests"] }
+					}
+				},
+				{
+					"name": "Get Nearby Requests (Technician)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/technician-requests?serviceType=Engine Repair", "host": ["{{BASE_URL}}"], "path": ["api", "technician-requests"], "query": [{ "key": "serviceType", "value": "Engine Repair" }] }
+					}
+				},
+				{
+					"name": "Get My Requests (User)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/technician-requests/my-requests", "host": ["{{BASE_URL}}"], "path": ["api", "technician-requests", "my-requests"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Bidding & Hiring",
+			"item": [
+				{
+					"name": "Submit Quote (Technician)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estimatedCost\": 450,\n    \"additionalNotes\": \"I can fix this by tomorrow evening. I have the necessary tools.\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/technician-requests/:id/quote", "host": ["{{BASE_URL}}"], "path": ["api", "technician-requests", ":id", "quote"], "variable": [{ "key": "id", "value": "{{REQUEST_ID}}" }] }
+					}
+				},
+				{
+					"name": "Accept Quote (User)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/technician-requests/:id/accept-quote/:techId", "host": ["{{BASE_URL}}"], "path": ["api", "technician-requests", ":id", "accept-quote", ":techId"], "variable": [{ "key": "id", "value": "{{REQUEST_ID}}" }, { "key": "techId", "value": "{{TECH_ID}}" }] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Handshake & Completion",
+			"item": [
+				{
+					"name": "Generate Handshake Token (Technician)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/technician-requests/:id/handshake-token", "host": ["{{BASE_URL}}"], "path": ["api", "technician-requests", ":id", "handshake-token"], "variable": [{ "key": "id", "value": "{{REQUEST_ID}}" }] }
+					}
+				},
+				{
+					"name": "Verify & Complete (User)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"{{HANDSHAKE_TOKEN}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/technician-requests/:id/complete-handshake", "host": ["{{BASE_URL}}"], "path": ["api", "technician-requests", ":id", "complete-handshake"], "variable": [{ "key": "id", "value": "{{REQUEST_ID}}" }] }
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{ "key": "BASE_URL", "value": "http://localhost:5000" },
+		{ "key": "ACCESS_TOKEN", "value": "" },
+		{ "key": "REQUEST_ID", "value": "" },
+		{ "key": "TECH_ID", "value": "" },
+		{ "key": "HANDSHAKE_TOKEN", "value": "" }
+	]
+}

@@ -1,0 +1,153 @@
+{
+  "info": {
+    "name": "Module 10 - Community Engagement",
+    "description": "API testing collection for activity feeds, public profiles, and achievements",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Activity Feed",
+      "item": [
+        {
+          "name": "Get Personal Activity Feed",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/users/feed", "host": ["{{base_url}}"], "path": ["api", "users", "feed"] }
+          }
+        },
+        {
+          "name": "Get Activity Feed (Filtered by Type)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/users/feed?type=listing", "host": ["{{base_url}}"], "path": ["api", "users", "feed"], "query": [{ "key": "type", "value": "listing" }] }
+          }
+        },
+        {
+          "name": "Get Activity Feed (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/users/feed?page=1&limit=10", "host": ["{{base_url}}"], "path": ["api", "users", "feed"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] }
+          }
+        },
+        {
+          "name": "Get Community Highlights",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/users/feed/community", "host": ["{{base_url}}"], "path": ["api", "users", "feed", "community"] }
+          }
+        },
+        {
+          "name": "Get User's Public Activity",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/users/feed/{{userId}}", "host": ["{{base_url}}"], "path": ["api", "users", "feed", "{{userId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Public User Profiles",
+      "item": [
+        {
+          "name": "Get Public User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/users/profile/{{userId}}/public", "host": ["{{base_url}}"], "path": ["api", "users", "profile", "{{userId}}", "public"] }
+          }
+        },
+        {
+          "name": "Get User's Public Listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/users/profile/{{userId}}/listings", "host": ["{{base_url}}"], "path": ["api", "users", "profile", "{{userId}}", "listings"] }
+          }
+        },
+        {
+          "name": "Get User's Public Listings (Filtered)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/users/profile/{{userId}}/listings?category=Automotive", "host": ["{{base_url}}"], "path": ["api", "users", "profile", "{{userId}}", "listings"], "query": [{ "key": "category", "value": "Automotive" }] }
+          }
+        },
+        {
+          "name": "Get User's Reviews Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/users/profile/{{userId}}/reviews", "host": ["{{base_url}}"], "path": ["api", "users", "profile", "{{userId}}", "reviews"] }
+          }
+        },
+        {
+          "name": "Get User Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/users/profile/{{userId}}/stats", "host": ["{{base_url}}"], "path": ["api", "users", "profile", "{{userId}}", "stats"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Achievements & Badges",
+      "item": [
+        {
+          "name": "Get All Achievement Definitions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/users/achievements/definitions", "host": ["{{base_url}}"], "path": ["api", "users", "achievements", "definitions"] }
+          }
+        },
+        {
+          "name": "Get User's Achievements",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/users/achievements", "host": ["{{base_url}}"], "path": ["api", "users", "achievements"] }
+          }
+        },
+        {
+          "name": "Check and Unlock Achievements",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{base_url}}/api/users/achievements/check", "host": ["{{base_url}}"], "path": ["api", "users", "achievements", "check"] }
+          }
+        },
+        {
+          "name": "Get Achievement Leaderboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/users/achievements/leaderboard", "host": ["{{base_url}}"], "path": ["api", "users", "achievements", "leaderboard"] }
+          }
+        },
+        {
+          "name": "Get Achievement Leaderboard (Top 5)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/users/achievements/leaderboard?limit=5", "host": ["{{base_url}}"], "path": ["api", "users", "achievements", "leaderboard"], "query": [{ "key": "limit", "value": "5" }] }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000" },
+    { "key": "token", "value": "YOUR_JWT_TOKEN" },
+    { "key": "userId", "value": "USER_ID_TO_TEST" }
+  ]
+}

@@ -1,0 +1,255 @@
+{
+	"info": {
+		"name": "SpareXChange - Module 2 (Marketplace & Inventory)",
+		"description": "Postman Collection for testing all Marketplace and Inventory features (Module 2). Includes advanced search, proximity, bulk upload, and community voting.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Create Listing",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Brembo Front Brake Pads\",\n  \"description\": \"High-performance brake pads for various vehicles.\",\n  \"price\": 120,\n  \"category\": \"vehicle\",\n  \"condition\": \"new\",\n  \"location\": \"Addis Ababa, Ethiopia\",\n  \"locationCoords\": {\n    \"type\": \"Point\",\n    \"coordinates\": [38.7578, 8.9806]\n  },\n  \"compatibleVehicles\": [\n    {\n      \"brand\": \"Toyota\",\n      \"model\": \"Camry\",\n      \"yearStart\": 2012,\n      \"yearEnd\": 2017\n    }\n  ],\n  \"specifications\": {\n    \"Position\": \"Front\",\n    \"Brand\": \"Brembo\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/listings",
+					"host": ["{{base_url}}"],
+					"path": ["listings"]
+				}
+			}
+		},
+		{
+			"name": "2. Get All Listings (Public)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings?category=vehicle&condition=new",
+					"host": ["{{base_url}}"],
+					"path": ["listings"],
+					"query": [
+						{ "key": "category", "value": "vehicle" },
+						{ "key": "condition", "value": "new" }
+					]
+				}
+			}
+		},
+		{
+			"name": "3. Proximity Search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings?latitude=8.9806&longitude=38.7578&radius=50",
+					"host": ["{{base_url}}"],
+					"path": ["listings"],
+					"query": [
+						{ "key": "latitude", "value": "8.9806" },
+						{ "key": "longitude", "value": "38.7578" },
+						{ "key": "radius", "value": "50" }
+					]
+				}
+			}
+		},
+		{
+			"name": "4. Advanced Fitment Filter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings?brand=Toyota&model=Camry&year=2015",
+					"host": ["{{base_url}}"],
+					"path": ["listings"],
+					"query": [
+						{ "key": "brand", "value": "Toyota" },
+						{ "key": "model", "value": "Camry" },
+						{ "key": "year", "value": "2015" }
+					]
+				}
+			}
+		},
+		{
+			"name": "5. Get Single Listing Detail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings/YOUR_LISTING_ID_HERE",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "YOUR_LISTING_ID_HERE"]
+				}
+			}
+		},
+		{
+			"name": "6. Update Listing",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"price\": 110,\n  \"available\": false\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/listings/YOUR_LISTING_ID_HERE",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "YOUR_LISTING_ID_HERE"]
+				}
+			}
+		},
+		{
+			"name": "7. Get My Listings",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings/my-listings",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "my-listings"]
+				}
+			}
+		},
+		{
+			"name": "8. Toggle Availability",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings/YOUR_LISTING_ID_HERE/toggle-availability",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "YOUR_LISTING_ID_HERE", "toggle-availability"]
+				}
+			}
+		},
+		{
+			"name": "9. Bulk Create Listings",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"listings\": [\n    {\n      \"title\": \"Oil Filter A\",\n      \"description\": \"Standard oil filter\",\n      \"price\": 15,\n      \"category\": \"vehicle\",\n      \"condition\": \"new\",\n      \"location\": \"Addis Ababa\"\n    },\n    {\n      \"title\": \"Oil Filter B\",\n      \"description\": \"Premium oil filter\",\n      \"price\": 25,\n      \"category\": \"vehicle\",\n      \"condition\": \"new\",\n      \"location\": \"Addis Ababa\"\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/listings/bulk",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "bulk"]
+				}
+			}
+		},
+		{
+			"name": "10. Renew Listing (Extend 30 Days)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings/YOUR_LISTING_ID_HERE/renew",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "YOUR_LISTING_ID_HERE", "renew"]
+				}
+			}
+		},
+		{
+			"name": "11. Report Listing",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"reason\": \"inaccurate\",\n  \"details\": \"The part does not fit the mentioned model.\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/listings/YOUR_LISTING_ID_HERE/report",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "YOUR_LISTING_ID_HERE", "report"]
+				}
+			}
+		},
+		{
+			"name": "12. Vote Compatibility",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"voteType\": \"up\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/listings/YOUR_LISTING_ID_HERE/compatibility/YOUR_VEHICLE_ENTRY_ID_HERE/vote",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "YOUR_LISTING_ID_HERE", "compatibility", "YOUR_VEHICLE_ENTRY_ID_HERE", "vote"]
+				}
+			}
+		},
+		{
+			"name": "13. High Demand Analytics (Seller)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings/analytics/high-demand",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "analytics", "high-demand"]
+				}
+			}
+		},
+		{
+			"name": "14. Personalized Recommendations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings/recommendations",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "recommendations"]
+				}
+			}
+		},
+		{
+			"name": "15. Delete Listing (Archive)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/listings/YOUR_LISTING_ID_HERE",
+					"host": ["{{base_url}}"],
+					"path": ["listings", "YOUR_LISTING_ID_HERE"]
+				}
+			}
+		}
+	]
+}

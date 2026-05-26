@@ -1,0 +1,638 @@
+{
+  "info": {
+    "name": "Module 8 - Operations & Intelligence",
+    "description": "Comprehensive API testing collection for analytics, reporting, and operational intelligence features",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Platform Statistics",
+      "item": [
+        {
+          "name": "Get Basic Platform Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "stats"]
+            },
+            "description": "Get basic platform statistics (total users, listings, exchanges)"
+          }
+        },
+        {
+          "name": "Get Comprehensive Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/comprehensive",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "comprehensive"]
+            },
+            "description": "Get comprehensive platform statistics with breakdowns and recent activity"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Time-Series Analytics",
+      "item": [
+        {
+          "name": "Get Daily Trends (Last 30 Days)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/trends?period=daily&days=30",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "trends"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "daily"
+                },
+                {
+                  "key": "days",
+                  "value": "30"
+                }
+              ]
+            },
+            "description": "Get daily trends for users, listings, and exchanges over last 30 days"
+          }
+        },
+        {
+          "name": "Get Weekly Trends (Last 12 Weeks)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/trends?period=weekly&days=84",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "trends"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "weekly"
+                },
+                {
+                  "key": "days",
+                  "value": "84"
+                }
+              ]
+            },
+            "description": "Get weekly trends for the last 12 weeks"
+          }
+        },
+        {
+          "name": "Get Monthly Trends (Last 12 Months)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/trends?period=monthly&days=365",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "trends"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "monthly"
+                },
+                {
+                  "key": "days",
+                  "value": "365"
+                }
+              ]
+            },
+            "description": "Get monthly trends for the last 12 months"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. User Engagement Analytics",
+      "item": [
+        {
+          "name": "Get User Engagement Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/engagement",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "engagement"]
+            },
+            "description": "Get user engagement metrics including active users, retention rate, and average listings per user"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Exchange Performance",
+      "item": [
+        {
+          "name": "Get Exchange Performance Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/exchanges",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "exchanges"]
+            },
+            "description": "Get exchange performance metrics including completion rate, average completion time, and status distribution"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Category & Listing Performance",
+      "item": [
+        {
+          "name": "Get Category Performance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/categories",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "categories"]
+            },
+            "description": "Get category performance including listings by category, average prices, condition distribution, and top sellers"
+          }
+        },
+        {
+          "name": "Get High Demand Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/listings/analytics/high-demand",
+              "host": ["{{base_url}}"],
+              "path": ["api", "listings", "analytics", "high-demand"]
+            },
+            "description": "Get high-demand, low-supply search queries to identify market opportunities"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Sustainability Metrics",
+      "item": [
+        {
+          "name": "Get Sustainability & Eco-Points Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/sustainability",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "sustainability"]
+            },
+            "description": "Get sustainability metrics including recycling stats, eco-points distribution, and top eco-point earners"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Search Analytics",
+      "item": [
+        {
+          "name": "Get Search Analytics (Last 30 Days)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/searches?days=30",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "searches"],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "30"
+                }
+              ]
+            },
+            "description": "Get search analytics including popular queries, unmet demand, and search success rate"
+          }
+        },
+        {
+          "name": "Get Search Analytics (Last 7 Days)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/searches?days=7",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "searches"],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "Get search analytics for the last 7 days"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Review & Rating Analytics",
+      "item": [
+        {
+          "name": "Get Review Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/analytics/reviews",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "analytics", "reviews"]
+            },
+            "description": "Get review analytics including average rating, rating distribution, and top-rated users"
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Report Management",
+      "item": [
+        {
+          "name": "Get All Reports (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Get all reports with pagination"
+          }
+        },
+        {
+          "name": "Get Reports by Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports?status=pending",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            },
+            "description": "Get all pending reports"
+          }
+        },
+        {
+          "name": "Get Reports by Target Model",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports?targetModel=Listing",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports"],
+              "query": [
+                {
+                  "key": "targetModel",
+                  "value": "Listing"
+                }
+              ]
+            },
+            "description": "Get all reports targeting listings"
+          }
+        },
+        {
+          "name": "Get Report by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/{{report_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "{{report_id}}"]
+            },
+            "description": "Get detailed information about a specific report"
+          }
+        },
+        {
+          "name": "Get Report Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "stats"]
+            },
+            "description": "Get report statistics including reports by status, target, reason, and average resolution time"
+          }
+        },
+        {
+          "name": "Update Report Status - Resolve",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"resolved\",\n  \"moderatorNote\": \"Investigated and confirmed violation. Listing removed.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/{{report_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "{{report_id}}"]
+            },
+            "description": "Update report status to resolved with moderator note"
+          }
+        },
+        {
+          "name": "Update Report Status - Dismiss",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"dismissed\",\n  \"moderatorNote\": \"No violation found after investigation.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/{{report_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "{{report_id}}"]
+            },
+            "description": "Update report status to dismissed with moderator note"
+          }
+        },
+        {
+          "name": "Update Report Status - Remove Listing",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"resolved\",\n  \"moderatorNote\": \"Listing violates community guidelines.\",\n  \"action\": \"remove_listing\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/{{report_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "{{report_id}}"]
+            },
+            "description": "Resolve report and remove the reported listing"
+          }
+        },
+        {
+          "name": "Update Report Status - Ban User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"resolved\",\n  \"moderatorNote\": \"User violated terms of service multiple times.\",\n  \"action\": \"ban_user\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/{{report_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "{{report_id}}"]
+            },
+            "description": "Resolve report and ban the reported user"
+          }
+        },
+        {
+          "name": "Update Report Status - Warn User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"reviewed\",\n  \"moderatorNote\": \"First violation. User has been warned.\",\n  \"action\": \"warn_user\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/{{report_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "{{report_id}}"]
+            },
+            "description": "Mark report as reviewed and send warning to user"
+          }
+        },
+        {
+          "name": "Delete Report",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/{{report_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "{{report_id}}"]
+            },
+            "description": "Delete a report (admin cleanup)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Admin Jobs",
+      "item": [
+        {
+          "name": "Run Saved Search Alerts Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"limitSearches\": 100,\n  \"limitListingsPerSearch\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/jobs/saved-search-alerts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "jobs", "saved-search-alerts"]
+            },
+            "description": "Manually trigger the saved search alerts processing job"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "your_jwt_token_here",
+      "type": "string"
+    },
+    {
+      "key": "report_id",
+      "value": "report_id_here",
+      "type": "string"
+    }
+  ]
+}

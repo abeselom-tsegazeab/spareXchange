@@ -1,0 +1,65 @@
+=== STEP 1: Kill existing node processes ===
+Processes killed
+
+=== STEP 2: Clear old logs ===
+Logs cleared
+
+=== STEP 3: Start backend server ===
+Backend process started (PID: 3025)
+Waiting for server to start...
+✓ Server is running on port 5000
+
+=== STEP 4: Test authentication flow ===
+Using email: testuser_1779026842@test.com
+
+--- SIGNUP ---
+Status: 201
+Response: {"success":true,"message":"User created successfully","accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5Y2JhMDkxOGRjNjNhYTZmYjQ1YTAiLCJpYXQiOjE3NzkwMjY4NTYsImV4cCI6MTc3
+
+--- LOGIN ---
+Status: 200
+Response: {"success":true,"message":"Logged in successfully","accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5Y2JhMDkxOGRjNjNhYTZmYjQ1YTAiLCJpYXQiOjE3NzkwMjY4NzcsImV4cCI6MTc3OTA
+Token extracted: ...
+
+--- LOGOUT ---
+Status: 200
+Response: {"success":true,"message":"Logged out successfully"}
+
+
+--- CHECK-AUTH (without token - should be 401) ---
+Status: 500
+Response: {"success":false,"message":"Something went wrong","error":{"name":"ReferenceError","message":"require is not defined","stack":"ReferenceError: require is not defined\n    at notFoundHandler 
+
+--- LOGIN AGAIN ---
+Status: 200
+Response: {"success":true,"message":"Logged in successfully","accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA5Y2JhMDkxOGRjNjNhYTZmYjQ1YTAiLCJpYXQiOjE3NzkwMjY4ODEsImV4cCI6MTc3OTA
+
+Waiting 5 seconds before checking logs...
+
+=== STEP 5: Log Analysis ===
+
+--- Last 30 lines from backend/logs/http.log (looking for 401/429 errors) ---
+✓ http.log exists
+{"error":{"message":"require is not defined","name":"ReferenceError","stack":"ReferenceError: require is not defined\n    at notFoundHandler (file:///C:/Users/HP/Documents/GitHub/spareXchange/backend/middleware/errorHandler.js:150:28)\n    at Layer.handle [as handle_request] (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:286:9\n    at router.process_params (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at httpLogger (file:///C:/Users/HP/Documents/GitHub/spareXchange/backend/utils/logger.js:142:2)\n    at Layer.handle [as handle_request] (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:286:9"},"ip":"::1","level":"error","message":"System Error","method":"GET","service":"sparexchange-api","timestamp":"2026-05-17 17:07:20","url":"/api/health","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"17ms","ip":"::1","level":"error","message":"HTTP 5xx Error","method":"GET","service":"sparexchange-api","statusCode":500,"timestamp":"2026-05-17 17:07:20","url":"/api/health","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"17ms","ip":"::1","level":"info","message":"HTTP","method":"GET","service":"sparexchange-api","statusCode":500,"timestamp":"2026-05-17 17:07:20","url":"/api/health","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"33067ms","ip":"::1","level":"info","message":"HTTP Request","method":"POST","service":"sparexchange-api","statusCode":201,"timestamp":"2026-05-17 17:07:55","url":"/api/auth/signup","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"33067ms","ip":"::1","level":"info","message":"HTTP","method":"POST","service":"sparexchange-api","statusCode":201,"timestamp":"2026-05-17 17:07:55","url":"/api/auth/signup","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"1272ms","ip":"::1","level":"info","message":"HTTP Request","method":"POST","service":"sparexchange-api","statusCode":200,"timestamp":"2026-05-17 17:07:57","url":"/api/auth/login","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"1272ms","ip":"::1","level":"info","message":"HTTP","method":"POST","service":"sparexchange-api","statusCode":200,"timestamp":"2026-05-17 17:07:57","url":"/api/auth/login","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"1ms","ip":"::1","level":"info","message":"HTTP Request","method":"POST","service":"sparexchange-api","statusCode":200,"timestamp":"2026-05-17 17:07:58","url":"/api/auth/logout","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"1ms","ip":"::1","level":"info","message":"HTTP","method":"POST","service":"sparexchange-api","statusCode":200,"timestamp":"2026-05-17 17:07:58","url":"/api/auth/logout","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"error":{"message":"require is not defined","name":"ReferenceError","stack":"ReferenceError: require is not defined\n    at notFoundHandler (file:///C:/Users/HP/Documents/GitHub/spareXchange/backend/middleware/errorHandler.js:150:28)\n    at Layer.handle [as handle_request] (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:286:9\n    at router.process_params (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:646:15\n    at next (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:265:14)\n    at router.handle (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:175:3)\n    at router (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:47:12)"},"ip":"::1","level":"error","message":"System Error","method":"GET","service":"sparexchange-api","timestamp":"2026-05-17 17:07:59","url":"/api/auth/check","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"3ms","ip":"::1","level":"error","message":"HTTP 5xx Error","method":"GET","service":"sparexchange-api","statusCode":500,"timestamp":"2026-05-17 17:07:59","url":"/api/auth/check","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"3ms","ip":"::1","level":"info","message":"HTTP","method":"GET","service":"sparexchange-api","statusCode":500,"timestamp":"2026-05-17 17:07:59","url":"/api/auth/check","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"2219ms","ip":"::1","level":"info","message":"HTTP Request","method":"POST","service":"sparexchange-api","statusCode":200,"timestamp":"2026-05-17 17:08:02","url":"/api/auth/login","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"2219ms","ip":"::1","level":"info","message":"HTTP","method":"POST","service":"sparexchange-api","statusCode":200,"timestamp":"2026-05-17 17:08:02","url":"/api/auth/login","userAgent":"curl/8.6.0","userId":"anonymous"}
+
+--- Last 20 lines from backend/logs/error.log ---
+✓ error.log exists
+{"error":{"message":"require is not defined","name":"ReferenceError","stack":"ReferenceError: require is not defined\n    at notFoundHandler (file:///C:/Users/HP/Documents/GitHub/spareXchange/backend/middleware/errorHandler.js:150:28)\n    at Layer.handle [as handle_request] (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:286:9\n    at router.process_params (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at httpLogger (file:///C:/Users/HP/Documents/GitHub/spareXchange/backend/utils/logger.js:142:2)\n    at Layer.handle [as handle_request] (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:286:9"},"ip":"::1","level":"error","message":"System Error","method":"GET","service":"sparexchange-api","timestamp":"2026-05-17 17:07:20","url":"/api/health","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"17ms","ip":"::1","level":"error","message":"HTTP 5xx Error","method":"GET","service":"sparexchange-api","statusCode":500,"timestamp":"2026-05-17 17:07:20","url":"/api/health","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"error":{"message":"require is not defined","name":"ReferenceError","stack":"ReferenceError: require is not defined\n    at notFoundHandler (file:///C:/Users/HP/Documents/GitHub/spareXchange/backend/middleware/errorHandler.js:150:28)\n    at Layer.handle [as handle_request] (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:286:9\n    at router.process_params (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:646:15\n    at next (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:265:14)\n    at router.handle (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:175:3)\n    at router (C:\\Users\\HP\\Documents\\GitHub\\spareXchange\\node_modules\\express\\lib\\router\\index.js:47:12)"},"ip":"::1","level":"error","message":"System Error","method":"GET","service":"sparexchange-api","timestamp":"2026-05-17 17:07:59","url":"/api/auth/check","userAgent":"curl/8.6.0","userId":"anonymous"}
+{"duration":"3ms","ip":"::1","level":"error","message":"HTTP 5xx Error","method":"GET","service":"sparexchange-api","statusCode":500,"timestamp":"2026-05-17 17:07:59","url":"/api/auth/check","userAgent":"curl/8.6.0","userId":"anonymous"}
+
+=== FLOW COMPLETE ===

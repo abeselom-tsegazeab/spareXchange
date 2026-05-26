@@ -1,0 +1,181 @@
+{
+	"info": {
+		"_postman_id": "exchange-module-3-001",
+		"name": "Module 3: Exchange & Transaction Management",
+		"description": "Exhaustive collection for verifying SpareXChange transactional flows, including QR digital handshakes and safe-zone negotiation.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Core Negotiation",
+			"item": [
+				{
+					"name": "Propose Exchange (Buyer)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"listingId\": \"{{LISTING_ID}}\",\n    \"offeredItems\": \"Brake Pads + $50 Cash\",\n    \"meetingLocation\": \"Neutral Ground Cafe\",\n    \"meetingTime\": \"2024-12-01T14:00:00Z\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/exchanges", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges"] }
+					}
+				},
+				{
+					"name": "Seller Counter-Offer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"offeredItems\": \"Brake Pads + $75 Cash\",\n    \"note\": \"The engine part is rare and heavy.\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/:id/counter-offer", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", ":id", "counter-offer"], "variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }] }
+					}
+				},
+				{
+					"name": "Update Status (Accept/Reject/Cancel)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"accepted\",\n    \"reason\": \"Happy with the counter-offer\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/:id/status", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", ":id", "status"], "variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Modernization & Security",
+			"item": [
+				{
+					"name": "Get Safe Zones",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/info/safe-zones", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", "info", "safe-zones"] }
+					}
+				},
+				{
+					"name": "Negotiate & Lock Meeting",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"meetingLocation\": \"Police Station Hub A\",\n    \"isLocked\": true,\n    \"negotiationNotes\": \"Safety first.\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/:id/negotiate", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", ":id", "negotiate"], "variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }] }
+					}
+				},
+				{
+					"name": "Generate QR Handshake (Seller)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/:id/handshake/generate", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", ":id", "handshake", "generate"], "variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }] }
+					}
+				},
+				{
+					"name": "Verify Handshake (Buyer)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"123456\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/:id/handshake/verify", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", ":id", "handshake", "verify"], "variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }] }
+					}
+				},
+				{
+					"name": "Upload Handover Photo Proof",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"photoUrl\": \"https://cloudinary.com/exchange/photo_001.jpg\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/:id/handover-photo", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", ":id", "handover-photo"], "variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Disputes & Administration",
+			"item": [
+				{
+					"name": "Open Dispute (Participant)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reason\": \"Item condition is not as described in the proof photos.\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/:id/dispute", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", ":id", "dispute"], "variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }] }
+					}
+				},
+				{
+					"name": "Resolve Dispute (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"resolution\": \"Mutual cancellation due to item damage.\",\n    \"outcome\": \"mutual\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{BASE_URL}}/api/exchanges/:id/dispute/resolve", "host": ["{{BASE_URL}}"], "path": ["api", "exchanges", ":id", "dispute", "resolve"], "variable": [{ "key": "id", "value": "{{EXCHANGE_ID}}" }] }
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": { "type": "text/javascript", "exec": [""] }
+		},
+		{
+			"listen": "test",
+			"script": { "type": "text/javascript", "exec": [""] }
+		}
+	],
+	"variable": [
+		{ "key": "BASE_URL", "value": "http://localhost:5000" },
+		{ "key": "ACCESS_TOKEN", "value": "your_token_here" },
+		{ "key": "EXCHANGE_ID", "value": "current_exchange_id" },
+		{ "key": "LISTING_ID", "value": "target_listing_id" }
+	]
+}

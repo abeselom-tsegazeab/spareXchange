@@ -1,0 +1,256 @@
+{
+  "info": {
+    "name": "Module 9 - Advanced Notifications & Mobile Integration",
+    "description": "Comprehensive API testing for push notifications, webhooks, templates, and preferences",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Basic Notifications",
+      "item": [
+        {
+          "name": "Get User Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications", "host": ["{{base_url}}"], "path": ["api", "notifications"] }
+          }
+        },
+        {
+          "name": "Get Notification History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/history?page=1&limit=20", "host": ["{{base_url}}"], "path": ["api", "notifications", "history"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "20" }] }
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/unread-count", "host": ["{{base_url}}"], "path": ["api", "notifications", "unread-count"] }
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/{{notification_id}}/read", "host": ["{{base_url}}"], "path": ["api", "notifications", "{{notification_id}}", "read"] }
+          }
+        },
+        {
+          "name": "Mark All as Read",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/mark-all-read", "host": ["{{base_url}}"], "path": ["api", "notifications", "mark-all-read"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Push Notifications",
+      "item": [
+        {
+          "name": "Register Device Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"token\": \"fcm_device_token_here\",\n  \"deviceType\": \"android\",\n  \"deviceName\": \"Samsung Galaxy S21\"\n}" },
+            "url": { "raw": "{{base_url}}/api/notifications/push/register", "host": ["{{base_url}}"], "path": ["api", "notifications", "push", "register"] }
+          }
+        },
+        {
+          "name": "Get Registered Devices",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/push/devices", "host": ["{{base_url}}"], "path": ["api", "notifications", "push", "devices"] }
+          }
+        },
+        {
+          "name": "Toggle Device Token",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"token\": \"fcm_device_token_here\"\n}" },
+            "url": { "raw": "{{base_url}}/api/notifications/push/toggle", "host": ["{{base_url}}"], "path": ["api", "notifications", "push", "toggle"] }
+          }
+        },
+        {
+          "name": "Remove Device Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"token\": \"fcm_device_token_here\"\n}" },
+            "url": { "raw": "{{base_url}}/api/notifications/push/remove", "host": ["{{base_url}}"], "path": ["api", "notifications", "push", "remove"] }
+          }
+        },
+        {
+          "name": "Send Push Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": \"user_id_here\",\n  \"title\": \"New Message\",\n  \"message\": \"You have a new message from John\",\n  \"type\": \"message\",\n  \"link\": \"/messages/123\"\n}" },
+            "url": { "raw": "{{base_url}}/api/notifications/push/send", "host": ["{{base_url}}"], "path": ["api", "notifications", "push", "send"] }
+          }
+        },
+        {
+          "name": "Get Notification Stats (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/push/stats", "host": ["{{base_url}}"], "path": ["api", "notifications", "push", "stats"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Notification Preferences",
+      "item": [
+        {
+          "name": "Get Preferences",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/preferences", "host": ["{{base_url}}"], "path": ["api", "notifications", "preferences"] }
+          }
+        },
+        {
+          "name": "Update Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"emailNotifications\": true,\n  \"pushNotifications\": true,\n  \"smsNotifications\": false,\n  \"listingAlerts\": true,\n  \"exchangeUpdates\": true,\n  \"messageNotifications\": true,\n  \"systemAnnouncements\": true,\n  \"marketingEmails\": false\n}" },
+            "url": { "raw": "{{base_url}}/api/notifications/preferences", "host": ["{{base_url}}"], "path": ["api", "notifications", "preferences"] }
+          }
+        },
+        {
+          "name": "Reset Preferences",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/preferences/reset", "host": ["{{base_url}}"], "path": ["api", "notifications", "preferences", "reset"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Notification Templates",
+      "item": [
+        {
+          "name": "Get All Templates",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/templates", "host": ["{{base_url}}"], "path": ["api", "notifications", "templates"] }
+          }
+        },
+        {
+          "name": "Create Notification from Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"templateName\": \"listing_match\",\n  \"userId\": \"user_id_here\",\n  \"variables\": {\n    \"listingTitle\": \"Tesla Model 3 Headlight\"\n  }\n}" },
+            "url": { "raw": "{{base_url}}/api/notifications/template", "host": ["{{base_url}}"], "path": ["api", "notifications", "template"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Webhook Management",
+      "item": [
+        {
+          "name": "Create Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"My Integration Webhook\",\n  \"url\": \"https://myapp.com/webhooks/sparexchange\",\n  \"events\": [\"listing.created\", \"exchange.completed\", \"message.received\"],\n  \"headers\": {\n    \"X-Custom-Header\": \"my-secret-value\"\n  }\n}" },
+            "url": { "raw": "{{base_url}}/api/notifications/webhooks", "host": ["{{base_url}}"], "path": ["api", "notifications", "webhooks"] }
+          }
+        },
+        {
+          "name": "Get All Webhooks",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/webhooks", "host": ["{{base_url}}"], "path": ["api", "notifications", "webhooks"] }
+          }
+        },
+        {
+          "name": "Get Webhook Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/webhooks/stats", "host": ["{{base_url}}"], "path": ["api", "notifications", "webhooks", "stats"] }
+          }
+        },
+        {
+          "name": "Get Webhook by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/webhooks/{{webhook_id}}", "host": ["{{base_url}}"], "path": ["api", "notifications", "webhooks", "{{webhook_id}}"] }
+          }
+        },
+        {
+          "name": "Update Webhook",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Webhook Name\",\n  \"isActive\": true,\n  \"events\": [\"listing.created\", \"exchange.completed\"]\n}" },
+            "url": { "raw": "{{base_url}}/api/notifications/webhooks/{{webhook_id}}", "host": ["{{base_url}}"], "path": ["api", "notifications", "webhooks", "{{webhook_id}}"] }
+          }
+        },
+        {
+          "name": "Regenerate Webhook Secret",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/webhooks/{{webhook_id}}/regenerate-secret", "host": ["{{base_url}}"], "path": ["api", "notifications", "webhooks", "{{webhook_id}}", "regenerate-secret"] }
+          }
+        },
+        {
+          "name": "Delete Webhook",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/webhooks/{{webhook_id}}", "host": ["{{base_url}}"], "path": ["api", "notifications", "webhooks", "{{webhook_id}}"] }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000", "type": "string" },
+    { "key": "token", "value": "your_jwt_token_here", "type": "string" },
+    { "key": "notification_id", "value": "notification_id_here", "type": "string" },
+    { "key": "webhook_id", "value": "webhook_id_here", "type": "string" }
+  ]
+}
