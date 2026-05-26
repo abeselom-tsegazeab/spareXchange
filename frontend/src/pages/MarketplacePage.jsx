@@ -25,9 +25,36 @@ const MarketplacePage = () => {
 			alert("Please login to report a listing.");
 			return;
 		}
-		const reason = prompt("Reason for reporting?");
-		if (!reason) return;
-		const description = prompt("Please provide a description:");
+		
+		// Show reason options
+		const reasonOptions = [
+			'not_as_described',
+			'no_show', 
+			'harassment',
+			'scam',
+			'other'
+		];
+		
+		const reasonChoice = prompt(
+			"Select reason for reporting (enter number):\n" +
+			"1. Item not as described\n" +
+			"2. User didn't show up\n" +
+			"3. Harassment or inappropriate behavior\n" +
+			"4. Suspected scam or fraud\n" +
+			"5. Other"
+		);
+		
+		if (!reasonChoice) return;
+		
+		const reasonIndex = parseInt(reasonChoice) - 1;
+		if (reasonIndex < 0 || reasonIndex >= reasonOptions.length) {
+			alert("Invalid selection. Please try again.");
+			return;
+		}
+		
+		const reason = reasonOptions[reasonIndex];
+		
+		const description = prompt("Please provide a detailed description:");
 		if (!description) return;
 
 		try {
@@ -39,7 +66,8 @@ const MarketplacePage = () => {
 			});
 			alert("Report submitted successfully.");
 		} catch (error) {
-			alert("Failed to submit report.");
+			console.error("Report error:", error);
+			alert(error.response?.data?.message || "Failed to submit report.");
 		}
 	};
 

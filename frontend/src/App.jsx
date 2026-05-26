@@ -77,6 +77,7 @@ import InactivityHandler from "./components/InactivityHandler";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
+import DisputeManagement from "./pages/DisputeManagement";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -483,7 +484,7 @@ function App() {
 					path='/admin/reports'
 					element={
 						<AdminRoute>
-							<ReportManagement />
+							<DisputeManagement />
 						</AdminRoute>
 					}
 				/>
