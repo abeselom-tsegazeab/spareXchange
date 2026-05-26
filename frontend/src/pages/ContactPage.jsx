@@ -1,19 +1,24 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 // import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Recycle, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Recycle, Send, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import emailjs from '@emailjs/browser';
+import toast from "react-hot-toast";
 
 const ContactPage = () => {
+	const formRef = useRef();
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
 		subject: "",
 		message: ""
 	});
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [submitStatus, setSubmitStatus] = useState(null); // 'success' or 'error'
 
 	// const handleChange = (e) => {
 	// 	setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,11 +27,92 @@ const ContactPage = () => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		// In a real app, you would send this data to your backend
-		alert("Thank you for your message! We'll get back to you soon.");
-		setFormData({ name: "", email: "", subject: "", message: "" });
+		setIsSubmitting(true);
+		setSubmitStatus(null);
+
+		try {
+			// EmailJS configuration
+			const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+			const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+			const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+			// Debug: Log environment variables (remove in production)
+			console.log('EmailJS Config:', { 
+				serviceId: serviceId ? '✓ Set' : '✗ Missing', 
+				templateId: templateId ? '✓ Set' : '✗ Missing', 
+				publicKey: publicKey ? '✓ Set' : '✗ Missing' 
+			});
+
+			// Validate all required credentials
+			if (!serviceId || !templateId || !publicKey) {
+				console.error('Missing EmailJS configuration:', { serviceId, templateId, publicKey });
+				toast.error("Email service not configured. Please contact support.");
+				setIsSubmitting(false);
+				return;
+			}
+
+			// Validate public key format
+			if (publicKey === "YOUR_PUBLIC_KEY" || publicKey.includes("your_")) {
+				console.warn("EmailJS public key not properly configured.");
+				toast.error("Email service not configured. Please contact support.");
+				setIsSubmitting(false);
+				return;
+			}
+
+			// Prepare template parameters with user contact information
+			const templateParams = {
+				name: formData.name,
+				email: formData.email,
+				title: formData.subject,
+				message: formData.message,
+				to_name: "SpareXchange Team",
+				reply_to: formData.email,
+				// Additional fields for better email formatting
+				client: formData.name,
+				user_email: formData.email,
+				contact_info: `Name: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}`,
+			};
+
+			console.log('Sending email with params:', templateParams);
+
+			// Send email using EmailJS
+			const result = await emailjs.send(
+				serviceId,
+				templateId,
+				templateParams,
+				publicKey
+			);
+
+			console.log('EmailJS Response:', result);
+
+			if (result.status === 200) {
+				setSubmitStatus('success');
+				toast.success("Message sent successfully! We'll get back to you soon.");
+				setFormData({ name: "", email: "", subject: "", message: "" });
+				
+				// Reset success status after 5 seconds
+				setTimeout(() => setSubmitStatus(null), 5000);
+			}
+		} catch (error) {
+			console.error("Error sending email:", error);
+			console.error("Error details:", {
+				message: error.message,
+				text: error.text,
+				status: error.status
+			});
+			setSubmitStatus('error');
+			
+			// Show more specific error message
+			const errorMessage = error.text || error.message || "Failed to send message";
+			toast.error(`${errorMessage}. Please try again or email us directly.`);
+			
+			// Reset error status after 5 seconds
+			setTimeout(() => setSubmitStatus(null), 5000);
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	return (
@@ -119,7 +205,7 @@ const ContactPage = () => {
 						</p>
 					</div>
 					{/* Form */}
-					<form onSubmit={handleSubmit} className="space-y-6">
+					<form onSubmit={handleSubmit} className="space-y-6" ref={formRef}>
 						<div className="space-y-2">
 							<Label htmlFor="name">Full Name</Label>
 							<Input
@@ -130,6 +216,7 @@ const ContactPage = () => {
 								onChange={(e) => updateFormData("name", e.target.value)}
 								required
 								className=" bg-gray-200 dark:bg-accent border border-border"
+								disabled={isSubmitting}
 							/>
 						</div>
 
@@ -143,6 +230,7 @@ const ContactPage = () => {
 								onChange={(e) => updateFormData("email", e.target.value)}
 								required
 								className="bg-gray-200 dark:bg-accent border border-border"
+								disabled={isSubmitting}
 							/>
 						</div>
 
@@ -156,6 +244,7 @@ const ContactPage = () => {
 								onChange={(e) => updateFormData("subject", e.target.value)}
 								required
 								className="bg-gray-200 dark:bg-accent border border-border"
+								disabled={isSubmitting}
 							/>
 						</div>
 
@@ -169,15 +258,45 @@ const ContactPage = () => {
 								required
 								rows={6}
 								className=" bg-gray-200 dark:bg-accent border border-border resize-none"
+								disabled={isSubmitting}
 							/>
 						</div>
+
+						{/* Status Messages */}
+						{submitStatus === 'success' && (
+							<div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+								<CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+								<p className="text-sm text-green-700 dark:text-green-400">
+									Message sent successfully! We'll get back to you soon.
+								</p>
+							</div>
+						)}
+
+						{submitStatus === 'error' && (
+							<div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+								<AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+								<p className="text-sm text-red-700 dark:text-red-400">
+									Failed to send message. Please try again or email us directly.
+								</p>
+							</div>
+						)}
 
 						<Button
 							type="submit"
 							className="w-full bg-primary hover:bg-primary/90"
+							disabled={isSubmitting}
 						>
-							<Send className="w-4 h-4 mr-2" />
-							Send Message
+							{isSubmitting ? (
+								<>
+									<Loader2 className="w-4 h-4 mr-2 animate-spin" />
+									Sending...
+								</>
+							) : (
+								<>
+									<Send className="w-4 h-4 mr-2" />
+									Send Message
+								</>
+							)}
 						</Button>
 					</form>
 

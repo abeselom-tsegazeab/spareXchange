@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmailJS Configuration Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #16a34a;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+        button {
+            background: #16a34a;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #15803d;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        label {
+            font-weight: bold;
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 EmailJS Configuration Test</h1>
+        <p>Use this tool to verify your EmailJS credentials are working correctly.</p>
+
+        <h2>Configuration</h2>
+        <div id="config-status"></div>
+
+        <h2>Test Email</h2>
+        <form id="test-form">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" value="Test User" required>
+
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" value="test@example.com" required>
+
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject" value="EmailJS Test" required>
+
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4" required>This is a test message from the EmailJS configuration test tool.</textarea>
+
+            <button type="submit" id="send-btn">🚀 Send Test Email</button>
+        </form>
+
+        <div id="result"></div>
+
+        <h2>Console Logs</h2>
+        <div class="log" id="logs"></div>
+    </div>
+
+    <script>
+        // Configuration - Update these with your actual credentials
+        const config = {
+            serviceId: 'service_lix03wa',
+            templateId: 'template_et2wvus',
+            publicKey: '35mp7E8Wbq60-dktV'
+        };
+
+        const logs = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push({ timestamp, message, type });
+            updateLogs();
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function updateLogs() {
+            const logsDiv = document.getElementById('logs');
+            logsDiv.innerHTML = logs.map(l => 
+                `<div style="color: ${l.type === 'error' ? '#ef4444' : l.type === 'success' ? '#10b981' : '#10b981'}">[${l.timestamp}] ${l.message}</div>`
+            ).join('');
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function checkConfiguration() {
+            const configDiv = document.getElementById('config-status');
+            let html = '<h3>Environment Variables Status:</h3>';
+            
+            const checks = [
+                { name: 'Service ID', value: config.serviceId, expected: 'service_' },
+                { name: 'Template ID', value: config.templateId, expected: 'template_' },
+                { name: 'Public Key', value: config.publicKey, expected: null }
+            ];
+
+            let allValid = true;
+            checks.forEach(check => {
+                const isValid = check.expected ? check.value.startsWith(check.expected) : check.value && check.value.length > 0;
+                html += `<div class="status ${isValid ? 'success' : 'error'}">
+                    ${isValid ? '✅' : '❌'} ${check.name}: ${isValid ? 'Configured' : 'Missing or Invalid'}
+                </div>`;
+                if (!isValid) allValid = false;
+            });
+
+            configDiv.innerHTML = html;
+            return allValid;
+        }
+
+        // Initialize EmailJS
+        (function() {
+            log('Initializing EmailJS...');
+            emailjs.init(config.publicKey);
+            log('EmailJS initialized with public key: ' + config.publicKey.substring(0, 10) + '...');
+            
+            const isValid = checkConfiguration();
+            if (!isValid) {
+                log('Configuration is incomplete. Please update the credentials in this file.', 'error');
+            } else {
+                log('Configuration looks good! You can send a test email.', 'success');
+            }
+        })();
+
+        // Handle form submission
+        document.getElementById('test-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const sendBtn = document.getElementById('send-btn');
+            const resultDiv = document.getElementById('result');
+            
+            sendBtn.disabled = true;
+            sendBtn.textContent = '⏳ Sending...';
+            resultDiv.innerHTML = '';
+
+            log('Preparing to send email...');
+            log(`Service ID: ${config.serviceId}`);
+            log(`Template ID: ${config.templateId}`);
+
+            const templateParams = {
+                from_name: document.getElementById('name').value,
+                from_email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value,
+                to_name: 'SpareXchange Team',
+                reply_to: document.getElementById('email').value,
+                // Additional fields for better email formatting
+                user_name: document.getElementById('name').value,
+                user_email: document.getElementById('email').value,
+                contact_info: `Name: ${document.getElementById('name').value}\nEmail: ${document.getElementById('email').value}\nSubject: ${document.getElementById('subject').value}`
+            };
+
+            log('Template parameters: ' + JSON.stringify(templateParams, null, 2));
+
+            try {
+                log('Sending email via EmailJS...');
+                
+                const response = await emailjs.send(
+                    config.serviceId,
+                    config.templateId,
+                    templateParams
+                );
+
+                log('Email sent successfully!', 'success');
+                log('Response: ' + JSON.stringify(response, null, 2), 'success');
+
+                resultDiv.innerHTML = `
+                    <div class="status success">
+                        <h3>✅ Email Sent Successfully!</h3>
+                        <p>Status: ${response.status}</p>
+                        <p>Response: ${response.text}</p>
+                        <p>Check your EmailJS dashboard to verify the email was delivered.</p>
+                    </div>
+                `;
+
+            } catch (error) {
+                log('Error sending email: ' + error.text || error.message, 'error');
+                log('Error details: ' + JSON.stringify(error, null, 2), 'error');
+
+                resultDiv.innerHTML = `
+                    <div class="status error">
+                        <h3>❌ Failed to Send Email</h3>
+                        <p><strong>Error:</strong> ${error.text || error.message}</p>
+                        <p><strong>Status:</strong> ${error.status || 'Unknown'}</p>
+                        <h4>Troubleshooting:</h4>
+                        <ul>
+                            <li>Check if Service ID is correct: ${config.serviceId}</li>
+                            <li>Check if Template ID is correct: ${config.templateId}</li>
+                            <li>Verify your EmailJS service is connected to an email account</li>
+                            <li>Check EmailJS dashboard for more details</li>
+                        </ul>
+                    </div>
+                `;
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = '🚀 Send Test Email';
+            }
+        });
+    </script>
+</body>
+</html>
