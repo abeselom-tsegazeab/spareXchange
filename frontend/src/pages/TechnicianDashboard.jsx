@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
-const API_URL = import.meta.env.MODE === 'development' ? 'http://localhost:5000/api/technician-requests' : '/api/technician-requests';
+const API_URL = `${import.meta.env.VITE_API_URL}/api/technician-requests`;
 
 const TechnicianDashboard = () => {
   const { user, logout } = useAuthStore();

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useCommunityStore } from "./communityStore";
 import { useAuthStore } from "./authStore";
 
-const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/api/listings" : "/api/listings";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/listings`;
 
 axios.defaults.withCredentials = true;
 

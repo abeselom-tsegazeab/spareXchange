@@ -78,7 +78,7 @@ const MarketplacePage = () => {
 			if (searchTerm) params.append("search", searchTerm);
 			if (selectedCategory !== "all") params.append("category", selectedCategory);
 			
-			const response = await fetch(`http://localhost:5000/api/listings?${params.toString()}`);
+			const response = await fetch(`${import.meta.env.VITE_API_URL}/api/listings?${params.toString()}`);
 			const data = await response.json();
 			if (data.success) {
 				setListings(data.listings);

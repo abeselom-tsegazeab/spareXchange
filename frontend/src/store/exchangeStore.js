@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/api/exchanges" : "/api/exchanges";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/exchanges`;
 
 axios.defaults.withCredentials = true;
 

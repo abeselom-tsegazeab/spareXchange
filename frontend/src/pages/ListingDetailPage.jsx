@@ -30,7 +30,7 @@ const ListingDetailPage = () => {
 		if (imagePath.startsWith("http")) return imagePath;
 		// If it's a local upload path, prepend backend URL
 		if (imagePath.startsWith("/uploads")) {
-			return `http://localhost:5000${imagePath}`;
+			return `${import.meta.env.VITE_API_URL}${imagePath}`;
 		}
 		return imagePath;
 	};
@@ -39,7 +39,7 @@ const ListingDetailPage = () => {
 		const fetchListing = async () => {
 			setIsLoading(true);
 			try {
-				const response = await fetch(`http://localhost:5000/api/listings/${id}`);
+				const response = await fetch(`${import.meta.env.VITE_API_URL}/api/listings/${id}`);
 				const data = await response.json();
 				if (data.success) {
 					setListing(data.listing);
@@ -133,7 +133,7 @@ const ListingDetailPage = () => {
 
 		try {
 			// Send notification to listing owner
-			await axios.post(`http://localhost:5000/api/notifications`, {
+			await axios.post(`${import.meta.env.VITE_API_URL}/api/notifications`, {
 				userId: listing.seller._id,
 				title: "Purchase Interest",
 				message: `${user.name} is interested in buying "${listing.title}" (Qty: ${quantity}). Contact them to proceed with the exchange!`,

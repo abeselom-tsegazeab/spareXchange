@@ -60,6 +60,10 @@
 		"transformIgnorePatterns": [
 			"node_modules/(?!(@scure|otplib|@otplib|@noble)/)"
 		],
+		"moduleNameMapper": {
+			"^\\.\\./index\\.js$": "<rootDir>/backend/index.js",
+			"^\\.\\./models/(.*)$": "<rootDir>/backend/models/$1"
+		},
 		"setupFilesAfterEnv": [
 			"<rootDir>/tests/backend/legacy/setup.js"
 		],

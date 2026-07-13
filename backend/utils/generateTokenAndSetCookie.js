@@ -13,7 +13,7 @@ export const generateTokenAndSetCookie = (res, userId, rememberMe = true) => {
 	const tokenOptions = {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
-		sameSite: "strict",
+		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 	};
 
 	if (rememberMe) {
@@ -26,7 +26,7 @@ export const generateTokenAndSetCookie = (res, userId, rememberMe = true) => {
 	const refreshTokenOptions = {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
-		sameSite: "strict",
+		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 	};
 
 	if (rememberMe) {

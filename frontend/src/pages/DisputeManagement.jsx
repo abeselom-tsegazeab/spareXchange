@@ -124,7 +124,7 @@ const DisputeManagement = () => {
       if (selectedAction === "ban_user" && currentDispute?.targetId?._id) {
         // Ban the user
         await axios.patch(
-          `http://localhost:5000/api/admin/users/${currentDispute.targetId._id}/ban`,
+          `${import.meta.env.VITE_API_URL}/api/admin/users/${currentDispute.targetId._id}/ban`,
           { isBanned: true },
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
@@ -132,7 +132,7 @@ const DisputeManagement = () => {
       } else if (selectedAction === "warn_user" && currentDispute?.targetId?._id) {
         // Send warning notification to user
         await axios.post(
-          `http://localhost:5000/api/notifications`,
+          `${import.meta.env.VITE_API_URL}/api/notifications`,
           {
             userId: currentDispute.targetId._id,
             title: "⚠️ Warning from Admin",
@@ -146,14 +146,14 @@ const DisputeManagement = () => {
       } else if (selectedAction === "remove_listing" && currentDispute?.listingId?._id) {
         // Remove the listing
         await axios.delete(
-          `http://localhost:5000/api/listings/${currentDispute.listingId._id}`,
+          `${import.meta.env.VITE_API_URL}/api/listings/${currentDispute.listingId._id}`,
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
         toast.success("Listing has been removed");
       } else if (selectedAction === "cancel_exchange" && currentDispute?.exchangeId?._id) {
         // Cancel the exchange
         await axios.patch(
-          `http://localhost:5000/api/exchanges/${currentDispute.exchangeId._id}`,
+          `${import.meta.env.VITE_API_URL}/api/exchanges/${currentDispute.exchangeId._id}`,
           { status: "cancelled" },
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );

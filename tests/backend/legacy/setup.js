@@ -7,11 +7,11 @@ dotenv.config();
 jest.mock("otplib", () => ({
 	generateSecret: jest.fn(() => "test-secret"),
 	generateURI: jest.fn(() => "otpauth://..."),
-	verify: jest.fn(() => true),
+	verify: jest.fn((options) => options?.token === "123456" || options === "123456"),
 	generate: jest.fn(() => "123456"),
 	authenticator: {
 		generate: jest.fn(() => "123456"),
-		verify: jest.fn(() => true)
+		verify: jest.fn((token) => token === "123456")
 	}
 }));
 

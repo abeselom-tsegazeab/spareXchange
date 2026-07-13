@@ -40,7 +40,7 @@ const AdminTechnicianRequestDetailPage = () => {
   const loadRequest = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5000/api/technician-requests/${id}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/technician-requests/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
 
@@ -65,7 +65,7 @@ const AdminTechnicianRequestDetailPage = () => {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/admin/users/${userId}/ban`,
+        `${import.meta.env.VITE_API_URL}/api/admin/users/${userId}/ban`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );

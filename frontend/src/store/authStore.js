@@ -2,9 +2,23 @@ import { create } from "zustand";
 import axios from "axios";
 import { disconnectSocket } from "../utils/socket.js";
 
-const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/api/auth" : "/api/auth";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/auth`;
 
 axios.defaults.withCredentials = true;
+
+// Axios request interceptor to add the Authorization header
+axios.interceptors.request.use(
+	(config) => {
+		const token = localStorage.getItem("token");
+		if (token && !config.headers.Authorization) {
+			config.headers.Authorization = `Bearer ${token}`;
+		}
+		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
+	}
+);
 
 let isRefreshing = false;
 let refreshQueue = [];
@@ -18,6 +32,10 @@ const processRefreshQueue = (error, originalRequest = null) => {
 		if (error) {
 			reject(error);
 		} else {
+			const newToken = localStorage.getItem("token");
+			if (newToken) {
+				request.headers.Authorization = `Bearer ${newToken}`;
+			}
 			resolve(axios(request));
 		}
 	});
@@ -71,6 +89,13 @@ axios.interceptors.response.use(
 			isRefreshing = true;
 			try {
 				await useAuthStore.getState().refreshToken();
+				
+				// Update original request with new token
+				const newToken = localStorage.getItem("token");
+				if (newToken) {
+					originalRequest.headers.Authorization = `Bearer ${newToken}`;
+				}
+				
 				processRefreshQueue(null, originalRequest);
 				return axios(originalRequest);
 			} catch (refreshError) {
@@ -110,6 +135,11 @@ export const useAuthStore = create((set) => ({
 		set({ isLoading: true, error: null });
 		try {
 			const response = await axios.post(`${API_URL}/signup`, { email, password, name, userType: accountType });
+			const { accessToken, refreshToken } = response.data;
+			localStorage.setItem("token", accessToken);
+			if (refreshToken) {
+				localStorage.setItem("refreshToken", refreshToken);
+			}
 			set({ user: response.data.user, isAuthenticated: true, isLoading: false });
 		} catch (error) {
 			set({ error: error.response?.data?.message || "Error signing up", isLoading: false });
@@ -130,6 +160,11 @@ export const useAuthStore = create((set) => ({
 				});
 			} else {
 				localStorage.setItem("rememberMe", rememberMe ? "true" : "false");
+				const { accessToken, refreshToken } = response.data;
+				localStorage.setItem("token", accessToken);
+				if (refreshToken) {
+					localStorage.setItem("refreshToken", refreshToken);
+				}
 				set({
 					isAuthenticated: true,
 					user: response.data.user,
@@ -160,8 +195,13 @@ export const useAuthStore = create((set) => ({
 			}
 
 			// Call logout endpoint
-			await axios.post(`${API_URL}/logout`);
+			const refToken = localStorage.getItem("refreshToken");
+			await axios.post(`${API_URL}/logout`, {}, {
+				headers: refToken ? { "x-refresh-token": refToken } : {},
+			});
 			localStorage.removeItem("rememberMe");
+			localStorage.removeItem("token");
+			localStorage.removeItem("refreshToken");
 
 			// Clear all auth state
 			set({
@@ -177,6 +217,8 @@ export const useAuthStore = create((set) => ({
 			});
 		} catch (error) {
 			console.error("Logout error:", error);
+			localStorage.removeItem("token");
+			localStorage.removeItem("refreshToken");
 			set({ error: "Error logging out", isLoading: false });
 			throw error;
 		} finally {
@@ -285,7 +327,7 @@ export const useAuthStore = create((set) => ({
 	redeemPoints: async (points, rewardDescription) => {
 		set({ isLoading: true, error: null });
 		try {
-			const response = await axios.post(`${import.meta.env.MODE === "development" ? "http://localhost:5000/api/users" : "/api/users"}/redeem-points`, { points, rewardDescription });
+			const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/redeem-points`, { points, rewardDescription });
 			set({
 				user: { ...useAuthStore.getState().user, ecoPoints: response.data.currentPoints },
 				isLoading: false,
@@ -326,6 +368,11 @@ export const useAuthStore = create((set) => ({
 		try {
 			const rememberMe = localStorage.getItem("rememberMe") === "true";
 			const response = await axios.post(`${API_URL}/mfa/validate`, { email, code, rememberMe });
+			const { accessToken, refreshToken } = response.data;
+			localStorage.setItem("token", accessToken);
+			if (refreshToken) {
+				localStorage.setItem("refreshToken", refreshToken);
+			}
 			set({
 				isAuthenticated: true,
 				user: response.data.user,
@@ -342,10 +389,20 @@ export const useAuthStore = create((set) => ({
 
 	refreshToken: async () => {
 		try {
-			const response = await axios.get(`${API_URL}/refresh-token`);
+			const refToken = localStorage.getItem("refreshToken");
+			const response = await axios.get(`${API_URL}/refresh-token`, {
+				headers: refToken ? { "x-refresh-token": refToken } : {},
+			});
+			const { accessToken, refreshToken: newRefreshToken } = response.data;
+			localStorage.setItem("token", accessToken);
+			if (newRefreshToken) {
+				localStorage.setItem("refreshToken", newRefreshToken);
+			}
 			set({ user: response.data.user, isAuthenticated: true, error: null });
 			return response.data;
 		} catch (error) {
+			localStorage.removeItem("token");
+			localStorage.removeItem("refreshToken");
 			set({ isAuthenticated: false, user: null });
 			throw error;
 		}
@@ -356,6 +413,11 @@ export const useAuthStore = create((set) => ({
 		try {
 			const response = await axios.post(`${API_URL}/oauth/google`, { credential, rememberMe });
 			localStorage.setItem("rememberMe", rememberMe ? "true" : "false");
+			const { accessToken, refreshToken } = response.data;
+			localStorage.setItem("token", accessToken);
+			if (refreshToken) {
+				localStorage.setItem("refreshToken", refreshToken);
+			}
 			set({
 				isAuthenticated: true,
 				user: response.data.user,
@@ -371,7 +433,7 @@ export const useAuthStore = create((set) => ({
 	updateProfile: async (profileData) => {
 		set({ isLoading: true, error: null });
 		try {
-			const API_URL_USERS = import.meta.env.MODE === "development" ? "http://localhost:5000/api/users" : "/api/users";
+			const API_URL_USERS = `${import.meta.env.VITE_API_URL}/api/users`;
 
 			// Check if profileData is FormData (for file uploads) or regular object
 			const isFormData = profileData instanceof FormData;
@@ -402,7 +464,7 @@ export const useAuthStore = create((set) => ({
 	requestVerificationWithFiles: async (userType, files) => {
 		set({ isLoading: true, error: null });
 		try {
-			const API_URL_USERS = import.meta.env.MODE === "development" ? "http://localhost:5000/api/users" : "/api/users";
+			const API_URL_USERS = `${import.meta.env.VITE_API_URL}/api/users`;
 			const formData = new FormData();
 			formData.append('requestedType', userType);
 
@@ -439,9 +501,7 @@ export const useAuthStore = create((set) => ({
 	createRecyclingSubmission: async (submissionData) => {
 		set({ isLoading: true, error: null });
 		try {
-			const API_URL_RECYCLING = import.meta.env.MODE === "development"
-				? "http://localhost:5000/api/recycling-submissions"
-				: "/api/recycling-submissions";
+			const API_URL_RECYCLING = `${import.meta.env.VITE_API_URL}/api/recycling-submissions`;
 
 			const response = await axios.post(API_URL_RECYCLING, submissionData);
 			set({ isLoading: false, message: response.data.message });
@@ -455,9 +515,7 @@ export const useAuthStore = create((set) => ({
 	getUserRecyclingSubmissions: async () => {
 		set({ isLoading: true, error: null });
 		try {
-			const API_URL_RECYCLING = import.meta.env.MODE === "development"
-				? "http://localhost:5000/api/recycling-submissions"
-				: "/api/recycling-submissions";
+			const API_URL_RECYCLING = `${import.meta.env.VITE_API_URL}/api/recycling-submissions`;
 
 			const response = await axios.get(`${API_URL_RECYCLING}/user`);
 			set({ isLoading: false });
@@ -471,9 +529,7 @@ export const useAuthStore = create((set) => ({
 	verifyRecyclingByToken: async (token) => {
 		set({ isLoading: true, error: null });
 		try {
-			const API_URL_RECYCLING = import.meta.env.MODE === "development"
-				? "http://localhost:5000/api/recycling-submissions"
-				: "/api/recycling-submissions";
+			const API_URL_RECYCLING = `${import.meta.env.VITE_API_URL}/api/recycling-submissions`;
 
 			const response = await axios.post(`${API_URL_RECYCLING}/verify-token`, { token });
 			set({ isLoading: false, message: response.data.message });
@@ -487,9 +543,7 @@ export const useAuthStore = create((set) => ({
 	getNearbyRecyclers: async (latitude, longitude, radius = 50) => {
 		set({ isLoading: true, error: null });
 		try {
-			const API_URL_RECYCLING = import.meta.env.MODE === "development"
-				? "http://localhost:5000/api/recycling-submissions"
-				: "/api/recycling-submissions";
+			const API_URL_RECYCLING = `${import.meta.env.VITE_API_URL}/api/recycling-submissions`;
 
 			const response = await axios.get(`${API_URL_RECYCLING}/discovery`, {
 				params: { latitude, longitude, radius }

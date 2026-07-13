@@ -100,6 +100,7 @@ export const signup = async (req, res) => {
 			success: true,
 			message: responseMessage,
 			accessToken,
+			refreshToken,
 			user: {
 				...user._doc,
 				password: undefined,
@@ -191,6 +192,7 @@ export const login = async (req, res) => {
 			success: true,
 			message: "Logged in successfully",
 			accessToken,
+			refreshToken,
 			user: {
 				...user._doc,
 				password: undefined,
@@ -204,7 +206,7 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-	const refreshToken = req.cookies.refreshToken;
+	const refreshToken = req.cookies.refreshToken || req.headers["x-refresh-token"] || req.body.refreshToken;
 	if (refreshToken) {
 		const user = await User.findOne({ refreshToken });
 		if (user) {
@@ -212,8 +214,12 @@ export const logout = async (req, res) => {
 			await user.save();
 		}
 	}
-	res.clearCookie("token");
-	res.clearCookie("refreshToken");
+	const clearOptions = {
+		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+		secure: process.env.NODE_ENV === "production",
+	};
+	res.clearCookie("token", clearOptions);
+	res.clearCookie("refreshToken", clearOptions);
 	res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 
@@ -480,7 +486,7 @@ export const resendVerificationEmail = async (req, res) => {
 };
 
 export const refreshToken = async (req, res) => {
-	const cookieRefreshToken = req.cookies.refreshToken;
+	const cookieRefreshToken = req.cookies.refreshToken || req.headers["x-refresh-token"] || req.body.refreshToken;
 
 	if (!cookieRefreshToken) {
 		return res.status(401).json({ success: false, message: "Refresh token not found - please login again" });
@@ -510,7 +516,12 @@ export const refreshToken = async (req, res) => {
 		user.refreshToken = newRefreshToken;
 		await user.save();
 
-		res.status(200).json({ success: true, accessToken, user: { ...user._doc, password: undefined, refreshToken: undefined } });
+		res.status(200).json({
+			success: true,
+			accessToken,
+			refreshToken: newRefreshToken,
+			user: { ...user._doc, password: undefined, refreshToken: undefined }
+		});
 	} catch (error) {
 		console.log("Error in refreshToken ", error);
 		res.clearCookie("token");
@@ -530,12 +541,11 @@ export const setupMFA = async (req, res) => {
 		const otpauth = generateURI({ label: user.email, issuer: "SpareXChange", secret });
 		const qrCodeUrl = await qrcode.toDataURL(otpauth);
 
-		// Store encrypted secret
-		user.mfaSecret = encrypt(secret);
-		await user.save();
-
+		// Store encrypted secret and backup codes
 		const backupCodes = Array.from({ length: 5 }, () => crypto.randomBytes(4).toString("hex"));
+		user.mfaSecret = encrypt(secret);
 		user.mfaBackupCodes = backupOfBackupCodes(backupCodes); // We'll hash these if we were ultra-secure
+		await user.save();
 
 		res.status(200).json({
 			success: true,
@@ -608,6 +618,7 @@ export const validateMFALogin = async (req, res) => {
 		res.status(200).json({
 			success: true,
 			accessToken,
+			refreshToken,
 			user: { ...user._doc, password: undefined, refreshToken: undefined, mfaSecret: undefined }
 		});
 	} catch (error) {
@@ -673,6 +684,7 @@ export const googleLogin = async (req, res) => {
 			success: true,
 			message: isNewUser ? "Signed up successfully via Google" : "Logged in successfully via Google",
 			accessToken,
+			refreshToken,
 			user: {
 				...user._doc,
 				password: undefined,
