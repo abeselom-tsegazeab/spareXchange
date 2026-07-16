@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTechnicianRequestStore } from "../store/technicianRequestStore";
 import { toast } from "react-hot-toast";
 import { 
-  Wrench, MapPin, Clock, DollarSign, ArrowRight, Search, 
+  Wrench, MapPin, Clock, Wallet, ArrowRight, Search,
   Filter, User
 } from "lucide-react";
 
@@ -253,10 +253,9 @@ const AdminTechnicianRequestsPage = () => {
                         <Clock size={14} />
                         {formatDate(request.createdAt)}
                       </span>
-                      {request.budgetMin && request.budgetMax && (
+                                          {request.budgetMin && request.budgetMax && (
                         <span className='flex items-center gap-1 text-green-600 dark:text-green-400'>
-                          {/* <DollarSign size={14} /> */}
-                          ${request.budgetMin} - ${request.budgetMax}
+                          ETB {request.budgetMin} - ETB {request.budgetMax}
                         </span>
                       )}
                     </div>
@@ -289,7 +288,7 @@ const AdminTechnicianRequestsPage = () => {
                         request.quotes && request.quotes.length > 0 && (
                           <div className='bg-gray-100 dark:bg-gray-700 rounded-lg p-3'>
                             <div className='flex items-center gap-2 mb-1'>
-                              <DollarSign size={14} className='text-yellow-600 dark:text-yellow-400' />
+                              <Wallet size={14} className='text-yellow-600 dark:text-yellow-400' />
                               <span className='text-gray-900 dark:text-white font-semibold text-sm'>Quotes Received:</span>
                             </div>
                             <p className='text-gray-700 dark:text-gray-300 text-sm'>{request.quotes.length} quote(s)</p>

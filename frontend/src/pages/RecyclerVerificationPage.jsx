@@ -11,7 +11,7 @@ import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 
 const RecyclerVerificationPage = () => {
-  const { verifyRecyclingByToken } = useAuthStore();
+  const { verifyRecyclingByToken, refreshUser } = useAuthStore();
   const [token, setToken] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationSuccess, setVerificationSuccess] = useState(false);
@@ -37,6 +37,10 @@ const RecyclerVerificationPage = () => {
       setVerifiedSubmission(response.submission);
       setVerificationSuccess(true);
       toast.success("Recycling verified successfully!");
+      
+      // Refresh user data to update ecoPoints
+      await refreshUser();
+      
       setToken("");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to verify recycling");

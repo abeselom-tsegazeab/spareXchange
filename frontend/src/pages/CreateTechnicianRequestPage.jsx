@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTechnicianRequestStore } from "../store/technicianRequestStore";
+import { useAuthStore } from "../store/authStore";
 import { toast } from "react-hot-toast";
-import { Wrench, MapPin, DollarSign, AlertCircle } from "lucide-react";
+import { Wrench, MapPin, Wallet, AlertCircle, ShieldAlert } from "lucide-react";
 
 const SERVICE_TYPES = [
 	"repair",
@@ -19,6 +20,14 @@ const PRIORITIES = ["low", "medium", "high", "urgent"];
 const CreateTechnicianRequestPage = () => {
 	const navigate = useNavigate();
 	const { createTechnicianRequest, isLoading } = useTechnicianRequestStore();
+	const { user } = useAuthStore();
+
+	// Check if user is verified on component mount
+	useEffect(() => {
+		if (user && !user.verifiedSeller) {
+			toast.error("⚠️ Account verification required. Please verify your account to create service requests.");
+		}
+	}, [user]);
 
 	const [formData, setFormData] = useState({
 		serviceType: "",
@@ -88,6 +97,12 @@ const CreateTechnicianRequestPage = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
+		// Check if user is verified
+		if (user && !user.verifiedSeller) {
+			toast.error("⚠️ Your account must be verified before creating service requests.");
+			return;
+		}
+
 		if (!validateForm()) {
 			toast.error("Please fix the errors in the form");
 			return;
@@ -126,6 +141,32 @@ const CreateTechnicianRequestPage = () => {
 			className='min-h-screen bg-white dark:bg-gradient-to-br from-gray-900 via-green-900 to-emerald-900 text-gray-900 dark:text-white py-8 px-4'
 		>
 			<div className='max-w-3xl mx-auto'>
+				{/* Verification Warning for Unverified Users */}
+				{user && !user.verifiedSeller && (
+					<motion.div
+						initial={{ opacity: 0, y: -20 }}
+						animate={{ opacity: 1, y: 0 }}
+						className='mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-300 dark:border-red-700 rounded-lg'
+					>
+						<div className='flex items-start gap-3'>
+							<ShieldAlert className='text-red-600 dark:text-red-400 flex-shrink-0 mt-1' size={24} />
+							<div>
+								<h3 className='text-lg font-bold text-red-800 dark:text-red-300 mb-1'>
+									⚠️ Account Verification Required
+								</h3>
+								<p className='text-red-700 dark:text-red-400 mb-2'>
+									Your account must be verified by an admin before you can create service requests.
+								</p>
+								<p className='text-red-600 dark:text-red-500 text-sm'>
+									• Service requests will not be processed<br/>
+									• Technicians cannot see your requests<br/>
+									• Please contact admin or complete verification process
+								</p>
+							</div>
+						</div>
+					</motion.div>
+				)}
+
 				{/* Header */}
 				<div className='mb-8'>
 					<h1 className='text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3'>
@@ -278,9 +319,9 @@ const CreateTechnicianRequestPage = () => {
 					{/* Budget Range */}
 					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 						<div>
-							<label className='block text-gray-700 dark:text-gray-300 font-semibold mb-2'>Minimum Budget ($)</label>
+							<label className='block text-gray-700 dark:text-gray-300 font-semibold mb-2'>Minimum Budget (ETB)</label>
 							<div className='relative'>
-								<DollarSign className='absolute left-3 top-3.5 text-gray-500 dark:text-gray-400' size={20} />
+								<Wallet className='absolute left-3 top-3.5 text-gray-500 dark:text-gray-400' size={20} />
 								<input
 									type='number'
 									name='budgetMin'
@@ -292,9 +333,9 @@ const CreateTechnicianRequestPage = () => {
 							</div>
 						</div>
 						<div>
-							<label className='block text-gray-700 dark:text-gray-300 font-semibold mb-2'>Maximum Budget ($)</label>
+							<label className='block text-gray-700 dark:text-gray-300 font-semibold mb-2'>Maximum Budget (ETB)</label>
 							<div className='relative'>
-								<DollarSign className='absolute left-3 top-3.5 text-gray-500 dark:text-gray-400' size={20} />
+								<Wallet className='absolute left-3 top-3.5 text-gray-500 dark:text-gray-400' size={20} />
 								<input
 									type='number'
 									name='budgetMax'
@@ -315,12 +356,22 @@ const CreateTechnicianRequestPage = () => {
 					{/* Submit Button */}
 					<button
 						type='submit'
-						disabled={isLoading}
-						className={`w-full py-4 px-6 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-lg shadow-lg hover:from-cyan-600 hover:to-blue-700 transition duration-200 ${
-							isLoading ? 'opacity-50 cursor-not-allowed' : ''
+						disabled={isLoading || (user && !user.verifiedSeller)}
+						className={`w-full py-4 px-6 font-bold rounded-lg shadow-lg transition duration-200 ${
+							user && !user.verifiedSeller
+								? 'bg-gray-400 dark:bg-gray-600 text-white cursor-not-allowed opacity-60'
+								: isLoading
+									? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white opacity-50 cursor-not-allowed'
+									: 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700'
 						}`}
+						title={user && !user.verifiedSeller ? 'Verification required to create service requests' : ''}
 					>
-						{isLoading ? 'Creating Request...' : 'Create Service Request'}
+						{isLoading 
+							? 'Creating Request...' 
+							: user && !user.verifiedSeller
+								? 'Create Request (Verification Required)'
+								: 'Create Service Request'
+						}
 					</button>
 				</motion.form>
 			</div>

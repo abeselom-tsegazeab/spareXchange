@@ -9,7 +9,11 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	Filter,
-	Clock
+	Clock,
+	Search,
+	Wallet,
+	MapPin,
+	Package
 } from "lucide-react";
 
 const NotificationHistoryPage = () => {
@@ -286,13 +290,85 @@ const NotificationHistoryPage = () => {
 												}`}>
 													{notification.title}
 												</h3>
-												{!notification.isRead && (
-													<div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2"></div>
-												)}
+												<div className="flex items-center gap-2">
+													{/* Saved Search Badge */}
+													{notification.data?.source === "saved_search" && (
+														<span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full font-medium">
+															Saved Search
+														</span>
+													)}
+													{!notification.isRead && (
+														<div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2"></div>
+													)}
+												</div>
 											</div>
 											<p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
 												{notification.message}
 											</p>
+										
+											{/* Saved Search Match Details Card */}
+											{notification.data?.source === "saved_search" && (
+												<div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-2 border border-gray-200 dark:border-gray-600">
+													{notification.data.listingImage && (
+														<div className="mb-2 rounded-md overflow-hidden h-32 bg-gray-200 dark:bg-gray-600">
+															<img 
+																src={notification.data.listingImage} 
+																alt={notification.data.listingTitle}
+																className="w-full h-full object-cover"
+																onError={(e) => e.target.style.display = 'none'}
+															/>
+														</div>
+													)}
+																						
+													<div className="space-y-1.5 text-sm">
+																{notification.data.listingPrice && (
+																	<div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold">
+																		<Wallet size={14} />
+																		<span>ETB {notification.data.listingPrice}</span>
+																	</div>
+																)}
+																							
+														<div className="flex flex-wrap gap-2">
+															{notification.data.listingCondition && (
+																<span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs rounded-full capitalize">
+																	{notification.data.listingCondition}
+																</span>
+															)}
+															{notification.data.listingCategory && (
+																<span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs rounded-full capitalize flex items-center gap-1">
+																	<Package size={10} />
+																	{notification.data.listingCategory}
+																</span>
+															)}
+														</div>
+																							
+														{(notification.data.listingBrand || notification.data.listingModel) && (
+															<div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
+																<Search size={12} className="text-gray-500" />
+																<span className="text-xs">
+																	{notification.data.listingBrand}
+																	{notification.data.listingBrand && notification.data.listingModel && " "}
+																	{notification.data.listingModel}
+																</span>
+															</div>
+														)}
+																							
+														{notification.data.listingLocation && (
+															<div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+																<MapPin size={12} />
+																<span className="text-xs">{notification.data.listingLocation}</span>
+															</div>
+														)}
+																							
+														{notification.data.listingDescription && (
+															<p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
+																{notification.data.listingDescription}...
+															</p>
+														)}
+													</div>
+												</div>
+											)}
+										
 											<div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-500">
 												<div className="flex items-center gap-1">
 													<Clock className="w-3 h-3" />

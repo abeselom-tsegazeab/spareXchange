@@ -87,7 +87,7 @@ const CartPage = () => {
 								>
 									<div className="flex gap-4">
 										<img
-											src={item.images?.[0]?.startsWith("http") ? item.images?.[0] : item.images?.[0] ? `http://localhost:5000${item.images?.[0]}` : "/placeholder-image.jpg"}
+											src={item.images?.[0]?.startsWith("http") ? item.images?.[0] : item.images?.[0] ? `${import.meta.env.VITE_API_URL}${item.images?.[0]}` : "/placeholder-image.jpg"}
 											alt={item.title}
 											onError={(e) => {
 												e.target.onerror = null;
@@ -136,10 +136,10 @@ const CartPage = () => {
 												</div>
 												<div className="text-right">
 													<p className="text-2xl font-bold text-green-600 dark:text-green-400">
-														${(item.price * item.quantity).toFixed(2)}
+														ETB {(item.price * item.quantity).toFixed(2)}
 													</p>
 													<p className="text-sm text-gray-600 dark:text-gray-400">
-														${item.price} each
+														ETB {item.price} each
 													</p>
 												</div>
 											</div>

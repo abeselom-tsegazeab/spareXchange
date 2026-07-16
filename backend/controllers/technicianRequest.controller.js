@@ -14,6 +14,19 @@ export const createTechnicianRequest = async (req, res) => {
 			return res.status(400).json({ success: false, message: "Service type, description, and location are required" });
 		}
 
+		// Check if user's account is verified
+		const user = await User.findById(req.userId);
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
+
+		if (!user.verifiedSeller) {
+			return res.status(403).json({ 
+				success: false, 
+				message: "Your account must be verified before creating service requests. Please contact admin or complete the verification process." 
+			});
+		}
+
 		const newRequest = new TechnicianRequest({
 			userId: req.userId,
 			serviceType,
@@ -114,6 +127,52 @@ export const acceptQuote = async (req, res) => {
 		res.status(200).json({ success: true, message: "Technician hired successfully", assignedTechnician: techId });
 	} catch (error) {
 		console.error("Error in acceptQuote:", error);
+		res.status(500).json({ success: false, message: "Server error" });
+	}
+};
+
+// Users: Update status of their technician request
+export const updateRequestStatus = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { status } = req.body;
+
+		// Validate status
+		const validStatuses = ["pending", "quoted", "accepted", "in-progress", "arrived", "started", "completed", "cancelled"];
+		if (!status || !validStatuses.includes(status)) {
+			return res.status(400).json({ 
+				success: false, 
+				message: `Invalid status. Must be one of: ${validStatuses.join(", ")}` 
+			});
+		}
+
+		const request = await TechnicianRequest.findById(id);
+		if (!request) return res.status(404).json({ success: false, message: "Request not found" });
+
+		// Check if user owns this request
+		if (request.userId.toString() !== req.userId) {
+			return res.status(403).json({ success: false, message: "Not authorized to update this request" });
+		}
+
+		// Prevent status updates on completed or cancelled requests
+		if (request.status === "completed" || request.status === "cancelled") {
+			return res.status(400).json({ 
+				success: false, 
+				message: `Cannot update status of a ${request.status} request` 
+			});
+		}
+
+		// Update status
+		request.status = status;
+		await request.save();
+
+		res.status(200).json({ 
+			success: true, 
+			message: `Request status updated to ${status}`, 
+			status: request.status 
+		});
+	} catch (error) {
+		console.error("Error in updateRequestStatus:", error);
 		res.status(500).json({ success: false, message: "Server error" });
 	}
 };

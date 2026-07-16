@@ -188,7 +188,7 @@ const UserManagement = () => {
     try {
       // Verify admin password before deletion
       const response = await axios.post(
-        "http://localhost:5000/api/auth/verify-password",
+        `${import.meta.env.VITE_API_URL}/api/auth/verify-password`,
         { password: adminPassword },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -196,7 +196,7 @@ const UserManagement = () => {
       if (response.data.success) {
         // Password verified, proceed with deletion
         const deleteResponse = await axios.delete(
-          `http://localhost:5000/api/admin/users/${userToDelete._id}`,
+          `${import.meta.env.VITE_API_URL}/api/admin/users/${userToDelete._id}`,
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
 
@@ -248,7 +248,7 @@ const UserManagement = () => {
     try {
       // Verify admin password
       const response = await axios.post(
-        "http://localhost:5000/api/auth/verify-password",
+        `${import.meta.env.VITE_API_URL}/api/auth/verify-password`,
         { password: adminPassword },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -256,7 +256,7 @@ const UserManagement = () => {
       if (response.data.success) {
         // Password verified, proceed with promotion
         const promoteResponse = await axios.patch(
-          `http://localhost:5000/api/admin/users/${userToPromote._id}/make-admin`,
+          `${import.meta.env.VITE_API_URL}/api/admin/users/${userToPromote._id}/make-admin`,
           {},
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
@@ -322,7 +322,7 @@ const UserManagement = () => {
     try {
       // Verify admin password
       const response = await axios.post(
-        "http://localhost:5000/api/auth/verify-password",
+        `${import.meta.env.VITE_API_URL}/api/auth/verify-password`,
         { password: adminPassword },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -330,7 +330,7 @@ const UserManagement = () => {
       if (response.data.success) {
         // Password verified, proceed with demotion
         const demoteResponse = await axios.patch(
-          `http://localhost:5000/api/admin/users/${userToDemote._id}/remove-admin`,
+          `${import.meta.env.VITE_API_URL}/api/admin/users/${userToDemote._id}/remove-admin`,
           {},
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );

@@ -5,11 +5,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { formatDate } from "../utils/date";
 import TierBadge from "../components/TierBadge";
 import { 
-  Trophy, Wrench, DollarSign, Clock, CheckCircle, Package, ArrowUpRight, ArrowRight, ShoppingCart, PlusCircle, Eye, Search
+  Trophy, Wrench, Wallet, Clock, CheckCircle, Package, ArrowUpRight, ArrowRight, ShoppingCart, PlusCircle, Eye, Search
 } from "lucide-react";
 import axios from "axios";
 
-const API_URL = import.meta.env.MODE === 'development' ? 'http://localhost:5000/api/technician-requests' : '/api/technician-requests';
+const API_URL = `${import.meta.env.VITE_API_URL}/api/technician-requests`;
 
 const TechnicianDashboard = () => {
   const { user, logout } = useAuthStore();
@@ -62,7 +62,7 @@ const TechnicianDashboard = () => {
     { label: "Pending Requests", value: stats.pending, icon: Clock, color: "from-yellow-400 to-orange-600", link: "/technician-requests" },
     { label: "Active Jobs", value: stats.active, icon: Wrench, color: "from-blue-400 to-cyan-600", link: "/technician-requests" },
     { label: "Completed", value: stats.completed, icon: CheckCircle, color: "from-green-400 to-emerald-600", link: "/technician-requests" },
-    { label: "Total Earnings", value: `$${stats.totalEarnings}`, icon: DollarSign, color: "from-purple-400 to-pink-600", link: "/analytics" },
+    { label: "Total Earnings", value: `ETB ${stats.totalEarnings}`, icon: Wallet, color: "from-purple-400 to-pink-600", link: "/analytics" },
   ];
 
   const quickActions = [
@@ -181,7 +181,7 @@ const TechnicianDashboard = () => {
                     <div className='flex items-start justify-between'>
                       <div className='flex-1'>
                         <h3 className='text-gray-900 dark:text-white font-semibold mb-1'>{listing.title}</h3>
-                        <p className='text-gray-600 dark:text-gray-400 text-sm mb-2'>{listing.category} • ${listing.price}</p>
+                        <p className='text-gray-600 dark:text-gray-400 text-sm mb-2'>{listing.category} • ETB {listing.price}</p>
                         <div className='flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500'>
                           <span className='flex items-center gap-1'><Eye size={12} />{listing.views || 0} views</span>
                         </div>

@@ -30,7 +30,7 @@ const ListingDetailPage = () => {
 		if (imagePath.startsWith("http")) return imagePath;
 		// If it's a local upload path, prepend backend URL
 		if (imagePath.startsWith("/uploads")) {
-			return `http://localhost:5000${imagePath}`;
+			return `${import.meta.env.VITE_API_URL}${imagePath}`;
 		}
 		return imagePath;
 	};
@@ -39,7 +39,7 @@ const ListingDetailPage = () => {
 		const fetchListing = async () => {
 			setIsLoading(true);
 			try {
-				const response = await fetch(`http://localhost:5000/api/listings/${id}`);
+				const response = await fetch(`${import.meta.env.VITE_API_URL}/api/listings/${id}`);
 				const data = await response.json();
 				if (data.success) {
 					setListing(data.listing);
@@ -58,9 +58,36 @@ const ListingDetailPage = () => {
 			alert("Please login to report.");
 			return;
 		}
-		const reason = prompt("Reason for reporting?");
-		if (!reason) return;
-		const description = prompt("Please provide a description:");
+		
+		// Show reason options
+		const reasonOptions = [
+			'not_as_described',
+			'no_show', 
+			'harassment',
+			'scam',
+			'other'
+		];
+		
+		const reasonChoice = prompt(
+			"Select reason for reporting (enter number):\n" +
+			"1. Item not as described\n" +
+			"2. User didn't show up\n" +
+			"3. Harassment or inappropriate behavior\n" +
+			"4. Suspected scam or fraud\n" +
+			"5. Other"
+		);
+		
+		if (!reasonChoice) return;
+		
+		const reasonIndex = parseInt(reasonChoice) - 1;
+		if (reasonIndex < 0 || reasonIndex >= reasonOptions.length) {
+			alert("Invalid selection. Please try again.");
+			return;
+		}
+		
+		const reason = reasonOptions[reasonIndex];
+		
+		const description = prompt("Please provide a detailed description:");
 		if (!description) return;
 
 		try {
@@ -72,7 +99,8 @@ const ListingDetailPage = () => {
 			});
 			alert("Report submitted successfully.");
 		} catch (error) {
-			alert("Failed to submit report.");
+			console.error("Report error:", error);
+			alert(error.response?.data?.message || "Failed to submit report.");
 		}
 	};
 
@@ -105,7 +133,7 @@ const ListingDetailPage = () => {
 
 		try {
 			// Send notification to listing owner
-			await axios.post(`http://localhost:5000/api/notifications`, {
+			await axios.post(`${import.meta.env.VITE_API_URL}/api/notifications`, {
 				userId: listing.seller._id,
 				title: "Purchase Interest",
 				message: `${user.name} is interested in buying "${listing.title}" (Qty: ${quantity}). Contact them to proceed with the exchange!`,
@@ -230,7 +258,7 @@ const ListingDetailPage = () => {
 						{/* Price */}
 						<div className='mb-6'>
 							<div className='flex items-baseline'>
-								<span className='text-3xl font-bold text-green-400'>${listing.price}</span>
+								<span className='text-3xl font-bold text-green-400'>ETB {listing.price}</span>
 							</div>
 							<div className='flex items-center mt-2'>
 								<span className='text-sm bg-green-100 dark:bg-green-900 dark:bg-opacity-30 text-green-700 dark:text-green-400 px-2 py-1 rounded-full mr-2'>

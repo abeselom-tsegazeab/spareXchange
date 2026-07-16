@@ -189,18 +189,22 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 		});
 
 		test("Should fail login for banned user", async () => {
-			// Create and ban a user
-			const bannedUser = await User.create({
-				name: "Banned User",
-				email: `banned_${timestamp}@test.com`,
-				password: "SecurePass123!",
-				isVerified: true,
-				isBanned: true
-			});
+			// Create a user via signup (which hashes the password properly)
+			const email = `banned_${timestamp}@test.com`;
+			await request(app)
+				.post("/api/auth/signup")
+				.send({
+					name: "Banned User",
+					email,
+					password: "SecurePass123!"
+				});
+
+			// Mark the user as banned in the database
+			await User.findOneAndUpdate({ email }, { isBanned: true });
 
 			const res = await request(app)
 				.post("/api/auth/login")
-				.send({ email: bannedUser.email, password: "SecurePass123!" });
+				.send({ email, password: "SecurePass123!" });
 			
 			expect(res.status).toBe(403);
 			expect(res.body.message).toMatch(/suspended/i);
@@ -480,7 +484,33 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 				.get("/api/auth/refresh-token")
 				.set("Cookie", "refreshToken=invalidtoken123");
 			
-			expect(res.status).toBe(403);
+			expect(res.status).toBe(401);
+		});
+
+		test("Should refresh access token with valid x-refresh-token header", async () => {
+			// Login to get fresh cookies/tokens
+			const loginRes = await request(app)
+				.post("/api/auth/login")
+				.send({ email: testUser.email, password: testUser.password });
+
+			// MFA validation
+			const totpToken = authenticator.generate(mfaSecret);
+			const mfaRes = await request(app)
+				.post("/api/auth/mfa/validate")
+				.send({ email: testUser.email, code: totpToken });
+
+			const testRefreshToken = mfaRes.body.refreshToken;
+			expect(testRefreshToken).toBeDefined();
+
+			// Now refresh using the x-refresh-token header instead of Cookie
+			const res = await request(app)
+				.get("/api/auth/refresh-token")
+				.set("x-refresh-token", testRefreshToken);
+			
+			expect(res.status).toBe(200);
+			expect(res.body.success).toBe(true);
+			expect(res.body.accessToken).toBeDefined();
+			expect(res.body.refreshToken).toBeDefined();
 		});
 	});
 
@@ -561,6 +591,31 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const setCookie = res.header['set-cookie'];
 			expect(setCookie).toBeDefined();
 			expect(setCookie.some(cookie => cookie.includes("token=;"))).toBe(true);
+		});
+
+		test("Should logout successfully with x-refresh-token header", async () => {
+			const loginRes = await request(app)
+				.post("/api/auth/login")
+				.send({ email: testUser.email, password: testUser.password });
+
+			const totpToken = authenticator.generate(mfaSecret);
+			const mfaRes = await request(app)
+				.post("/api/auth/mfa/validate")
+				.send({ email: testUser.email, code: totpToken });
+
+			const testRefreshToken = mfaRes.body.refreshToken;
+			expect(testRefreshToken).toBeDefined();
+
+			const res = await request(app)
+				.post("/api/auth/logout")
+				.set("x-refresh-token", testRefreshToken);
+			
+			expect(res.status).toBe(200);
+			expect(res.body.success).toBe(true);
+
+			// Verify user's refresh token is removed from database
+			const user = await User.findById(userId);
+			expect(user.refreshToken).toBeUndefined();
 		});
 
 		test("Should logout without token (graceful)", async () => {

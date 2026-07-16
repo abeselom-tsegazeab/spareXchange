@@ -100,6 +100,7 @@ export const signup = async (req, res) => {
 			success: true,
 			message: responseMessage,
 			accessToken,
+			refreshToken,
 			user: {
 				...user._doc,
 				password: undefined,
@@ -191,6 +192,7 @@ export const login = async (req, res) => {
 			success: true,
 			message: "Logged in successfully",
 			accessToken,
+			refreshToken,
 			user: {
 				...user._doc,
 				password: undefined,
@@ -204,7 +206,7 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-	const refreshToken = req.cookies.refreshToken;
+	const refreshToken = req.cookies.refreshToken || req.headers["x-refresh-token"] || req.body.refreshToken;
 	if (refreshToken) {
 		const user = await User.findOne({ refreshToken });
 		if (user) {
@@ -212,8 +214,12 @@ export const logout = async (req, res) => {
 			await user.save();
 		}
 	}
-	res.clearCookie("token");
-	res.clearCookie("refreshToken");
+	const clearOptions = {
+		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+		secure: process.env.NODE_ENV === "production",
+	};
+	res.clearCookie("token", clearOptions);
+	res.clearCookie("refreshToken", clearOptions);
 	res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 
@@ -291,6 +297,79 @@ export const resetPassword = async (req, res) => {
 	}
 };
 
+export const updatePassword = async (req, res) => {
+	try {
+		const { currentPassword, newPassword } = req.body;
+		const userId = req.userId;
+
+		console.log("Update Password Request for user:", userId);
+
+		if (!currentPassword || !newPassword) {
+			return res.status(400).json({ 
+				success: false, 
+				message: "Current password and new password are required" 
+			});
+		}
+
+		if (newPassword.length < 8) {
+			return res.status(400).json({ 
+				success: false, 
+				message: "New password must be at least 8 characters long" 
+			});
+		}
+
+		const user = await User.findById(userId);
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
+
+		// Verify current password
+		const isPasswordCorrect = await bcryptjs.compare(currentPassword, user.password);
+		if (!isPasswordCorrect) {
+			console.log("Incorrect current password for user:", user.email);
+			return res.status(400).json({ 
+				success: false, 
+				message: "Current password is incorrect" 
+			});
+		}
+
+		// Check if new password is same as current
+		const isSamePassword = await bcryptjs.compare(newPassword, user.password);
+		if (isSamePassword) {
+			return res.status(400).json({ 
+				success: false, 
+				message: "New password must be different from current password" 
+			});
+		}
+
+		console.log("Current password verified for user:", user.email);
+		console.log("Updating to new password...");
+
+		// Hash and update new password
+		const hashedPassword = await bcryptjs.hash(newPassword, 10);
+		user.password = hashedPassword;
+		await user.save();
+
+		console.log("Password updated successfully for user:", user.email);
+
+		// Send confirmation email
+		try {
+			await sendResetSuccessEmail(user.email);
+			console.log("Password change confirmation email sent");
+		} catch (err) {
+			console.error("Confirmation email failed: ", err);
+		}
+
+		res.status(200).json({ 
+			success: true, 
+			message: "Password updated successfully" 
+		});
+	} catch (error) {
+		console.log("Error in updatePassword:", error);
+		res.status(400).json({ success: false, message: error.message });
+	}
+};
+
 export const checkAuth = async (req, res) => {
 	try {
 		const user = await User.findById(req.userId).select("-password");
@@ -302,7 +381,54 @@ export const checkAuth = async (req, res) => {
 			return res.status(403).json({ success: false, message: "Account suspended" });
 		}
 
-		res.status(200).json({ success: true, user });
+		// Initialize stats with default values
+		let listingsCount = 0;
+		let recycledCount = 0;
+		let reviewsCount = 0;
+		let averageRating = 0;
+		let memberSince = user.joinedAt || user.createdAt;
+
+		// Calculate real-time statistics (with error handling)
+		try {
+			const { Listing } = await import("../models/listing.model.js");
+			const { RecyclingSubmission } = await import("../models/recyclingSubmission.model.js");
+			const { Review } = await import("../models/review.model.js");
+
+			console.log("Fetching stats for user:", user._id);
+			
+			listingsCount = await Listing.countDocuments({ seller: user._id });
+			console.log("Listings count:", listingsCount);
+			
+			recycledCount = await RecyclingSubmission.countDocuments({ 
+				userId: user._id, 
+				status: 'approved' 
+			});
+			console.log("Recycled count:", recycledCount);
+			
+			reviewsCount = await Review.countDocuments({ revieweeId: user._id });
+			console.log("Reviews count:", reviewsCount);
+
+			// Calculate average rating
+			const reviews = await Review.find({ revieweeId: user._id }).select('rating');
+			averageRating = reviews.length > 0
+				? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+				: 0;
+			console.log("Average rating:", averageRating);
+		} catch (statsError) {
+			console.error("Warning: Could not fetch user stats (non-critical):", statsError.message);
+			console.error("Stats error stack:", statsError.stack);
+			// Continue with default values (0)
+		}
+
+		// Return user with computed stats
+		const userResponse = user.toObject();
+		userResponse.listings = listingsCount;
+		userResponse.itemsRecycled = recycledCount;
+		userResponse.reviews = reviewsCount;
+		userResponse.rating = parseFloat(averageRating);
+		userResponse.memberSince = memberSince;
+
+		res.status(200).json({ success: true, user: userResponse });
 	} catch (error) {
 		console.log("Error in checkAuth ", error);
 		res.status(400).json({ success: false, message: error.message });
@@ -360,7 +486,7 @@ export const resendVerificationEmail = async (req, res) => {
 };
 
 export const refreshToken = async (req, res) => {
-	const cookieRefreshToken = req.cookies.refreshToken;
+	const cookieRefreshToken = req.cookies.refreshToken || req.headers["x-refresh-token"] || req.body.refreshToken;
 
 	if (!cookieRefreshToken) {
 		return res.status(401).json({ success: false, message: "Refresh token not found - please login again" });
@@ -390,7 +516,12 @@ export const refreshToken = async (req, res) => {
 		user.refreshToken = newRefreshToken;
 		await user.save();
 
-		res.status(200).json({ success: true, accessToken, user: { ...user._doc, password: undefined, refreshToken: undefined } });
+		res.status(200).json({
+			success: true,
+			accessToken,
+			refreshToken: newRefreshToken,
+			user: { ...user._doc, password: undefined, refreshToken: undefined }
+		});
 	} catch (error) {
 		console.log("Error in refreshToken ", error);
 		res.clearCookie("token");
@@ -410,12 +541,11 @@ export const setupMFA = async (req, res) => {
 		const otpauth = generateURI({ label: user.email, issuer: "SpareXChange", secret });
 		const qrCodeUrl = await qrcode.toDataURL(otpauth);
 
-		// Store encrypted secret
-		user.mfaSecret = encrypt(secret);
-		await user.save();
-
+		// Store encrypted secret and backup codes
 		const backupCodes = Array.from({ length: 5 }, () => crypto.randomBytes(4).toString("hex"));
+		user.mfaSecret = encrypt(secret);
 		user.mfaBackupCodes = backupOfBackupCodes(backupCodes); // We'll hash these if we were ultra-secure
+		await user.save();
 
 		res.status(200).json({
 			success: true,
@@ -488,6 +618,7 @@ export const validateMFALogin = async (req, res) => {
 		res.status(200).json({
 			success: true,
 			accessToken,
+			refreshToken,
 			user: { ...user._doc, password: undefined, refreshToken: undefined, mfaSecret: undefined }
 		});
 	} catch (error) {
@@ -553,6 +684,7 @@ export const googleLogin = async (req, res) => {
 			success: true,
 			message: isNewUser ? "Signed up successfully via Google" : "Logged in successfully via Google",
 			accessToken,
+			refreshToken,
 			user: {
 				...user._doc,
 				password: undefined,

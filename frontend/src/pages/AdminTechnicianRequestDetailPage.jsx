@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { 
-  Wrench, MapPin, Clock, DollarSign, User, MessageCircle, 
+  Wrench, MapPin, Clock, Wallet, User, MessageCircle,
   Mail, Phone, ArrowLeft, Trash2, Ban, Copy
 } from "lucide-react";
 import axios from "axios";
@@ -40,7 +40,7 @@ const AdminTechnicianRequestDetailPage = () => {
   const loadRequest = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5000/api/technician-requests/${id}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/technician-requests/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
 
@@ -65,7 +65,7 @@ const AdminTechnicianRequestDetailPage = () => {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/admin/users/${userId}/ban`,
+        `${import.meta.env.VITE_API_URL}/api/admin/users/${userId}/ban`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -182,8 +182,8 @@ const AdminTechnicianRequestDetailPage = () => {
             </div>
             {request.budgetMin && request.budgetMax && (
               <div className='flex items-center gap-2 text-green-600 dark:text-green-400'>
-                <DollarSign size={16} />
-                <span>Budget: ${request.budgetMin} - ${request.budgetMax}</span>
+                <Wallet size={16} />
+                <span>Budget: ETB {request.budgetMin} - ETB {request.budgetMax}</span>
               </div>
             )}
           </div>
@@ -326,7 +326,7 @@ const AdminTechnicianRequestDetailPage = () => {
             className='bg-primary dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-6'
           >
             <h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2'>
-              <DollarSign className='text-yellow-600 dark:text-yellow-400' size={28} />
+              <Wallet className='text-yellow-600 dark:text-yellow-400' size={28} />
               Quotes Received ({request.quotes.length})
             </h2>
 
@@ -338,8 +338,8 @@ const AdminTechnicianRequestDetailPage = () => {
                       <p className='text-gray-900 dark:text-white font-semibold mb-1'>
                         {quote.technicianId?.name || 'Unknown Technician'}
                       </p>
-                      <p className='text-green-600 dark:text-green-400 text-lg font-bold mb-2'>
-                        ${quote.estimatedCost}
+                                          <p className='text-green-600 dark:text-green-400 text-lg font-bold mb-2'>
+                        ETB {quote.estimatedCost}
                       </p>
                       {quote.additionalNotes && (
                         <p className='text-gray-700 dark:text-gray-300 text-sm'>{quote.additionalNotes}</p>

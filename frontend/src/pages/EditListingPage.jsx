@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
-import { Plus, X, Upload, MapPin, DollarSign, Tag } from "lucide-react";
+import { Plus, X, Upload, MapPin, Wallet, Tag } from "lucide-react";
 import { useListingStore } from "../store/listingStore";
 import { useAuthStore } from "../store/authStore";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -203,7 +203,7 @@ const EditListingPage = () => {
 									name='title'
 									value={formData.title}
 									onChange={handleInputChange}
-									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary'
+									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary dark:text-gray-900'
 									required
 								/>
 							</div>
@@ -215,7 +215,7 @@ const EditListingPage = () => {
 									value={formData.description}
 									onChange={handleInputChange}
 									rows='4'
-									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary'
+									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary dark:text-gray-900'
 									required
 								/>
 							</div>
@@ -223,8 +223,8 @@ const EditListingPage = () => {
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 								<div>
 									<label className='block text-sm font-medium mb-2'>
-										<DollarSign size={16} className='inline mr-1' />
-										Price *
+										<Wallet size={16} className='inline mr-1' />
+										Price (ETB) *
 									</label>
 									<input
 										type='number'
@@ -233,7 +233,7 @@ const EditListingPage = () => {
 										onChange={handleInputChange}
 										min='0'
 										step='0.01'
-										className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary'
+										className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary dark:text-gray-900'
 										required
 									/>
 								</div>
@@ -247,7 +247,7 @@ const EditListingPage = () => {
 										name='category'
 										value={formData.category}
 										onChange={handleInputChange}
-										className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary'
+										className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary dark:text-gray-900'
 										required
 									>
 										<option value=''>Select Category</option>
@@ -264,7 +264,7 @@ const EditListingPage = () => {
 									name='condition'
 									value={formData.condition}
 									onChange={handleInputChange}
-									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary'
+									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary dark:text-gray-900'
 									required
 								>
 									<option value=''>Select Condition</option>
@@ -294,7 +294,7 @@ const EditListingPage = () => {
 								name='location'
 								value={formData.location}
 								onChange={handleInputChange}
-								className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary'
+								className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary dark:text-gray-900'
 								required
 							/>
 						</div>
@@ -343,7 +343,8 @@ const EditListingPage = () => {
 						transition={{ delay: 0.4 }}
 						className='bg-gray-800 bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-xl p-6 border border-gray-700'
 					>
-						<h2 className='text-2xl font-bold mb-4'>Compatible Vehicles</h2>
+						<h2 className='text-2xl font-bold mb-4'>Compatible Parts</h2>
+						<p className='text-gray-400'>Add details about the compatible parts</p>
 						<div className='space-y-4'>
 							<div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
 								<input
@@ -351,28 +352,28 @@ const EditListingPage = () => {
 									placeholder='Brand'
 									value={vehicleForm.brand}
 									onChange={(e) => setVehicleForm(prev => ({ ...prev, brand: e.target.value }))}
-									className='px-4 py-2 bg-background border border-border rounded-lg'
+									className='px-4 py-2 bg-background border border-border rounded-lg dark:text-gray-900'
 								/>
 								<input
 									type='text'
 									placeholder='Model'
 									value={vehicleForm.model}
 									onChange={(e) => setVehicleForm(prev => ({ ...prev, model: e.target.value }))}
-									className='px-4 py-2 bg-background border border-border rounded-lg'
+									className='px-4 py-2 bg-background border border-border rounded-lg dark:text-gray-900'
 								/>
 								<input
 									type='number'
 									placeholder='Year Start'
 									value={vehicleForm.yearStart}
 									onChange={(e) => setVehicleForm(prev => ({ ...prev, yearStart: e.target.value }))}
-									className='px-4 py-2 bg-background border border-border rounded-lg'
+									className='px-4 py-2 bg-background border border-border rounded-lg dark:text-gray-900'
 								/>
 								<input
 									type='number'
 									placeholder='Year End'
 									value={vehicleForm.yearEnd}
 									onChange={(e) => setVehicleForm(prev => ({ ...prev, yearEnd: e.target.value }))}
-									className='px-4 py-2 bg-background border border-border rounded-lg'
+									className='px-4 py-2 bg-background border border-border rounded-lg dark:text-gray-900'
 								/>
 							</div>
 							<button
@@ -381,13 +382,13 @@ const EditListingPage = () => {
 								className='px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center'
 							>
 								<Plus size={16} className='mr-2' />
-								Add Vehicle
+								Add Compatible Vehicle
 							</button>
 
 							{formData.compatibleVehicles.length > 0 && (
 								<div className='space-y-2'>
 									{formData.compatibleVehicles.map((vehicle, index) => (
-										<div key={index} className='flex justify-between items-center p-3 bg-background rounded-lg border border-border'>
+										<div key={index} className='flex justify-between items-center p-3 bg-background rounded-lg border border-border dark:text-gray-900'>
 											<span>{vehicle.brand} {vehicle.model} ({vehicle.yearStart}-{vehicle.yearEnd})</span>
 											<button
 												type='button'
@@ -418,14 +419,14 @@ const EditListingPage = () => {
 									placeholder='Key'
 									value={specKey}
 									onChange={(e) => setSpecKey(e.target.value)}
-									className='flex-1 px-4 py-2 bg-background border border-border rounded-lg'
+									className='flex-1 px-4 py-2 bg-background border border-border rounded-lg dark:text-gray-900'
 								/>
 								<input
 									type='text'
 									placeholder='Value'
 									value={specValue}
 									onChange={(e) => setSpecValue(e.target.value)}
-									className='flex-1 px-4 py-2 bg-background border border-border rounded-lg'
+									className='flex-1 px-4 py-2 bg-background border border-border rounded-lg dark:text-gray-900'
 								/>
 								<button
 									type='button'
@@ -439,7 +440,7 @@ const EditListingPage = () => {
 							{Object.keys(formData.specifications).length > 0 && (
 								<div className='space-y-2'>
 									{Object.entries(formData.specifications).map(([key, value]) => (
-										<div key={key} className='flex justify-between items-center p-3 bg-background rounded-lg border border-border'>
+										<div key={key} className='flex justify-between items-center p-3 bg-background rounded-lg border border-border dark:text-gray-900'>
 											<span><strong>{key}:</strong> {value}</span>
 											<button
 												type='button'
@@ -471,7 +472,7 @@ const EditListingPage = () => {
 									name='contactInfo.phone'
 									value={formData.contactInfo.phone}
 									onChange={handleInputChange}
-									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary'
+									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary dark:text-gray-900'
 								/>
 							</div>
 							<div>
@@ -481,7 +482,7 @@ const EditListingPage = () => {
 									name='contactInfo.email'
 									value={formData.contactInfo.email}
 									onChange={handleInputChange}
-									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary'
+									className='w-full px-4 py-2 bg-background border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary dark:text-gray-900'
 								/>
 							</div>
 						</div>

@@ -449,7 +449,7 @@ const UserProfilePage = () => {
                           <h3 className="font-bold text-lg mb-2">{listing.title}</h3>
                           <div className="flex items-center justify-between">
                             <span className="text-green-400 font-bold">
-                              ${listing.price || "Exchange"}
+                              ETB {listing.price || "Exchange"}
                             </span>
                             <span className="text-sm text-gray-400">
                               {listing.condition}

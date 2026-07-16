@@ -10,9 +10,7 @@ import {
 	User
 } from "lucide-react";
 
-const API_URL = import.meta.env.MODE === "development" 
-	? "http://localhost:5000/api/disputes" 
-	: "/api/disputes";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/disputes`;
 
 const DisputeReportPage = () => {
 	const navigate = useNavigate();

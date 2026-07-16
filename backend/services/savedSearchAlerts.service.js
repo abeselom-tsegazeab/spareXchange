@@ -141,7 +141,7 @@ export async function processSavedSearchAlerts({ limitSearches = 200, limitListi
 		const listings = await Listing.find(listingQuery)
 			.sort({ createdAt: -1 })
 			.limit(limitListingsPerSearch)
-			.select("_id title description brand category locationCoords compatibleVehicles");
+			.select("_id title description brand model category price condition location locationCoords compatibleVehicles images seller");
 
 		for (const listing of listings) {
 			const exists = await Notification.countDocuments({
@@ -160,13 +160,25 @@ export async function processSavedSearchAlerts({ limitSearches = 200, limitListi
 				userId: s.userId,
 				type: "match",
 				title: "Saved search match",
-				message: `A new listing matches your saved search${s.name ? `: ${s.name}` : ""}.`,
+				message: `New listing matches "${s.name || s.query}": ${listing.title}`,
 				link: `/listings/${listing._id}`,
 				relatedId: listing._id,
 				relatedModel: "Listing",
 				data: {
 					source: "saved_search",
 					savedSearchId: s._id,
+					savedSearchName: s.name,
+					savedSearchQuery: s.query,
+					listingId: listing._id,
+					listingTitle: listing.title,
+					listingDescription: listing.description?.substring(0, 100),
+					listingPrice: listing.price,
+					listingCondition: listing.condition,
+					listingBrand: listing.brand,
+					listingModel: listing.model,
+					listingCategory: listing.category,
+					listingLocation: listing.location,
+					listingImage: listing.images?.[0],
 					score,
 					reasons,
 				},

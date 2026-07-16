@@ -25,9 +25,36 @@ const MarketplacePage = () => {
 			alert("Please login to report a listing.");
 			return;
 		}
-		const reason = prompt("Reason for reporting?");
-		if (!reason) return;
-		const description = prompt("Please provide a description:");
+		
+		// Show reason options
+		const reasonOptions = [
+			'not_as_described',
+			'no_show', 
+			'harassment',
+			'scam',
+			'other'
+		];
+		
+		const reasonChoice = prompt(
+			"Select reason for reporting (enter number):\n" +
+			"1. Item not as described\n" +
+			"2. User didn't show up\n" +
+			"3. Harassment or inappropriate behavior\n" +
+			"4. Suspected scam or fraud\n" +
+			"5. Other"
+		);
+		
+		if (!reasonChoice) return;
+		
+		const reasonIndex = parseInt(reasonChoice) - 1;
+		if (reasonIndex < 0 || reasonIndex >= reasonOptions.length) {
+			alert("Invalid selection. Please try again.");
+			return;
+		}
+		
+		const reason = reasonOptions[reasonIndex];
+		
+		const description = prompt("Please provide a detailed description:");
 		if (!description) return;
 
 		try {
@@ -39,7 +66,8 @@ const MarketplacePage = () => {
 			});
 			alert("Report submitted successfully.");
 		} catch (error) {
-			alert("Failed to submit report.");
+			console.error("Report error:", error);
+			alert(error.response?.data?.message || "Failed to submit report.");
 		}
 	};
 
@@ -50,7 +78,7 @@ const MarketplacePage = () => {
 			if (searchTerm) params.append("search", searchTerm);
 			if (selectedCategory !== "all") params.append("category", selectedCategory);
 			
-			const response = await fetch(`http://localhost:5000/api/listings?${params.toString()}`);
+			const response = await fetch(`${import.meta.env.VITE_API_URL}/api/listings?${params.toString()}`);
 			const data = await response.json();
 			if (data.success) {
 				setListings(data.listings);
@@ -237,7 +265,7 @@ const MarketplacePage = () => {
 							<div className='p-4'>
 								<div className='flex justify-between items-start mb-2'>
 									<h3 className='text-gray-900 dark:text-white font-bold text-lg truncate' title={listing.title}>{listing.title}</h3>
-									<span className='text-green-600 dark:text-green-400 font-bold'>${listing.price}</span>
+									<span className='text-green-600 dark:text-green-400 font-bold'>ETB {listing.price}</span>
 								</div>
 								<div className='flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2'>
 									<MapPin size={16} className='mr-1' />

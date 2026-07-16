@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MapPin, Search, DollarSign, Tag, Bell } from "lucide-react";
+import { X, MapPin, Search, Wallet, Tag, Bell } from "lucide-react";
 import toast from "react-hot-toast";
 
 const CATEGORIES = ["electronics", "vehicle", "automotive", "appliances", "tools", "other"];
@@ -346,9 +346,9 @@ const CreateSavedSearchModal = ({ isOpen, onClose, onSave, initialData = null })
 
 								{/* Min Price */}
 								<div>
-									<label className="block text-sm font-medium text-gray-300 mb-2">Min Price</label>
+									<label className="block text-sm font-medium text-gray-300 mb-2">Min Price (ETB)</label>
 									<div className="relative">
-										<DollarSign size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+										<Wallet size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400" />
 										<input
 											type="number"
 											value={formData.filters.minPrice}
@@ -361,9 +361,9 @@ const CreateSavedSearchModal = ({ isOpen, onClose, onSave, initialData = null })
 
 								{/* Max Price */}
 								<div>
-									<label className="block text-sm font-medium text-gray-300 mb-2">Max Price</label>
+									<label className="block text-sm font-medium text-gray-300 mb-2">Max Price (ETB)</label>
 									<div className="relative">
-										<DollarSign size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+										<Wallet size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400" />
 										<input
 											type="number"
 											value={formData.filters.maxPrice}

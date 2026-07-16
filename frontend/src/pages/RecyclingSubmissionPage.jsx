@@ -4,7 +4,7 @@ import {
   Recycle, 
   MapPin, 
   Weight, 
-  DollarSign, 
+  Wallet,
   FileText, 
   Camera,
   Loader2,
@@ -314,8 +314,8 @@ const RecyclingSubmissionPage = () => {
                       : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                   }`}
                 >
-                  <DollarSign className="inline size-4 mr-1" />
-                  Value ($)
+                  <Wallet className="inline size-4 mr-1" />
+                  Value (ETB)
                 </button>
               </div>
 
@@ -336,7 +336,7 @@ const RecyclingSubmissionPage = () => {
                   name="estimatedValue"
                   value={formData.estimatedValue}
                   onChange={handleChange}
-                  placeholder="Estimated value in dollars"
+                  placeholder="Estimated value in ETB"
                   className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 text-gray-900 dark:text-white transition-all"
                   min="0"
                   step="0.01"

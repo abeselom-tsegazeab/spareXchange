@@ -22,7 +22,7 @@ const LeaderboardPage = () => {
     useEffect(() => {
         const fetchLeaderboard = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/users/leaderboard");
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/leaderboard`);
                 if (response.data.success) {
                     setLeaderboard(response.data.leaderboard);
                 } else {
@@ -38,7 +38,7 @@ const LeaderboardPage = () => {
 
         const fetchLeaderboardStats = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/users/leaderboard/stats");
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/leaderboard/stats`);
                 if (response.data.success) {
                     setStats({
                         totalEcoPointsAwarded: response.data.stats.totalEcoPointsAwarded,

@@ -33,7 +33,7 @@ const ListingCard = ({ listing, index }) => {
       </div>
 
       <div className="flex justify-between items-center mb-3 relative z-10">
-        <span className="text-black font-bold text-lg group-hover:text-green-300 transition-colors duration-300">${listing.price}</span>
+        <span className="text-black font-bold text-lg group-hover:text-green-300 transition-colors duration-300">ETB {listing.price}</span>
         <span className="text-white dark:text-black text-sm group-hover:text-gray-300 transition-colors duration-300">{listing.condition}</span>
       </div>
 

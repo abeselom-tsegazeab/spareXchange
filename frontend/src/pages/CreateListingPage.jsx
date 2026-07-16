@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Plus, X, Upload, MapPin, DollarSign, Tag } from "lucide-react";
+import { Plus, X, Upload, MapPin, Wallet, Tag } from "lucide-react";
 import { useListingStore } from "../store/listingStore";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
@@ -185,6 +185,12 @@ const CreateListingPage = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
+		// Check if user is verified
+		if (!user?.verifiedSeller) {
+			toast.error("Your account must be verified before creating listings. \n________________________________________\n Please check your profile and request for verification.");
+			return;
+		}
+
 		if (!formData.title || !formData.description || !formData.price || !formData.category || !formData.condition || !formData.location) {
 			toast.error("Please fill in all required fields");
 			return;
@@ -208,6 +214,32 @@ const CreateListingPage = () => {
 	return (
 		<div className='min-h-screen bg-white dark:bg-gradient-to-b from-gray-900 via-green-900 to-emerald-900 text-gray-900 dark:text-white py-8'>
 			<div className='container mx-auto px-4 max-w-4xl'>
+				{/* Verification Warning Banner */}
+				{!user?.verifiedSeller && (
+					<motion.div
+						initial={{ opacity: 0, y: -20 }}
+						animate={{ opacity: 1, y: 0 }}
+						className='mb-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4'
+					>
+						<div className='flex items-start gap-3'>
+							<div className='flex-shrink-0'>
+								<svg className='h-5 w-5 text-yellow-400' viewBox='0 0 20 20' fill='currentColor'>
+									<path fillRule='evenodd' d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z' clipRule='evenodd' />
+								</svg>
+							</div>
+							<div>
+								<h3 className='text-sm font-medium text-yellow-800 dark:text-yellow-200'>
+									Account Verification Required
+								</h3>
+								<div className='mt-1 text-sm text-yellow-700 dark:text-yellow-300'>
+									<p>You need to verify your account before creating listings.</p>
+									<p className='mt-1'>Please check your profile and submit your verification request with a proper document.</p>
+								</div>
+							</div>
+						</div>
+					</motion.div>
+				)}
+
 				<motion.div
 					initial={{ opacity: 0, y: -20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -258,8 +290,8 @@ const CreateListingPage = () => {
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 								<div>
 									<label className='block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300'>
-										<DollarSign size={16} className='inline mr-1 text-green-600 dark:text-green-400' />
-										Price *
+										<Wallet size={16} className='inline mr-1 text-green-600 dark:text-green-400' />
+										Price (ETB) *
 									</label>
 									<input
 										type='number'

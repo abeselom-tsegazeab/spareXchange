@@ -105,8 +105,8 @@ const SavedSearchesPage = () => {
 		if (search.filters?.year) parts.push(`Year: ${search.filters.year}`);
 		
 		if (search.filters?.minPrice || search.filters?.maxPrice) {
-			const min = search.filters.minPrice ? `$${search.filters.minPrice}` : "$0";
-			const max = search.filters.maxPrice ? `$${search.filters.maxPrice}` : "∞";
+			const min = search.filters.minPrice ? `ETB ${search.filters.minPrice}` : "ETB 0";
+			const max = search.filters.maxPrice ? `ETB ${search.filters.maxPrice}` : "∞";
 			parts.push(`Price: ${min} - ${max}`);
 		}
 

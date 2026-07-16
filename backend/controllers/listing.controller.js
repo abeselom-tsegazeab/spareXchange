@@ -15,6 +15,14 @@ export const createListing = async (req, res) => {
 		const user = await User.findById(req.userId);
 		if (!user || user.isBanned) return res.status(403).json({ success: false, message: "Forbidden" });
 
+		// Check if user's email is verified
+		if (!user.isVerified) {
+			return res.status(403).json({ 
+				success: false, 
+				message: "Your account must be verified before creating listings. Please check your email for the verification link or contact support." 
+			});
+		}
+
 		// Process images (Mocked Cloudinary)
 		let processedImages = [];
 		if (Array.isArray(images)) {
@@ -365,6 +373,14 @@ export const bulkCreateListings = async (req, res) => {
 
 		const user = await User.findById(req.userId);
 		if (!user || user.isBanned) return res.status(403).json({ success: false, message: "Forbidden" });
+
+		// Check if user's email is verified
+		if (!user.isVerified) {
+			return res.status(403).json({ 
+				success: false, 
+				message: "Your account must be verified before creating listings. Please check your email for the verification link or contact support." 
+			});
+		}
 
 		const sellerId = req.userId;
 		const finalData = listings.map(l => {

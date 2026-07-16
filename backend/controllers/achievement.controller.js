@@ -171,7 +171,7 @@ export const checkAndUnlockAchievements = async (req, res) => {
 		const currentAchievements = user.achievements || [];
 
 		// Count user's activities
-		const listingsCount = await Listing.countDocuments({ owner: userId });
+		const listingsCount = await Listing.countDocuments({ seller: userId });
 		const exchangesCount = await Exchange.countDocuments({
 			$or: [{ requester: userId }, { receiver: userId }],
 			status: 'completed'
@@ -336,7 +336,7 @@ export const getUserAchievements = async (req, res) => {
 async function calculateAchievementProgress(userId) {
 	const progress = {};
 
-	const listingsCount = await Listing.countDocuments({ owner: userId });
+	const listingsCount = await Listing.countDocuments({ seller: userId });
 	const exchangesCount = await Exchange.countDocuments({
 		$or: [{ requester: userId }, { receiver: userId }],
 		status: 'completed'

@@ -21,7 +21,7 @@ import {
 const ExchangeDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, refreshUser } = useAuthStore();
   const {
     currentExchange,
     getExchangeById,
@@ -158,6 +158,8 @@ const ExchangeDetailPage = () => {
       const result = await completeExchange(id);
       if (result.data.status === "fully_completed") {
         toast.success("🎉 Exchange fully completed! +50 EcoPoints earned!");
+        // Refresh user data to update ecoPoints
+        await refreshUser();
       } else {
         toast.success("Completion confirmed. Waiting for other party.");
       }
@@ -214,7 +216,9 @@ const ExchangeDetailPage = () => {
     }
     try {
       await verifyHandshake(id, handshakeToken);
-      toast.success("🎉 Handshake verified! Exchange completed!");
+      toast.success("🎉 Handshake verified! Exchange completed! +50 EcoPoints earned!");
+      // Refresh user data to update ecoPoints
+      await refreshUser();
       fetchExchange();
     } catch (error) {
       toast.error(error.response?.data?.message || "Invalid code");
@@ -290,7 +294,7 @@ const ExchangeDetailPage = () => {
                 </div>
                 <div>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">Price</p>
-                  <p className="font-semibold text-green-600 dark:text-green-400">${currentExchange.listingId?.price || "0"}</p>
+                  <p className="font-semibold text-green-600 dark:text-green-400">ETB {currentExchange.listingId?.price || "0"}</p>
                 </div>
               </div>
             </motion.div>
@@ -312,7 +316,7 @@ const ExchangeDetailPage = () => {
                   <div>
                     <p className="text-gray-600 dark:text-gray-400 text-sm">Offered Listing</p>
                     <p className="font-semibold text-green-600 dark:text-green-400">
-                      {currentExchange.offeredListingId.title} - ${currentExchange.offeredListingId.price}
+                      {currentExchange.offeredListingId.title} - ETB {currentExchange.offeredListingId.price}
                     </p>
                   </div>
                 )}
@@ -622,7 +626,7 @@ const ExchangeDetailPage = () => {
               {showCounterOfferForm && (
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
                   <textarea
-                    placeholder="Your offer (e.g., 'Brake Pads + $75')"
+                    placeholder="Your offer (e.g., 'Brake Pads + ETB 75')"
                     value={counterOfferText}
                     onChange={(e) => setCounterOfferText(e.target.value)}
                     className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"

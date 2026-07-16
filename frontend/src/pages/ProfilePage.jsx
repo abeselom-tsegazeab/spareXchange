@@ -4,19 +4,32 @@ import { User, Mail, MapPin, Edit3, Star, Package, CreditCard, Settings, LogOut,
 import { useNavigate, Link } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { useCommunityStore } from "../store/communityStore";
+import { useListingStore } from "../store/listingStore";
 import { useTheme } from "../contexts/ThemeContext";
 import PointsRedemptionModal from "../components/PointsRedemptionModal";
+import PasswordChangeForm from "../components/PasswordChangeForm";
 
 const ProfilePage = () => {
 	const { darkMode } = useTheme();
 	const navigate = useNavigate();
-	const { user, logout, requestVerificationWithFiles } = useAuthStore();
+	const { user, logout, requestVerificationWithFiles, refreshUser } = useAuthStore();
 	const { userAchievements, getUserAchievements } = useCommunityStore();
+	const { listings, getUserListings } = useListingStore();
 	const [activeTab, setActiveTab] = useState("profile");
 	const [showRedemptionModal, setShowRedemptionModal] = useState(false);
 	const [accountType, setAccountType] = useState("individual");
 	const [verificationFiles, setVerificationFiles] = useState([]);
 	const [isSubmittingVerification, setIsSubmittingVerification] = useState(false);
+	const [profileStats, setProfileStats] = useState({
+		ecoPoints: 0,
+		listings: 0,
+		itemsRecycled: 0,
+		rating: 0,
+		reviews: 0,
+		memberSince: null
+	});
+	const [statsLoading, setStatsLoading] = useState(true);
+	const [lastEcoPoints, setLastEcoPoints] = useState(null);
 	// const [notificationSettings, setNotificationSettings] = useState({
 	// 	messages_buyers: true,
 	// 	messages_sellers: true,
@@ -33,37 +46,109 @@ const ProfilePage = () => {
 	useEffect(() => {
 		// Load user achievements when profile page mounts
 		getUserAchievements();
-	}, []);
+		
+		// Load user's listings and update stats
+		fetchProfileData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []); // Only run once on mount
+
+	// Auto-refresh ecoPoints when they change in authStore
+	useEffect(() => {
+		if (user && user.ecoPoints !== undefined) {
+			// Check if ecoPoints have changed
+			if (lastEcoPoints !== null && lastEcoPoints !== user.ecoPoints) {
+				console.log("EcoPoints updated from", lastEcoPoints, "to", user.ecoPoints);
+				// Update profile stats with new ecoPoints
+				setProfileStats(prev => ({
+					...prev,
+					ecoPoints: user.ecoPoints
+				}));
+			}
+			// Track the last known ecoPoints value
+			setLastEcoPoints(user.ecoPoints);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user?.ecoPoints, lastEcoPoints]);
+
+	// Periodic refresh to catch any backend updates (every 30 seconds)
+	useEffect(() => {
+		const intervalId = setInterval(async () => {
+			try {
+				const freshUser = await refreshUser();
+				if (freshUser && freshUser.ecoPoints !== profileStats.ecoPoints) {
+					console.log("Auto-refreshed ecoPoints:", freshUser.ecoPoints);
+					setProfileStats(prev => ({
+						...prev,
+						ecoPoints: freshUser.ecoPoints
+					}));
+				}
+			} catch (error) {
+				// Silently fail - don't interrupt user experience
+				console.debug("Periodic ecoPoints refresh skipped:", error.message);
+			}
+		}, 30000); // Check every 30 seconds
+
+		// Cleanup interval on unmount
+		return () => clearInterval(intervalId);
+	}, [profileStats.ecoPoints, refreshUser]);
+
+	const fetchProfileData = async () => {
+		try {
+			setStatsLoading(true);
+			
+			// Refresh user data from backend to get latest stats
+			const freshUser = await refreshUser();
+			const userData = freshUser || user;
+			
+			// Immediately set stats from current user object (no waiting)
+			if (userData) {
+				setProfileStats({
+					ecoPoints: userData.ecoPoints || 0,
+					listings: userData.listings || 0,
+					itemsRecycled: userData.itemsRecycled || 0,
+					rating: userData.rating || 0,
+					reviews: userData.reviews || 0,
+					memberSince: userData.memberSince || userData.createdAt
+				});
+				
+				// Initialize lastEcoPoints tracker
+				setLastEcoPoints(userData.ecoPoints || 0);
+			}
+			
+			// Fetch user's listings from backend
+			await getUserListings();
+			
+			// Debug: Log the user object to see what data is available
+			console.log("Profile stats from user object:", {
+				ecoPoints: userData?.ecoPoints,
+				listings: userData?.listings,
+				itemsRecycled: userData?.itemsRecycled,
+				rating: userData?.rating,
+				reviews: userData?.reviews,
+				memberSince: userData?.memberSince
+			});
+		} catch (error) {
+			console.error("Error fetching profile data:", error);
+		} finally {
+			setStatsLoading(false);
+		}
+	};
 
 	if (!user) return null;
 
-	// Mock listings data
-	const listings = [
-		{
-			id: 1,
-			title: "Car Engine Block - Toyota Camry 2015",
-			price: 450,
-			status: "Active",
-			views: 124,
-			interested: 8,
-		},
-		{
-			id: 2,
-			title: "Laptop Battery - Dell Inspiron 15",
-			price: 85,
-			status: "Sold",
-			views: 89,
-			interested: 5,
-		},
-		{
-			id: 3,
-			title: "Motorcycle Carburetor - Honda CB125",
-			price: 120,
-			status: "Active",
-			views: 67,
-			interested: 3,
-		},
-	];
+	// Debug: Log the user object to see what data is available
+	console.log("ProfilePage - User object:", {
+		id: user._id,
+		ecoPoints: user.ecoPoints,
+		listings: user.listings,
+		itemsRecycled: user.itemsRecycled,
+		rating: user.rating,
+		reviews: user.reviews,
+		memberSince: user.memberSince,
+		createdAt: user.createdAt
+	});
+
+	// Load real listings from backend (stored in listings state from useListingStore)
 
 	const handleLogout = async () => {
 		await logout();
@@ -221,20 +306,22 @@ const ProfilePage = () => {
 									{!isAdmin && (
 										<>
 											<div className='text-center'>
-												<div className='text-2xl font-bold text-green-600 dark:text-white'>{user.ecoPoints}</div>
+												<div className='text-2xl font-bold text-green-600 dark:text-white'>
+													{statsLoading ? (user?.ecoPoints || 0) : profileStats.ecoPoints}
+												</div>
 												<div className='text-sm text-gray-700 dark:text-gray-300'>Eco Points</div>
 											</div>
-											<div className='text-center'>
-												<div className='text-2xl font-bold text-gray-900 dark:text-white'>{user.listings}</div>
+											{/* <div className='text-center'>
+												<div className='text-2xl font-bold text-gray-900 dark:text-white'>{statsLoading ? '...' : profileStats.listings}</div>
 												<div className='text-sm text-gray-700 dark:text-gray-300'>Listings</div>
 											</div>
 											<div className='text-center'>
 												<div className='flex items-center justify-center'>
 													<Star size={16} className='text-yellow-600 dark:text-yellow-400 fill-current mr-1' />
-													<span className='text-2xl font-bold text-gray-900 dark:text-white'>{user.rating}</span>
+													<span className='text-2xl font-bold text-gray-900 dark:text-white'>{statsLoading ? '...' : profileStats.rating}</span>
 												</div>
-												<div className='text-sm text-gray-700 dark:text-gray-300'>{user.reviews} Reviews</div>
-											</div>
+												<div className='text-sm text-gray-700 dark:text-gray-300'>{statsLoading ? '...' : profileStats.reviews} Reviews</div>
+											</div> */}
 										</>
 									)}
 									{isAdmin && (
@@ -245,7 +332,17 @@ const ProfilePage = () => {
 									)}
 								</div>
 								<div className='text-sm text-gray-700 dark:text-gray-300'>
-									Member since {user.memberSince}
+									{statsLoading ? (
+										'Member since ...'
+									) : profileStats.memberSince ? (
+										<>Member since {new Date(profileStats.memberSince).toLocaleDateString('en-US', { 
+											year: 'numeric', 
+											month: 'long',
+											day: 'numeric'
+										})}</>
+									) : (
+										'Member since N/A'
+									)}
 								</div>
 							</div>
 							<div className='mt-4 md:mt-0'>
@@ -407,16 +504,16 @@ const ProfilePage = () => {
 											<div className='bg-gray-700 rounded-lg p-4 mb-4'>
 												<div className='flex justify-between items-center mb-2'>
 													<span className='text-gray-300'>Total Eco Points</span>
-													<span className='text-2xl font-bold text-green-400'>{user.ecoPoints}</span>
+													<span className='text-2xl font-bold text-green-400'>{statsLoading ? '...' : profileStats.ecoPoints}</span>
 												</div>
 												<div className='w-full bg-gray-600 rounded-full h-2'>
 													<div
 														className='bg-green-500 h-2 rounded-full'
-														style={{ width: `${Math.min(100, (user.ecoPoints / 2000) * 100)}%` }}
+														style={{ width: `${Math.min(100, ((statsLoading ? 0 : profileStats.ecoPoints) / 2000) * 100)}%` }}
 													></div>
 												</div>
 												<div className='text-sm text-gray-400 mt-2 flex justify-between'>
-													<span>{2000 - user.ecoPoints} points to next level</span>
+													<span>{statsLoading ? '...' : `${Math.max(0, 2000 - profileStats.ecoPoints)} points to next level`}</span>
 													<button
 														onClick={() => {
 															if (user.roleStatus !== "verified") {
@@ -552,7 +649,7 @@ const ProfilePage = () => {
 												<td className='p-4'>
 													<div className='font-medium'>{listing.title}</div>
 												</td>
-												<td className='p-4'>${listing.price}</td>
+												<td className='p-4'>ETB {listing.price}</td>
 												<td className='p-4'>
 													<span className={`px-2 py-1 rounded-full text-xs font-bold ${listing.status === "Active"
 														? "bg-green-900 text-green-300"
@@ -660,6 +757,7 @@ const ProfilePage = () => {
 							animate={{ opacity: 1 }}
 							className='bg-primary dark:bg-gray-800 rounded-xl p-6 border border-gray-700'
 						>
+							<PasswordChangeForm />
 							<h2 className='text-2xl font-bold mb-6'>Security Settings</h2>
 							<div className='space-y-6'>
 								<div className='p-4 bg-gray-700 rounded-lg'>

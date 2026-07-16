@@ -51,7 +51,7 @@ const FaqPage = () => {
 				},
 				{
 					question: 'How does shipping work?',
-					answer: 'Shipping is handled by the seller. Each listing includes shipping costs and estimated delivery times. Orders over $50 often qualify for free shipping.',
+					answer: 'Shipping is handled by the seller. Each listing includes shipping costs and estimated delivery times. Orders over ETB 2,500 often qualify for free shipping.',
 				},
 				{
 					question: 'What is buyer protection?',

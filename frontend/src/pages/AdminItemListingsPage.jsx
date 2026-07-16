@@ -41,7 +41,7 @@ const AdminItemListingsPage = () => {
       if (filters.available) params.available = filters.available;
       if (filters.search) params.search = filters.search;
 
-      const response = await axios.get("http://localhost:5000/api/listings/admin/all", {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/listings/admin/all`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         params
       });
@@ -76,7 +76,7 @@ const AdminItemListingsPage = () => {
     if (!window.confirm("Are you sure you want to delete this listing?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/listings/${listingId}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/listings/${listingId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       toast.success("Listing deleted successfully");
@@ -93,7 +93,7 @@ const AdminItemListingsPage = () => {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/admin/users/${userId}/ban`,
+        `${import.meta.env.VITE_API_URL}/api/admin/users/${userId}/ban`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -118,7 +118,7 @@ const AdminItemListingsPage = () => {
     if (!imagePath) return "/placeholder-image.jpg";
     if (imagePath.startsWith("http")) return imagePath;
     if (imagePath.startsWith("/uploads")) {
-      return `http://localhost:5000${imagePath}`;
+      return `${import.meta.env.VITE_API_URL}${imagePath}`;
     }
     return imagePath;
   };
@@ -298,7 +298,7 @@ const AdminItemListingsPage = () => {
                 {/* Content */}
                 <div className='p-4'>
                   <h3 className='text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1'>{listing.title}</h3>
-                  <p className='text-purple-600 dark:text-purple-400 text-xl font-bold mb-2'>${listing.price}</p>
+                  <p className='text-purple-600 dark:text-purple-400 text-xl font-bold mb-2'>ETB {listing.price}</p>
                   
                   <div className='space-y-1 text-sm text-gray-600 dark:text-gray-400 mb-3'>
                     <div className='flex items-center gap-2'>

@@ -19,7 +19,7 @@ export const getPublicUserProfile = async (req, res) => {
 
 		// Get user's active listings count
 		const activeListingsCount = await Listing.countDocuments({
-			owner: userId,
+			seller: userId,
 			status: 'active'
 		});
 
@@ -126,7 +126,7 @@ export const getUserPublicListings = async (req, res) => {
 
 		// Build query - admins can see all listings, public sees only active
 		const query = {
-			owner: userId
+			seller: userId
 		};
 
 		// If status filter is provided (for admins), use it; otherwise default to active for public
