@@ -1,11 +1,34 @@
 import { Server } from "socket.io";
 
 let io;
+const allowedSocketOrigins = [
+	"http://localhost:5173",
+	"https://sparexchange-two.vercel.app",
+	"https://sparexchange.netlify.app",
+	process.env.CLIENT_URL,
+	process.env.FRONTEND_URL,
+].filter(Boolean);
+
+
 
 export const initSocket = (server) => {
 	io = new Server(server, {
 		cors: {
-			origin: process.env.CLIENT_URL || "http://localhost:5173",
+			origin: (origin, callback) => {
+				if (!origin) {
+					callback(null, true);
+					return;
+				}
+
+				const normalizedOrigin = origin.replace(/\/$/, "");
+				const isAllowed = allowedSocketOrigins.some((allowedOrigin) => allowedOrigin.replace(/\/$/, "") === normalizedOrigin);
+
+				if (isAllowed) {
+					callback(null, true);
+				} else {
+					callback(new Error(`Socket origin not allowed: ${origin}`));
+				}
+			},
 			methods: ["GET", "POST"],
 			credentials: true,
 		},

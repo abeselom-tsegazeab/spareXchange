@@ -32,10 +32,33 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
+const allowedOrigins = [
+	"http://localhost:5173",
+	"https://sparexchange-two.vercel.app",
+	"https://sparexchange.netlify.app",
+	process.env.FRONTEND_URL,
+	process.env.CLIENT_URL,
+].filter(Boolean);
 
 app.use(cors({
-	origin: [process.env.FRONTEND_URL, process.env.CLIENT_URL, "http://localhost:5173", "http://localhost:5174"],
-	credentials: true
+	origin: (origin, callback) => {
+		if (!origin) {
+			callback(null, true);
+			return;
+		}
+
+		const normalizedOrigin = origin.replace(/\/$/, "");
+		const isAllowed = allowedOrigins.some((allowedOrigin) => allowedOrigin.replace(/\/$/, "") === normalizedOrigin);
+
+		if (isAllowed) {
+			callback(null, true);
+		} else {
+			callback(new Error(`Origin not allowed by CORS: ${origin}`));
+		}
+	},
+	credentials: true,
+	methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+	allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Cookie"],
 }));
 
 app.use(express.json({ limit: '50mb' })); // allows us to parse incoming requests:req.body (increased for image uploads)
