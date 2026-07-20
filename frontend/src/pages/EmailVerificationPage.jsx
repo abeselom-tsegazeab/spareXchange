@@ -18,10 +18,15 @@ const EmailVerificationPage = () => {
 	const handleResend = async () => {
 		setIsResending(true);
 		try {
-			await resendVerificationEmail();
-			setResent(true);
-			toast.success("Verification email sent successfully!");
-			setTimeout(() => setResent(false), 3000);
+			const response = await resendVerificationEmail();
+			if (response?.emailSent === false) {
+				toast.error(response.message || "Failed to resend verification email");
+				setResent(false);
+			} else {
+				setResent(true);
+				toast.success(response?.message || "Verification email sent successfully!");
+				setTimeout(() => setResent(false), 3000);
+			}
 		} catch (error) {
 			console.error("Error resending email:", error);
 			toast.error(error.response?.data?.message || "Failed to resend verification email");

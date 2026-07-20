@@ -305,16 +305,16 @@ export const updatePassword = async (req, res) => {
 		console.log("Update Password Request for user:", userId);
 
 		if (!currentPassword || !newPassword) {
-			return res.status(400).json({ 
-				success: false, 
-				message: "Current password and new password are required" 
+			return res.status(400).json({
+				success: false,
+				message: "Current password and new password are required"
 			});
 		}
 
 		if (newPassword.length < 8) {
-			return res.status(400).json({ 
-				success: false, 
-				message: "New password must be at least 8 characters long" 
+			return res.status(400).json({
+				success: false,
+				message: "New password must be at least 8 characters long"
 			});
 		}
 
@@ -327,18 +327,18 @@ export const updatePassword = async (req, res) => {
 		const isPasswordCorrect = await bcryptjs.compare(currentPassword, user.password);
 		if (!isPasswordCorrect) {
 			console.log("Incorrect current password for user:", user.email);
-			return res.status(400).json({ 
-				success: false, 
-				message: "Current password is incorrect" 
+			return res.status(400).json({
+				success: false,
+				message: "Current password is incorrect"
 			});
 		}
 
 		// Check if new password is same as current
 		const isSamePassword = await bcryptjs.compare(newPassword, user.password);
 		if (isSamePassword) {
-			return res.status(400).json({ 
-				success: false, 
-				message: "New password must be different from current password" 
+			return res.status(400).json({
+				success: false,
+				message: "New password must be different from current password"
 			});
 		}
 
@@ -360,9 +360,9 @@ export const updatePassword = async (req, res) => {
 			console.error("Confirmation email failed: ", err);
 		}
 
-		res.status(200).json({ 
-			success: true, 
-			message: "Password updated successfully" 
+		res.status(200).json({
+			success: true,
+			message: "Password updated successfully"
 		});
 	} catch (error) {
 		console.log("Error in updatePassword:", error);
@@ -395,16 +395,16 @@ export const checkAuth = async (req, res) => {
 			const { Review } = await import("../models/review.model.js");
 
 			console.log("Fetching stats for user:", user._id);
-			
+
 			listingsCount = await Listing.countDocuments({ seller: user._id });
 			console.log("Listings count:", listingsCount);
-			
-			recycledCount = await RecyclingSubmission.countDocuments({ 
-				userId: user._id, 
-				status: 'approved' 
+
+			recycledCount = await RecyclingSubmission.countDocuments({
+				userId: user._id,
+				status: 'approved'
 			});
 			console.log("Recycled count:", recycledCount);
-			
+
 			reviewsCount = await Review.countDocuments({ revieweeId: user._id });
 			console.log("Reviews count:", reviewsCount);
 
@@ -476,9 +476,20 @@ export const resendVerificationEmail = async (req, res) => {
 		user.verificationTokenExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
 		await user.save();
 
-		await sendVerificationEmail(user.email, verificationToken);
+		let emailSent = false;
+		try {
+			emailSent = await sendVerificationEmail(user.email, verificationToken);
+		} catch (error) {
+			console.error("Verification email resend failed:", error);
+		}
 
-		res.status(200).json({ success: true, message: "Verification email resent successfully" });
+		res.status(200).json({
+			success: true,
+			emailSent,
+			message: emailSent
+				? "Verification email resent successfully"
+				: "Verification token updated, but the email could not be delivered. Please try again later or contact support.",
+		});
 	} catch (error) {
 		console.error("Error resending verification email:", error);
 		res.status(500).json({ success: false, message: "Server error" });
@@ -657,7 +668,7 @@ export const googleLogin = async (req, res) => {
 				name,
 				profilePicture: picture,
 				isVerified: true, // Social accounts are pre-verified
-				password: await bcryptjs.hash(randomPassword, 10), 
+				password: await bcryptjs.hash(randomPassword, 10),
 				permissions: ["create_listings", "propose_exchanges"],
 				authProvider: "google",
 				googleId: googleId
@@ -701,7 +712,7 @@ export const googleLogin = async (req, res) => {
 export const verifyPassword = async (req, res) => {
 	try {
 		const { password } = req.body;
-		
+
 		if (!password) {
 			return res.status(400).json({ success: false, message: "Password is required" });
 		}

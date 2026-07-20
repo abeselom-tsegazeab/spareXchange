@@ -3,8 +3,26 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Create one or more transporter configurations for the configured SMTP host.
-// This helps when the provider is reachable only over a different TLS/port combination.
+const fromEmail = process.env.FROM_EMAIL || process.env.RESEND_FROM_EMAIL;
+
+export const getResendFromAddress = (env = process.env) => {
+  const configuredAddress = env.RESEND_FROM_EMAIL || env.FROM_EMAIL;
+  if (!configuredAddress) {
+    return "onboarding@resend.dev";
+  }
+
+  const normalized = configuredAddress.toLowerCase();
+  if (
+    normalized.endsWith("@gmail.com") ||
+    normalized.endsWith("@googlemail.com") ||
+    normalized.includes("gmail.com")
+  ) {
+    return "onboarding@resend.dev";
+  }
+
+  return configuredAddress;
+};
+
 const createTransporters = () => {
   // If no SMTP credentials are provided, return null (for development mode)
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
@@ -46,9 +64,50 @@ const createTransporters = () => {
   return transporters.map((config) => nodemailer.createTransport(config));
 };
 
-const fromEmail = process.env.FROM_EMAIL;
+const sendWithResend = async (to, subject, html) => {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+
+  const fromAddress = getResendFromAddress();
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: fromAddress,
+      to: [to],
+      subject,
+      html,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorPayload = await response.text();
+    throw new Error(`Resend API error: ${response.status} ${errorPayload}`);
+  }
+
+  return true;
+};
 
 export const sendEmail = async (to, subject, html) => {
+  const hasResendKey = Boolean(process.env.RESEND_API_KEY);
+  if (hasResendKey) {
+    try {
+      console.log("Using Resend API for outgoing email");
+      const result = await sendWithResend(to, subject, html);
+      if (result) {
+        console.log("Email sent successfully via Resend");
+        return true;
+      }
+    } catch (error) {
+      console.error("Resend email failed:", error);
+    }
+  }
+
   // Check if we have SMTP credentials
   const hasCredentials = process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS;
 
@@ -75,8 +134,6 @@ export const sendEmail = async (to, subject, html) => {
     return true;
   }
 
-  let lastError = null;
-
   for (const transporter of transporters) {
     try {
       const host = transporter.options?.host || process.env.SMTP_HOST;
@@ -84,7 +141,6 @@ export const sendEmail = async (to, subject, html) => {
       console.log(`Verifying SMTP connection via ${host}:${port}...`);
       await transporter.verify();
       console.log(`SMTP connection is ready via ${host}:${port}`);
-      // Send mail with defined transport object
       console.log(`Attempting to send email to: ${to}`);
       console.log(`Using SMTP host: ${host}:${port}`);
       console.log(`From: SpareXchange <${fromEmail}>`);
@@ -99,7 +155,6 @@ export const sendEmail = async (to, subject, html) => {
       console.log("Email sent successfully: %s", info.messageId);
       return true;
     } catch (error) {
-      lastError = error;
       console.error(`SMTP attempt failed for ${transporter.options?.host || process.env.SMTP_HOST}:${transporter.options?.port || process.env.SMTP_PORT || 587}`);
       console.error("Error sending email:", error);
       if (error.code) {
