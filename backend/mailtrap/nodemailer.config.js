@@ -5,6 +5,24 @@ dotenv.config();
 
 const fromEmail = process.env.FROM_EMAIL || process.env.RESEND_FROM_EMAIL;
 
+export const getResendFromAddress = (env = process.env) => {
+  const configuredAddress = env.RESEND_FROM_EMAIL || env.FROM_EMAIL;
+  if (!configuredAddress) {
+    return "onboarding@resend.dev";
+  }
+
+  const normalized = configuredAddress.toLowerCase();
+  if (
+    normalized.endsWith("@gmail.com") ||
+    normalized.endsWith("@googlemail.com") ||
+    normalized.includes("gmail.com")
+  ) {
+    return "onboarding@resend.dev";
+  }
+
+  return configuredAddress;
+};
+
 const createTransporters = () => {
   // If no SMTP credentials are provided, return null (for development mode)
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
@@ -52,7 +70,7 @@ const sendWithResend = async (to, subject, html) => {
     return null;
   }
 
-  const fromAddress = process.env.RESEND_FROM_EMAIL || process.env.FROM_EMAIL || "onboarding@resend.dev";
+  const fromAddress = getResendFromAddress();
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {

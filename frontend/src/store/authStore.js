@@ -89,13 +89,13 @@ axios.interceptors.response.use(
 			isRefreshing = true;
 			try {
 				await useAuthStore.getState().refreshToken();
-				
+
 				// Update original request with new token
 				const newToken = localStorage.getItem("token");
 				if (newToken) {
 					originalRequest.headers.Authorization = `Bearer ${newToken}`;
 				}
-				
+
 				processRefreshQueue(null, originalRequest);
 				return axios(originalRequest);
 			} catch (refreshError) {
@@ -264,9 +264,9 @@ export const useAuthStore = create((set) => ({
 		try {
 			console.log("Resetting password with token:", token);
 			console.log("New password length:", password?.length);
-			
+
 			const response = await axios.post(`${API_URL}/reset-password/${token}`, { password });
-			
+
 			console.log("Password reset response:", response.data);
 			set({ message: response.data.message, isLoading: false });
 			return response.data;
@@ -284,12 +284,12 @@ export const useAuthStore = create((set) => ({
 		set({ isLoading: true, error: null });
 		try {
 			console.log("Updating password...");
-			
-			const response = await axios.post(`${API_URL}/update-password`, { 
-				currentPassword, 
-				newPassword 
+
+			const response = await axios.post(`${API_URL}/update-password`, {
+				currentPassword,
+				newPassword
 			});
-			
+
 			console.log("Password update response:", response.data);
 			set({ message: response.data.message, isLoading: false });
 			return response.data;
@@ -317,8 +317,9 @@ export const useAuthStore = create((set) => ({
 	resendVerificationEmail: async () => {
 		set({ isLoading: true, error: null });
 		try {
-			await axios.post(`${API_URL}/resend-verification`);
+			const response = await axios.post(`${API_URL}/resend-verification`);
 			set({ isLoading: false });
+			return response.data;
 		} catch (error) {
 			set({ error: error.response?.data?.message || "Error resending verification email", isLoading: false });
 			throw error;
