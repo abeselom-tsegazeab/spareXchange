@@ -93,82 +93,52 @@ const sendWithResend = async (to, subject, html) => {
   return true;
 };
 
+// new configuration for Brevo email sending;
 export const sendEmail = async (to, subject, html) => {
-  const hasResendKey = Boolean(process.env.RESEND_API_KEY);
-  if (hasResendKey) {
-    try {
-      console.log("Using Resend API for outgoing email");
-      const result = await sendWithResend(to, subject, html);
-      if (result) {
-        console.log("Email sent successfully via Resend");
-        return true;
-      }
-    } catch (error) {
-      console.error("Resend email failed:", error);
-    }
-  }
+  const apiKey = process.env.BREVO_API_KEY;
+  const fromEmail = process.env.BREVO_FROM_EMAIL;
+  const fromName = process.env.BREVO_FROM_NAME || "SpareXchange";
 
-  // Check if we have SMTP credentials
-  const hasCredentials = process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS;
-
-  if (!hasCredentials) {
-    const missingVars = [];
-    if (!process.env.SMTP_HOST) missingVars.push("SMTP_HOST");
-    if (!process.env.SMTP_USER) missingVars.push("SMTP_USER");
-    if (!process.env.SMTP_PASS) missingVars.push("SMTP_PASS");
-
-    console.error(`Email sending failed: missing SMTP env vars: ${missingVars.join(", ")}`);
-    return false;
+  if (!apiKey) {
+    throw new Error("BREVO_API_KEY is not configured");
   }
 
   if (!fromEmail) {
-    console.error("Email sending failed: FROM_EMAIL is not configured");
-    return false;
+    throw new Error("BREVO_FROM_EMAIL is not configured");
   }
 
-  const transporters = createTransporters();
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "api-key": apiKey,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      sender: {
+        name: fromName,
+        email: fromEmail,
+      },
+      to: [
+        {
+          email: to,
+        },
+      ],
+      subject,
+      htmlContent: html,
+    }),
+  });
 
-  // If transporter is null, we're in development without credentials
-  if (!transporters || transporters.length === 0) {
-    console.log("Email sending skipped (no transporter available)");
-    return true;
+  const result = await response.json();
+
+  if (!response.ok) {
+    console.error("Brevo API error:", result);
+    throw new Error(
+      `Brevo email failed: ${result.message || response.statusText}`
+    );
   }
 
-  for (const transporter of transporters) {
-    try {
-      const host = transporter.options?.host || process.env.SMTP_HOST;
-      const port = transporter.options?.port || process.env.SMTP_PORT || 587;
-      console.log(`Verifying SMTP connection via ${host}:${port}...`);
-      await transporter.verify();
-      console.log(`SMTP connection is ready via ${host}:${port}`);
-      console.log(`Attempting to send email to: ${to}`);
-      console.log(`Using SMTP host: ${host}:${port}`);
-      console.log(`From: SpareXchange <${fromEmail}>`);
+  console.log("Email sent successfully via Brevo:", result.messageId);
 
-      const info = await transporter.sendMail({
-        from: `SpareXchange <${fromEmail}>`,
-        to,
-        subject,
-        html,
-      });
-
-      console.log("Email sent successfully: %s", info.messageId);
-      return true;
-    } catch (error) {
-      console.error(`SMTP attempt failed for ${transporter.options?.host || process.env.SMTP_HOST}:${transporter.options?.port || process.env.SMTP_PORT || 587}`);
-      console.error("Error sending email:", error);
-      if (error.code) {
-        console.error(`SMTP Error Code: ${error.code}`);
-      }
-      if (error.response) {
-        console.error(`SMTP Response: ${error.response}`);
-      }
-      if (error.code === "EAUTH") {
-        console.error("Authentication failed. Please check your SMTP credentials.");
-        console.error("Make sure you are using an App Password, not your regular Gmail password.");
-      }
-    }
-  }
-
-  return false;
+  return true;
 };
