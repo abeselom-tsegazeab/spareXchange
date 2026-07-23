@@ -28,7 +28,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/signup")
 				.send(testUser);
-			
+
 			expect(res.status).toBe(201);
 			expect(res.body.success).toBe(true);
 			expect(res.body.user).toBeDefined();
@@ -38,7 +38,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			expect(res.body.accessToken).toBeDefined();
 			expect(res.body.user.permissions).toContain("create_listings");
 			expect(res.body.user.permissions).toContain("propose_exchanges");
-			
+
 			accessToken = res.body.accessToken;
 			userId = res.body.user._id;
 		});
@@ -47,7 +47,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/signup")
 				.send({ email: "test@example.com" });
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.success).toBe(false);
 		});
@@ -56,7 +56,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/signup")
 				.send(testUser);
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.success).toBe(false);
 			expect(res.body.message).toMatch(/already exists/i);
@@ -70,7 +70,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 					email: `weak_${timestamp}@test.com`,
 					password: "weak"
 				});
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.success).toBe(false);
 			expect(res.body.message).toMatch(/password.*8 characters/i);
@@ -84,7 +84,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 					email: `nospecial_${timestamp}@test.com`,
 					password: "Password123"
 				});
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.success).toBe(false);
 		});
@@ -105,11 +105,11 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/verify-email")
 				.send({ code: user.verificationToken });
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.message).toMatch(/verified/i);
-			
+
 			// Verify user is now marked as verified
 			const updatedUser = await User.findById(userId);
 			expect(updatedUser.isVerified).toBe(true);
@@ -119,7 +119,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/verify-email")
 				.send({ code: "999999" });
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.success).toBe(false);
 		});
@@ -137,7 +137,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/verify-email")
 				.send({ code: "123456" });
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.message).toMatch(/invalid or expired/i);
 		});
@@ -148,22 +148,49 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/login")
 				.send({ email: testUser.email, password: testUser.password });
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.accessToken).toBeDefined();
 			expect(res.body.user.email).toBe(testUser.email);
 			expect(res.body.user.password).toBeUndefined();
 			expect(res.header['set-cookie']).toBeDefined();
-			
+
 			accessToken = res.body.accessToken;
+		});
+
+		test("Should resend a fresh verification code when an unverified user logs in", async () => {
+			const unverifiedEmail = `login_unverified_${timestamp}@test.com`;
+			await request(app)
+				.post("/api/auth/signup")
+				.send({
+					name: "Unverified Login User",
+					email: unverifiedEmail,
+					password: "SecurePass123!"
+				});
+
+			const originalUser = await User.findOne({ email: unverifiedEmail });
+			const originalVerificationToken = originalUser.verificationToken;
+
+			const res = await request(app)
+				.post("/api/auth/login")
+				.send({ email: unverifiedEmail, password: "SecurePass123!" });
+
+			expect(res.status).toBe(403);
+			expect(res.body.success).toBe(false);
+			expect(res.body.message).toMatch(/verify your email/i);
+
+			const updatedUser = await User.findOne({ email: unverifiedEmail });
+			expect(updatedUser.verificationToken).toBeDefined();
+			expect(updatedUser.verificationToken).not.toBe(originalVerificationToken);
+			expect(updatedUser.verificationTokenExpiresAt).toBeDefined();
 		});
 
 		test("Should fail login with wrong password", async () => {
 			const res = await request(app)
 				.post("/api/auth/login")
 				.send({ email: testUser.email, password: "WrongPassword123!" });
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.success).toBe(false);
 			expect(res.body.message).toMatch(/invalid credentials/i);
@@ -173,7 +200,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/login")
 				.send({ email: "nonexistent@test.com", password: "SecurePass123!" });
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.success).toBe(false);
 		});
@@ -182,7 +209,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			await request(app)
 				.post("/api/auth/login")
 				.send({ email: testUser.email, password: testUser.password });
-			
+
 			const user = await User.findById(userId);
 			expect(user.lastLogin).toBeDefined();
 			expect(new Date(user.lastLogin).getTime()).toBeGreaterThan(Date.now() - 60000);
@@ -205,7 +232,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/login")
 				.send({ email, password: "SecurePass123!" });
-			
+
 			expect(res.status).toBe(403);
 			expect(res.body.message).toMatch(/suspended/i);
 		});
@@ -216,7 +243,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.get("/api/auth/check-auth")
 				.set("Authorization", `Bearer ${accessToken}`);
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.user.email).toBe(testUser.email);
@@ -226,7 +253,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 		test("Should fail check-auth without token", async () => {
 			const res = await request(app)
 				.get("/api/auth/check-auth");
-			
+
 			expect(res.status).toBe(401);
 		});
 
@@ -234,7 +261,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.get("/api/auth/check-auth")
 				.set("Authorization", "Bearer invalidtoken123");
-			
+
 			expect(res.status).toBe(401);
 		});
 
@@ -250,13 +277,13 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const loginRes = await request(app)
 				.post("/api/auth/login")
 				.send({ email: bannedUser.email, password: "SecurePass123!" });
-			
+
 			// Should be blocked at login, but if somehow gets token:
 			if (loginRes.body.accessToken) {
 				const res = await request(app)
 					.get("/api/auth/check-auth")
 					.set("Authorization", `Bearer ${loginRes.body.accessToken}`);
-				
+
 				expect(res.status).toBe(403);
 			}
 		});
@@ -269,7 +296,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/forgot-password")
 				.send({ email: testUser.email });
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.message).toMatch(/reset link sent/i);
@@ -284,7 +311,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/forgot-password")
 				.send({ email: "nonexistent@test.com" });
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.success).toBe(false);
 		});
@@ -296,7 +323,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post(`/api/auth/reset-password/${user.resetPasswordToken}`)
 				.send({ password: newPassword });
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.message).toMatch(/password reset successful/i);
@@ -309,7 +336,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const loginRes = await request(app)
 				.post("/api/auth/login")
 				.send({ email: testUser.email, password: newPassword });
-			
+
 			expect(loginRes.status).toBe(200);
 			expect(loginRes.body.success).toBe(true);
 
@@ -317,7 +344,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			await request(app)
 				.post("/api/auth/forgot-password")
 				.send({ email: testUser.email });
-			
+
 			const user2 = await User.findById(userId);
 			await request(app)
 				.post(`/api/auth/reset-password/${user2.resetPasswordToken}`)
@@ -328,7 +355,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/reset-password/invalidtoken123")
 				.send({ password: "NewSecurePass456!" });
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.message).toMatch(/invalid or expired/i);
 		});
@@ -346,7 +373,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/reset-password/expiredtoken123")
 				.send({ password: "NewSecurePass456!" });
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.message).toMatch(/invalid or expired/i);
 		});
@@ -357,26 +384,26 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/mfa/setup")
 				.set("Authorization", `Bearer ${accessToken}`);
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.qrCodeUrl).toBeDefined();
 			expect(res.body.secret).toBeDefined();
 			expect(res.body.backupCodes).toBeDefined();
 			expect(res.body.backupCodes).toHaveLength(5);
-			
+
 			mfaSecret = res.body.secret;
 			backupCodes = res.body.backupCodes;
 		});
 
 		test("Should verify MFA with correct TOTP token", async () => {
 			const totpToken = authenticator.generate(mfaSecret);
-			
+
 			const res = await request(app)
 				.post("/api/auth/mfa/verify")
 				.set("Authorization", `Bearer ${accessToken}`)
 				.send({ code: totpToken });
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.message).toMatch(/enabled/i);
@@ -390,7 +417,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/login")
 				.send({ email: testUser.email, password: testUser.password });
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.mfaRequired).toBe(true);
 			expect(res.body.message).toMatch(/mfa verification required/i);
@@ -398,26 +425,26 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 
 		test("Should validate MFA login with correct TOTP", async () => {
 			const totpToken = authenticator.generate(mfaSecret);
-			
+
 			const res = await request(app)
 				.post("/api/auth/mfa/validate")
 				.send({ email: testUser.email, code: totpToken });
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.accessToken).toBeDefined();
-			
+
 			accessToken = res.body.accessToken;
 		});
 
 		test("Should validate MFA login with backup code", async () => {
 			// Use first backup code
 			const backupCode = backupCodes[0];
-			
+
 			const res = await request(app)
 				.post("/api/auth/mfa/validate")
 				.send({ email: testUser.email, code: backupCode });
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 
@@ -431,7 +458,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/mfa/validate")
 				.send({ email: testUser.email, code: "000000" });
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.success).toBe(false);
 		});
@@ -439,7 +466,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 		test("Should fail MFA setup without authentication", async () => {
 			const res = await request(app)
 				.post("/api/auth/mfa/setup");
-			
+
 			expect(res.status).toBe(401);
 		});
 	});
@@ -465,7 +492,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.get("/api/auth/refresh-token")
 				.set("Cookie", cookies);
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.accessToken).toBeDefined();
@@ -474,7 +501,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 		test("Should fail refresh without refresh token", async () => {
 			const res = await request(app)
 				.get("/api/auth/refresh-token");
-			
+
 			expect(res.status).toBe(401);
 			expect(res.body.message).toMatch(/refresh token not found/i);
 		});
@@ -483,7 +510,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.get("/api/auth/refresh-token")
 				.set("Cookie", "refreshToken=invalidtoken123");
-			
+
 			expect(res.status).toBe(401);
 		});
 
@@ -506,7 +533,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.get("/api/auth/refresh-token")
 				.set("x-refresh-token", testRefreshToken);
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.accessToken).toBeDefined();
@@ -526,7 +553,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 				.put("/api/users/profile")
 				.set("Authorization", `Bearer ${accessToken}`)
 				.send(updateData);
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.user.name).toBe(updateData.name);
@@ -536,12 +563,12 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 
 		test("Should update profile interests", async () => {
 			const interests = ["vehicle parts", "electronics", "machinery"];
-			
+
 			const res = await request(app)
 				.put("/api/users/profile")
 				.set("Authorization", `Bearer ${accessToken}`)
 				.send({ interests });
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.user.interests).toEqual(interests);
 		});
@@ -550,7 +577,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.put("/api/users/profile")
 				.send({ name: "Hacker" });
-			
+
 			expect(res.status).toBe(401);
 		});
 	});
@@ -562,7 +589,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 				.post("/api/users/verify-role")
 				.set("Authorization", `Bearer ${accessToken}`)
 				.send({ requestedType: "technician" });
-			
+
 			// Should fail without documents
 			expect(res.status).toBe(400);
 			expect(res.body.message).toMatch(/document/i);
@@ -572,7 +599,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/users/verify-role")
 				.send({ requestedType: "technician" });
-			
+
 			expect(res.status).toBe(401);
 		});
 	});
@@ -582,11 +609,11 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/logout")
 				.set("Authorization", `Bearer ${accessToken}`);
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 			expect(res.body.message).toMatch(/logged out/i);
-			
+
 			// Verify cookies are cleared
 			const setCookie = res.header['set-cookie'];
 			expect(setCookie).toBeDefined();
@@ -609,7 +636,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 			const res = await request(app)
 				.post("/api/auth/logout")
 				.set("x-refresh-token", testRefreshToken);
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 
@@ -621,7 +648,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 		test("Should logout without token (graceful)", async () => {
 			const res = await request(app)
 				.post("/api/auth/logout");
-			
+
 			expect(res.status).toBe(200);
 			expect(res.body.success).toBe(true);
 		});
@@ -631,11 +658,11 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 		test("Should prevent SQL injection in email field", async () => {
 			const res = await request(app)
 				.post("/api/auth/login")
-				.send({ 
-					email: "test@test.com' OR '1'='1", 
-					password: "SecurePass123!" 
+				.send({
+					email: "test@test.com' OR '1'='1",
+					password: "SecurePass123!"
 				});
-			
+
 			expect(res.status).toBe(400);
 			expect(res.body.message).toMatch(/invalid credentials/i);
 		});
@@ -671,7 +698,7 @@ describe("Module 1: Identity & Security - Comprehensive Testing", () => {
 						email: `weak_${Date.now()}@test.com`,
 						password
 					});
-				
+
 				expect(res.status).toBe(400);
 				expect(res.body.success).toBe(false);
 			}

@@ -41,6 +41,11 @@ const LoginPage = () => {
 				toast.success("Logged in successfully!");
 			}
 		} catch (error) {
+			const message = error?.response?.data?.message || "";
+			if (/verify your email/i.test(message)) {
+				navigate("/verify-email");
+				return;
+			}
 			console.log(error);
 		}
 	};

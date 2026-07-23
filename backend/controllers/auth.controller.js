@@ -171,6 +171,25 @@ export const login = async (req, res) => {
 			return res.status(403).json({ success: false, message: "Your account has been suspended. Please contact support." });
 		}
 
+		if (!user.isVerified) {
+			const verificationToken = crypto.randomInt(100000, 999999).toString();
+			user.verificationToken = verificationToken;
+			user.verificationTokenExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
+			user.rememberMe = rememberMe !== undefined ? !!rememberMe : true;
+			await user.save();
+
+			try {
+				await sendVerificationEmail(user.email, verificationToken);
+			} catch (emailError) {
+				console.error("Login verification email re-send failed:", emailError);
+			}
+
+			return res.status(403).json({
+				success: false,
+				message: "Please verify your email address. A new verification code has been sent to your email.",
+			});
+		}
+
 		user.rememberMe = rememberMe !== undefined ? !!rememberMe : true;
 		user.lastLogin = new Date();
 		await user.save();
